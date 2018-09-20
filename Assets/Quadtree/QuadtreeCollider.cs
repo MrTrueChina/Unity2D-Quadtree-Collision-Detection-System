@@ -1,9 +1,4 @@
-﻿/*
- *  一定要设置执行顺序在 QuadtreeObject 前，否则会出错
- *  
- *  设置方法是 Edit -> Project Setting -> Script Execution Order，点那个"+"，之后上下拖动，向上是更早执行，向下是更晚执行
- */
-using UnityEngine;
+﻿using UnityEngine;
 
 public delegate void CollisionDelegate(GameObject obj);
 
