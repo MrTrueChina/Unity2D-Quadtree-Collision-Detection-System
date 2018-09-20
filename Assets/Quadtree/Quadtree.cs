@@ -92,7 +92,7 @@ public class QuadtreeLeaf<T>
 public class Quadtree<T>
 {
     Rect _rect;
-    float _maxRadius;               //最大半径，存入叶子、移除叶子、更新叶子半径时都需要一起向上更新
+    float _maxRadius = float.MinValue;          //最大半径，存入叶子、移除叶子、更新叶子半径时都需要一起向上更新
 
     Quadtree<T> _parent;
     Quadtree<T> _upperRightChild;
@@ -106,6 +106,8 @@ public class Quadtree<T>
     float _minWidth;
     float _minHeight;
 
+
+    //构造
     public Quadtree(float x, float y, float width, float height,int splitLeafsNumber = 10,float minWidth = 1,float minHeight = 1, Quadtree<T> parent = null)
     {
         _rect = new Rect(x, y, width, height);
@@ -117,15 +119,20 @@ public class Quadtree<T>
     }
 
 
-    public bool SetLeaf(QuadtreeLeaf<T> leaf)   //有bug,没有向上更新最大半径
+    //存入
+    public bool SetLeaf(QuadtreeLeaf<T> leaf)
     {
         if (_rect.pointToRectDistance(leaf.position) > 0) return false;
 
         if (DontHaveChildren())
         {
             _leafs.Add(leaf);
-            _maxRadius = Mathf.Max(_maxRadius, leaf.radius);
-            //缺一步，还得向上更新最大半径
+            if (_maxRadius < leaf.radius)
+            {
+                _maxRadius = leaf.radius;
+                if (_parent != null)
+                    _parent.UpwardsUpdateMaxRaiuds();
+            }
             Debug.Log("位置在" + _rect.position + "宽高是" + _rect.size + "的节点，存入一个半径为 " + leaf.radius + " 的叶子，存入后节点最大半径是 " + _maxRadius);
 
             if (_leafs.Count > _splitNodesNomber && _rect.width > _minWidth && _rect.height > _minHeight)
@@ -158,6 +165,7 @@ public class Quadtree<T>
     }
 
 
+    //分割
     void Split()    //对应叶子位置在子节点精度问题造成的夹缝中的极端情况是否需要增加边缘扩展值
     {
         float childWidth = _rect.width / 2;
@@ -181,6 +189,7 @@ public class Quadtree<T>
     }
 
 
+    //检测
     public T[] CheckCollision(Vector2 checkPosition, float checkRadius)
     {
         List<T> objs = new List<T>();
@@ -215,6 +224,7 @@ public class Quadtree<T>
     }
 
 
+    //更新
     public void Update()
     {
         UpdateLeafsPosition();
@@ -278,7 +288,7 @@ public class Quadtree<T>
     }
     float GetMaxRadius()
     {
-        float newMaxRadius = 0;
+        float newMaxRadius = float.MinValue;
         foreach (QuadtreeLeaf<T> leaf in _leafs)
             if (leaf.radius > newMaxRadius)
                 newMaxRadius = leaf.radius;
@@ -301,6 +311,7 @@ public class Quadtree<T>
     }
 
 
+    //移除
     public bool RemoveLeaf(QuadtreeLeaf<T> removeLeaf)
     {
         if (DontHaveChildren())
@@ -340,6 +351,7 @@ public class Quadtree<T>
         _maxRadius = newMaxRadius;
     }
 }
+
 
 public static partial class RectExtension
 {
