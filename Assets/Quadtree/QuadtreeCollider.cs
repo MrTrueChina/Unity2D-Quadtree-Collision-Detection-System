@@ -1,4 +1,9 @@
-﻿using UnityEngine;
+﻿/*
+ *  碰撞器，一定要设置执行顺序在 QuadtreeObject 前。
+ *  
+ *  设置方法是 Edit -> Project Setting -> Script Execution Order，点"+"，之后选择一个脚本，上下拖动，越靠上执行越早，越靠下执行越晚。
+ */
+using UnityEngine;
 
 public delegate void CollisionDelegate(GameObject obj);
 

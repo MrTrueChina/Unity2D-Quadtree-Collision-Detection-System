@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 /*
  *  这只是个用来演示四叉树效果的脚本，到处都是缺陷，千万不要用到实际工程里
