@@ -92,7 +92,7 @@ public class QuadtreeLeaf<T>
 public class Quadtree<T>
 {
     Rect _rect;
-    float _maxRadius;
+    float _maxRadius;               //最大半径，存入叶子、移除叶子、更新叶子半径时都需要一起向上更新
 
     Quadtree<T> _parent;
     Quadtree<T> _upperRightChild;
@@ -117,7 +117,7 @@ public class Quadtree<T>
     }
 
 
-    public bool SetLeaf(QuadtreeLeaf<T> leaf)
+    public bool SetLeaf(QuadtreeLeaf<T> leaf)   //有bug,没有向上更新最大半径
     {
         if (_rect.pointToRectDistance(leaf.position) > 0) return false;
 
@@ -125,6 +125,7 @@ public class Quadtree<T>
         {
             _leafs.Add(leaf);
             _maxRadius = Mathf.Max(_maxRadius, leaf.radius);
+            //缺一步，还得向上更新最大半径
             Debug.Log("位置在" + _rect.position + "宽高是" + _rect.size + "的节点，存入一个半径为 " + leaf.radius + " 的叶子，存入后节点最大半径是 " + _maxRadius);
 
             if (_leafs.Count > _splitNodesNomber && _rect.width > _minWidth && _rect.height > _minHeight)
