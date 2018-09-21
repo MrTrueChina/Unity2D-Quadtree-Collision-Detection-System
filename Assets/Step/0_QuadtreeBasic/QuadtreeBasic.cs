@@ -65,18 +65,44 @@ public class QuadtreeBasic<T>
         }
         else
         {
-            
+            SetLeafToChildren(leaf);
         }
     }
+
+    void SetLeafToChildren(QuadtreeBasicLeaf<T> leaf)
+    {
+        if (_upperRightChild._rect.pointToRectDistance(leaf.position) == 0)
+            _upperRightChild.SetLeaf(leaf);
+        if (_lowerRightChild._rect.pointToRectDistance(leaf.position) == 0)
+            _lowerRightChild.SetLeaf(leaf);
+        if (_lowerLeftChild._rect.pointToRectDistance(leaf.position) == 0)
+            _lowerLeftChild.SetLeaf(leaf);
+        if (_upperLeftChild._rect.pointToRectDistance(leaf.position) == 0)
+            _upperLeftChild.SetLeaf(leaf);
+    }
+
     bool DontHaveChildren()
     {
         return _upperRightChild == null || _lowerRightChild == null || _lowerLeftChild == null || _upperLeftChild == null;      //四个子节点是一起创建的，原理上说一个不存在另外三个也不存在，但假设只有一个不存在插入的叶子又在这个位置就要出事了
     }
 
 
-    void Split()
+    void Split()    //对应叶子位置在子节点精度问题造成的夹缝中的极端情况是否需要增加边缘扩展值
     {
+        float childWidth = _rect.width / 2;
+        float childHeight = _rect.height / 2;
 
+        float rightX = _rect.x + childWidth;
+        float upperY = _rect.y + childHeight;
+
+        _upperRightChild = new QuadtreeBasic<T>(rightX, upperY, childWidth, childHeight, _splitNodesNomber, _minWidth, _minHeight);
+        _lowerRightChild = new QuadtreeBasic<T>(rightX, _rect.y, childWidth, childHeight, _splitNodesNomber, _minWidth, _minHeight);
+        _lowerLeftChild = new QuadtreeBasic<T>(_rect.x, _rect.y, childWidth, childHeight, _splitNodesNomber, _minWidth, _minHeight);
+        _upperLeftChild = new QuadtreeBasic<T>(_rect.x, upperY, childWidth, childHeight, _splitNodesNomber, _minWidth, _minHeight);
+
+        foreach (QuadtreeBasicLeaf<T> leaf in _leafs)
+            SetLeafToChildren(leaf);
+        _leafs = null;
     }
 
 

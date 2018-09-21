@@ -131,7 +131,7 @@ public class Quadtree<T>
             {
                 _maxRadius = leaf.radius;
                 if (_parent != null)
-                    _parent.UpwardsUpdateMaxRaiuds();
+                    _parent.UpwardsUpdateMaxRaiuds();//需要一个同时兼容叶子表和子节点的更新方法，或将上向下、最底层、下向上做成三个连续方法，上向下必然执行最底层，最底层必然考虑下向上
             }
             Debug.Log("位置在" + _rect.position + "宽高是" + _rect.size + "的节点，存入一个半径为 " + leaf.radius + " 的叶子，存入后节点最大半径是 " + _maxRadius);
 
@@ -186,6 +186,8 @@ public class Quadtree<T>
             else
                 GetRoot().SetLeaf(leaf);                //有这样一种情况：有的叶子的位置已经移出了节点范围但还没有更新位置，此时分割节点，这些叶子就会超出范围。把这些叶子直接从根节点重新存入
         }
+
+        _leafs = null;  //分割后叶子List就没用了，清除掉
     }
 
 
