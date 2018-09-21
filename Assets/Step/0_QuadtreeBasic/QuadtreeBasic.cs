@@ -106,8 +106,22 @@ public class QuadtreeBasic<T>
     }
 
 
-    public void RemoveLeaf()
+    public void RemoveLeaf(QuadtreeBasicLeaf<T> leaf)
     {
-
+        if (DontHaveChildren())
+        {
+            _leafs.Remove(leaf);
+        }
+        else
+        {
+            if (_upperRightChild._rect.pointToRectDistance(leaf.position) == 0)
+                _upperRightChild.RemoveLeaf(leaf);
+            if (_lowerRightChild._rect.pointToRectDistance(leaf.position) == 0)
+                _lowerRightChild.RemoveLeaf(leaf);
+            if (_lowerLeftChild._rect.pointToRectDistance(leaf.position) == 0)
+                _lowerLeftChild.RemoveLeaf(leaf);
+            if (_upperLeftChild._rect.pointToRectDistance(leaf.position) == 0)
+                _upperLeftChild.RemoveLeaf(leaf);
+        }
     }
 }
