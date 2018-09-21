@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class QuadtreeBasicCollider : MonoBehaviour
 {
@@ -17,6 +15,20 @@ public class QuadtreeBasicCollider : MonoBehaviour
 
     private void OnEnable()
     {
-        
+        QuadtreeBasicObject.SetLeaf(_leaf);
+    }
+
+
+    private void OnDisable()
+    {
+        QuadtreeBasicObject.RemoveLeaf(_leaf);
+    }
+
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+
+        Gizmos.DrawSphere(transform.position, 0.1f);
     }
 }

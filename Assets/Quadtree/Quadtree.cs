@@ -131,7 +131,7 @@ public class Quadtree<T>
             {
                 _maxRadius = leaf.radius;
                 if (_parent != null)
-                    _parent.UpwardsUpdateMaxRaiuds();
+                    _parent.UpwardsUpdateMaxRaiuds();//需要一个同时兼容叶子表和子节点的更新方法，或将上向下、最底层、下向上做成三个连续方法，上向下必然执行最底层，最底层必然考虑下向上
             }
             Debug.Log("位置在" + _rect.position + "宽高是" + _rect.size + "的节点，存入一个半径为 " + leaf.radius + " 的叶子，存入后节点最大半径是 " + _maxRadius);
 
@@ -161,7 +161,7 @@ public class Quadtree<T>
             return _upperLeftChild.SetLeaf(leaf);
 
         Debug.LogError("SetLeafToChild，存入的叶子的位置" + leaf.position + "不在四个子节点的范围里");
-        return false;   //缕一下逻辑，执行到这一步的条件是：叶子的位置在这个节点的范围里、这个节点有子节点。四个子节点的范围覆盖父节点的全部范围，也就是说四个if应该有且只有一个通过，假设执行到这一步，说明叶子根本不在这个节点的范围里，存错节点了
+        return false;   //缕一下逻辑，执行到这一步的条件是：叶子的位置在这个节点的范围里、这个节点有子节点。四个子节点的范围覆盖父节点的全部范围，也就是说四个if应该至少有一个通过（如果在交界处则都可以通过，所以要找到正确的子节点后马上return），假设执行到这一步，说明叶子根本不在这个节点的范围里，存错节点了
     }
 
 
@@ -186,6 +186,8 @@ public class Quadtree<T>
             else
                 GetRoot().SetLeaf(leaf);                //有这样一种情况：有的叶子的位置已经移出了节点范围但还没有更新位置，此时分割节点，这些叶子就会超出范围。把这些叶子直接从根节点重新存入
         }
+
+        _leafs = null;  //分割后叶子List就没用了，清除掉
     }
 
 
