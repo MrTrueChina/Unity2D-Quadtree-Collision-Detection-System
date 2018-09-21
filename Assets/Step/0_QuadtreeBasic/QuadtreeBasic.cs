@@ -15,9 +15,9 @@
  *  节点是四叉树的每个分支，节点组成树本身。
  *  叶子是碰撞器在树立的映射，树通过叶子判断是否发生碰撞。
  *  
- *  除了这个脚本还有一个配合的碰撞器脚本，用来挂载到物体上。
- *  
- *  但需要注意的是有这两个脚本是不够的，缺少一个初始化四叉树的脚本，这两个脚本仅用来帮助理解最后的三个完成品脚本： Quadtree、QuadtreeCollider、QuadtreeObject
+ *  只有这个脚本是不能使用的，因此还有两个脚本是 QuadtreeBasicCollider 和 QuadtreeBasicObject
+ *  QuadtreeBasicCollider 是碰撞器，挂载在物体上
+ *  QuadtreeBasicObject   是四叉树物体，用来在场景加载时建立四叉树，之后才能进行碰撞检测
  */
 
 using System.Collections.Generic;
