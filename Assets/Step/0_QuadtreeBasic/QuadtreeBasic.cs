@@ -122,6 +122,10 @@ public class QuadtreeBasic<T>
         else
             SetLeafToChildren(leaf);
     }
+    bool DontHaveChildren()
+    {
+        return _upperRightChild == null || _lowerRightChild == null || _lowerLeftChild == null || _upperLeftChild == null;      //四个子节点是一起创建的，原理上说一个不存在另外三个也不存在，但假设只有一个不存在插入的叶子又在这个位置就要出事了
+    }
     void SetLeafToSelf(QuadtreeBasicLeaf<T> leaf)
     {
         _leafs.Add(leaf);
@@ -151,44 +155,45 @@ public class QuadtreeBasic<T>
             _upperLeftChild.SetLeaf(leaf);
     }
 
-    bool DontHaveChildren()
-    {
-        return _upperRightChild == null || _lowerRightChild == null || _lowerLeftChild == null || _upperLeftChild == null;      //四个子节点是一起创建的，原理上说一个不存在另外三个也不存在，但假设只有一个不存在插入的叶子又在这个位置就要出事了
-    }
 
-
+    //分割，四叉树的核心来了
     void Split()    //对应叶子位置在子节点精度问题造成的夹缝中的极端情况是否需要增加边缘扩展值
     {
+        //计算子节点的宽高，就是当前节点宽高的一半
         float childWidth = _rect.width / 2;
         float childHeight = _rect.height / 2;
-
+        
+        //同样计算出两个新的x,y
         float rightX = _rect.x + childWidth;
         float upperY = _rect.y + childHeight;
 
+        //用上面计算的宽高和坐标组合出四个子节点的区域来，并且把最大叶子数、最小宽高一起传给子节点
         _upperRightChild = new QuadtreeBasic<T>(rightX, upperY, childWidth, childHeight, _maxLeafsNomber, _minWidth, _minHeight);
         _lowerRightChild = new QuadtreeBasic<T>(rightX, _rect.y, childWidth, childHeight, _maxLeafsNomber, _minWidth, _minHeight);
         _lowerLeftChild = new QuadtreeBasic<T>(_rect.x, _rect.y, childWidth, childHeight, _maxLeafsNomber, _minWidth, _minHeight);
         _upperLeftChild = new QuadtreeBasic<T>(_rect.x, upperY, childWidth, childHeight, _maxLeafsNomber, _minWidth, _minHeight);
 
-        foreach (QuadtreeBasicLeaf<T> leaf in _leafs)
+        //生成完子节点后把这个节点里的所有叶子分给子节点
+        foreach (QuadtreeBasicLeaf<T> leaf in _leafs)   //假设你不会用 foreach ，请看 QuadtreeBasicDetector
             SetLeafToChildren(leaf);
-        _leafs = null;
+        _leafs = null;                  //将叶子分给子节点后这个节点就不需要继续保留叶子了，把叶子List设为null，让C#的清理器来清理掉节省内存
     }
 
 
+    //碰撞检测
     public T[] CheckCollision(Vector2 checkPosition, float checkRadius)
     {
         List<T> objs = new List<T>();
         if (DontHaveChildren())
         {
             foreach (QuadtreeBasicLeaf<T> leaf in _leafs)
-                if (Vector2.Distance(checkPosition, leaf.position) <= checkRadius)
+                if (Vector2.Distance(checkPosition, leaf.position) <= checkRadius)          //开头说的没有一丁点技术含量的距离检测， Vector2.Distance可以计算出两个点的距离，之后和检测半径一比较就知道有没有检测到了
                     objs.Add(leaf.obj);
         }
         else
         {
             if (_upperRightChild._rect.PointToRectDistance(checkPosition) <= checkRadius)
-                objs.AddRange(_upperRightChild.CheckCollision(checkPosition, checkRadius));
+                objs.AddRange(_upperRightChild.CheckCollision(checkPosition, checkRadius)); //这里用的不是 if else 而是连续存入，因为检测的范围是一个圆，基本不可能只在一个节点范围里，因此要把每个子节点都考虑到
             if (_lowerRightChild._rect.PointToRectDistance(checkPosition) <= checkRadius)
                 objs.AddRange(_lowerRightChild.CheckCollision(checkPosition, checkRadius));
             if (_lowerLeftChild._rect.PointToRectDistance(checkPosition) <= checkRadius)
@@ -199,7 +204,8 @@ public class QuadtreeBasic<T>
         return objs.ToArray();
     }
 
-
+    
+    //移除和二叉树的移除几乎完全一样，只不过寻找子节点是按区域找四个
     public void RemoveLeaf(QuadtreeBasicLeaf<T> leaf)
     {
         if (DontHaveChildren())
