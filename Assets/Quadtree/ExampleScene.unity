@@ -834,7 +834,7 @@ MonoBehaviour:
   _y: 0
   _width: 50
   _height: 100
-  _spliceLeafsNumber: 4
+  _maxLeafsNumber: 5
   _minWidth: 1
   _minHeight: 1
 --- !u!4 &1596747949

@@ -15,7 +15,7 @@ public class QuadtreeBasicDetector : MonoBehaviour
     private void Update()
     {
         GameObject[] objs = QuadtreeBasicObject.CheckCollision(transform.position, _radius);
-
+        
         foreach (GameObject obj in objs)
             Debug.Log("检测到碰撞器 " + obj.name + " ，位置在 " + obj.transform.position);
         /*
