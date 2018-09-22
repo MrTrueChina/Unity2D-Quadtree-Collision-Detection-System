@@ -108,12 +108,12 @@ public class Quadtree<T>
 
 
     //构造
-    public Quadtree(float x, float y, float width, float height,int splitLeafsNumber = 10,float minWidth = 1,float minHeight = 1, Quadtree<T> parent = null)
+    public Quadtree(float x, float y, float width, float height,int maxLeafsNumber = 10,float minWidth = 1,float minHeight = 1, Quadtree<T> parent = null)
     {
         _rect = new Rect(x, y, width, height);
         _parent = parent;
 
-        _maxLeafNumber = splitLeafsNumber;
+        _maxLeafNumber = maxLeafsNumber;
         _minWidth = minWidth;
         _minHeight = minHeight;
     }
