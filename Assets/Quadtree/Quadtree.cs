@@ -122,7 +122,7 @@ public class Quadtree<T>
     //存入
     public bool SetLeaf(QuadtreeLeaf<T> leaf)
     {
-        if (_rect.pointToRectDistance(leaf.position) > 0) return false;
+        if (_rect.PointToRectDistance(leaf.position) > 0) return false;
 
         if (DontHaveChildren())
         {
@@ -151,13 +151,13 @@ public class Quadtree<T>
     }
     private bool SetLeafToChild(QuadtreeLeaf<T> leaf)
     {
-        if (_upperRightChild._rect.pointToRectDistance(leaf.position, 0) == 0)
+        if (_upperRightChild._rect.PointToRectDistance(leaf.position, 0) == 0)
             return _upperRightChild.SetLeaf(leaf);
-        if (_lowerRightChild._rect.pointToRectDistance(leaf.position, 0) == 0)
+        if (_lowerRightChild._rect.PointToRectDistance(leaf.position, 0) == 0)
             return _lowerRightChild.SetLeaf(leaf);
-        if (_lowerLeftChild._rect.pointToRectDistance(leaf.position, 0) == 0)
+        if (_lowerLeftChild._rect.PointToRectDistance(leaf.position, 0) == 0)
             return _lowerLeftChild.SetLeaf(leaf);
-        if (_upperLeftChild._rect.pointToRectDistance(leaf.position, 0) == 0)
+        if (_upperLeftChild._rect.PointToRectDistance(leaf.position, 0) == 0)
             return _upperLeftChild.SetLeaf(leaf);
 
         Debug.LogError("SetLeafToChild，存入的叶子的位置" + leaf.position + "不在四个子节点的范围里");
@@ -204,13 +204,13 @@ public class Quadtree<T>
         }
         else
         {
-            if (_upperRightChild._rect.pointToRectDistance(checkPosition, _maxRadius) <= checkRadius)
+            if (_upperRightChild._rect.PointToRectDistance(checkPosition, _maxRadius) <= checkRadius)
                 objs.AddRange(_upperRightChild.CheckCollision(checkPosition, checkRadius));
-            if (_lowerRightChild._rect.pointToRectDistance(checkPosition, _maxRadius) <= checkRadius)
+            if (_lowerRightChild._rect.PointToRectDistance(checkPosition, _maxRadius) <= checkRadius)
                 objs.AddRange(_lowerRightChild.CheckCollision(checkPosition, checkRadius));
-            if (_lowerLeftChild._rect.pointToRectDistance(checkPosition, _maxRadius) <= checkRadius)
+            if (_lowerLeftChild._rect.PointToRectDistance(checkPosition, _maxRadius) <= checkRadius)
                 objs.AddRange(_lowerLeftChild.CheckCollision(checkPosition, checkRadius));
-            if (_upperLeftChild._rect.pointToRectDistance(checkPosition, _maxRadius) <= checkRadius)
+            if (_upperLeftChild._rect.PointToRectDistance(checkPosition, _maxRadius) <= checkRadius)
                 objs.AddRange(_upperLeftChild.CheckCollision(checkPosition, checkRadius));
         }
 
@@ -239,7 +239,7 @@ public class Quadtree<T>
         {
             List<QuadtreeLeaf<T>> resetLeafs = new List<QuadtreeLeaf<T>>();     //如果直接在叶子List里移动，会导致更新到一半List变了，可能导致有的叶子没更新到。在这里先准备一个要移动的叶子的List，之后再按照这个List移动
             foreach (QuadtreeLeaf<T> leaf in _leafs)
-                if (_rect.pointToRectDistance(leaf.position, 0) > 0)
+                if (_rect.PointToRectDistance(leaf.position, 0) > 0)
                     resetLeafs.Add(leaf);
             foreach (QuadtreeLeaf<T> leaf in resetLeafs)
                 ResetLeaf(leaf);
@@ -328,13 +328,13 @@ public class Quadtree<T>
         }
         else
         {
-            if (_upperRightChild._rect.pointToRectDistance(removeLeaf.position) == 0)
+            if (_upperRightChild._rect.PointToRectDistance(removeLeaf.position) == 0)
                 return _upperRightChild.RemoveLeaf(removeLeaf);
-            if (_lowerRightChild._rect.pointToRectDistance(removeLeaf.position) == 0)
+            if (_lowerRightChild._rect.PointToRectDistance(removeLeaf.position) == 0)
                 return _lowerRightChild.RemoveLeaf(removeLeaf);
-            if (_lowerLeftChild._rect.pointToRectDistance(removeLeaf.position) == 0)
+            if (_lowerLeftChild._rect.PointToRectDistance(removeLeaf.position) == 0)
                 return _lowerLeftChild.RemoveLeaf(removeLeaf);
-            if (_upperLeftChild._rect.pointToRectDistance(removeLeaf.position) == 0)
+            if (_upperLeftChild._rect.PointToRectDistance(removeLeaf.position) == 0)
                 return _upperLeftChild.RemoveLeaf(removeLeaf);
 
             Debug.LogError("RemoveLeaf，移除叶子的坐标不在所有子节点范围内");
@@ -357,7 +357,7 @@ public class Quadtree<T>
 
 public static partial class RectExtension
 {
-    public static float pointToRectDistance(this Rect rect, Vector2 point, float extendedDistance = 0)
+    public static float PointToRectDistance(this Rect rect, Vector2 point, float extendedDistance = 0)
     {
         return Mathf.Max(0, GetDistance(GetXDistance(rect, point), GetYDistance(rect, point)) - extendedDistance);
     }

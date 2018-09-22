@@ -23,7 +23,7 @@ public class RectExtensionTest
                 new Vector2(75,52)
             };
         foreach (Vector2 point in points)
-            Assert.AreEqual(0, rect.pointToRectDistance(point));
+            Assert.AreEqual(0, rect.PointToRectDistance(point));
     }
 
 
@@ -59,7 +59,7 @@ public class RectExtensionTest
                 402
             };
         for (int i = 0; i < 10; i++)
-            Assert.AreEqual(expectedDistances[i], rect.pointToRectDistance(points[i]), 0.0001f);     //Assert.AreEqual，第三个参数：允许的偏差范围。float本身存在精度问题，用这个参数来做弥补
+            Assert.AreEqual(expectedDistances[i], rect.PointToRectDistance(points[i]), 0.0001f);     //Assert.AreEqual，第三个参数：允许的偏差范围。float本身存在精度问题，用这个参数来做弥补
     }
 
 
@@ -95,7 +95,7 @@ public class RectExtensionTest
                 650
             };
         for (int i = 0; i < 10; i++)
-            Assert.AreEqual(expectedDistances[i], rect.pointToRectDistance(points[i]), 0.0001f);
+            Assert.AreEqual(expectedDistances[i], rect.PointToRectDistance(points[i]), 0.0001f);
     }
 
 
@@ -121,7 +121,7 @@ public class RectExtensionTest
                 Mathf.Sqrt(5*5 + 101*101),
             };
         for (int i = 0; i < 5; i++)
-            Assert.AreEqual(expectedDistances[i], rect.pointToRectDistance(points[i]), 0.0001f);
+            Assert.AreEqual(expectedDistances[i], rect.PointToRectDistance(points[i]), 0.0001f);
     }
 
 
@@ -138,7 +138,7 @@ public class RectExtensionTest
                 new Vector2(105,105),
             };
         foreach (Vector2 point in points)
-            Assert.AreEqual(0, rect.pointToRectDistance(point, 10));
+            Assert.AreEqual(0, rect.PointToRectDistance(point, 10));
     }
 
 
@@ -153,6 +153,6 @@ public class RectExtensionTest
                 new Vector2(110,110)
             };
         foreach(Vector2 point in points)
-            Assert.Greater(rect.pointToRectDistance(point, 10), 0);
+            Assert.Greater(rect.PointToRectDistance(point, 10), 0);
     }
 }
