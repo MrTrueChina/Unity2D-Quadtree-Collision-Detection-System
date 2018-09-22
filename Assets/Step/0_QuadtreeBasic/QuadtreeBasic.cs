@@ -23,14 +23,48 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
+/*
+ *  这个<T>是“泛型”，有泛型的类和方法可以在调用的时候指定类型，Unity的 GetComponent<> 就应用了泛型
+ */
 public class QuadtreeBasicLeaf<T>
 {
+    /*
+     *  get,set访问器，C#的常用封装方式，看起来是这样的：
+     *  
+     *  修饰符 类型 访问器名
+     *  {
+     *      get
+     *      {
+     *          这里面需要return
+     *      }
+     *      set
+     *      {
+     *          这里存入的量用 value 表示
+     *      }
+     *  }
+     *  
+     *  假设有一个访问器是这样的：
+     *  public int age
+     *  {
+     *      get
+     *      {
+     *          return _age;
+     *      }
+     *      set
+     *      {
+     *          _age = value;
+     *      }
+     *  }
+     *  int _age
+     *  
+     *  赋值会调用 set 进行赋值，赋值在 set 里就是那个 value
+     *  取值会调用 get 进行返回
+     */
     public T obj
     {
         get { return _obj; }
     }
-    T _obj;
+    T _obj;         //叶子映射的对象，在检测碰撞的时候会以数组形式返回出去
 
     public Vector2 position
     {
@@ -42,10 +76,6 @@ public class QuadtreeBasicLeaf<T>
 
     public QuadtreeBasicLeaf(T obj, Vector2 position)
     {
-        Constructed(obj, position);
-    }
-    void Constructed(T obj, Vector2 position)
-    {
         _obj = obj;
         _position = position;
     }
@@ -53,16 +83,16 @@ public class QuadtreeBasicLeaf<T>
 
 public class QuadtreeBasic<T>
 {
-    Rect _rect;
+    Rect _rect;                             //Rect是Unity自带的类，用来表示矩形，用这个矩形代表这个节点的空间
     
-    QuadtreeBasic<T> _upperRightChild;
+    QuadtreeBasic<T> _upperRightChild;      //四个子节点
     QuadtreeBasic<T> _lowerRightChild;
     QuadtreeBasic<T> _lowerLeftChild;
     QuadtreeBasic<T> _upperLeftChild;
 
-    List<QuadtreeBasicLeaf<T>> _leafs = new List<QuadtreeBasicLeaf<T>>();
+    List<QuadtreeBasicLeaf<T>> _leafs = new List<QuadtreeBasicLeaf<T>>();   //叶子List，用来存储这个节点里的叶子
 
-    int _splitNodesNomber;
+    int _maxLeafsNomber;                  //
     float _minWidth;
     float _minHeight;
 
@@ -70,7 +100,7 @@ public class QuadtreeBasic<T>
     {
         _rect = new Rect(x, y, width, height);
 
-        _splitNodesNomber = splitLeafsNumber;
+        _maxLeafsNomber = splitLeafsNumber;
         _minWidth = minWidth;
         _minHeight = minHeight;
     }
@@ -87,7 +117,7 @@ public class QuadtreeBasic<T>
     {
         _leafs.Add(leaf);
 
-        if (_leafs.Count > _splitNodesNomber && _rect.width > _minWidth && _rect.height > _minHeight)
+        if (_leafs.Count > _maxLeafsNomber && _rect.width > _minWidth && _rect.height > _minHeight)
             Split();
     }
     void SetLeafToChildren(QuadtreeBasicLeaf<T> leaf)
@@ -116,10 +146,10 @@ public class QuadtreeBasic<T>
         float rightX = _rect.x + childWidth;
         float upperY = _rect.y + childHeight;
 
-        _upperRightChild = new QuadtreeBasic<T>(rightX, upperY, childWidth, childHeight, _splitNodesNomber, _minWidth, _minHeight);
-        _lowerRightChild = new QuadtreeBasic<T>(rightX, _rect.y, childWidth, childHeight, _splitNodesNomber, _minWidth, _minHeight);
-        _lowerLeftChild = new QuadtreeBasic<T>(_rect.x, _rect.y, childWidth, childHeight, _splitNodesNomber, _minWidth, _minHeight);
-        _upperLeftChild = new QuadtreeBasic<T>(_rect.x, upperY, childWidth, childHeight, _splitNodesNomber, _minWidth, _minHeight);
+        _upperRightChild = new QuadtreeBasic<T>(rightX, upperY, childWidth, childHeight, _maxLeafsNomber, _minWidth, _minHeight);
+        _lowerRightChild = new QuadtreeBasic<T>(rightX, _rect.y, childWidth, childHeight, _maxLeafsNomber, _minWidth, _minHeight);
+        _lowerLeftChild = new QuadtreeBasic<T>(_rect.x, _rect.y, childWidth, childHeight, _maxLeafsNomber, _minWidth, _minHeight);
+        _upperLeftChild = new QuadtreeBasic<T>(_rect.x, upperY, childWidth, childHeight, _maxLeafsNomber, _minWidth, _minHeight);
 
         foreach (QuadtreeBasicLeaf<T> leaf in _leafs)
             SetLeafToChildren(leaf);

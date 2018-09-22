@@ -14,7 +14,7 @@ public class QuadtreeObject : MonoBehaviour
     [SerializeField]
     float _height = 100;
     [SerializeField]
-    int _spliceLeafsNumber = 50;
+    int _maxLeafsNumber = 50;
     [SerializeField]
     float _minWidth = 1;
     [SerializeField]
@@ -25,7 +25,7 @@ public class QuadtreeObject : MonoBehaviour
 
     private void Awake()
     {
-        _quadtree = new Quadtree<GameObject>(_x, _y, _width, _height, _spliceLeafsNumber, _minWidth, _minHeight);
+        _quadtree = new Quadtree<GameObject>(_x, _y, _width, _height, _maxLeafsNumber, _minWidth, _minHeight);
     }
 
 

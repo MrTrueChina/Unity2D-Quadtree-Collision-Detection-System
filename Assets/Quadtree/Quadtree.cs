@@ -102,7 +102,7 @@ public class Quadtree<T>
 
     List<QuadtreeLeaf<T>> _leafs = new List<QuadtreeLeaf<T>>();
 
-    int _splitNodesNomber;
+    int _maxLeafNumber;
     float _minWidth;
     float _minHeight;
 
@@ -113,7 +113,7 @@ public class Quadtree<T>
         _rect = new Rect(x, y, width, height);
         _parent = parent;
 
-        _splitNodesNomber = splitLeafsNumber;
+        _maxLeafNumber = splitLeafsNumber;
         _minWidth = minWidth;
         _minHeight = minHeight;
     }
@@ -135,7 +135,7 @@ public class Quadtree<T>
             }
             Debug.Log("位置在" + _rect.position + "宽高是" + _rect.size + "的节点，存入一个半径为 " + leaf.radius + " 的叶子，存入后节点最大半径是 " + _maxRadius);
 
-            if (_leafs.Count > _splitNodesNomber && _rect.width > _minWidth && _rect.height > _minHeight)
+            if (_leafs.Count > _maxLeafNumber && _rect.width > _minWidth && _rect.height > _minHeight)
                 Split();
 
             return true;
@@ -174,10 +174,10 @@ public class Quadtree<T>
         float rightX = _rect.x + childWidth;
         float upperY = _rect.y + childHeight;
 
-        _upperRightChild = new Quadtree<T>(rightX, upperY, childWidth, childHeight, _splitNodesNomber, _minWidth, _minHeight, this);
-        _lowerRightChild = new Quadtree<T>(rightX, _rect.y, childWidth, childHeight, _splitNodesNomber, _minWidth, _minHeight, this);
-        _lowerLeftChild = new Quadtree<T>(_rect.x, _rect.y, childWidth, childHeight, _splitNodesNomber, _minWidth, _minHeight, this);
-        _upperLeftChild = new Quadtree<T>(_rect.x, upperY, childWidth, childHeight, _splitNodesNomber, _minWidth, _minHeight, this);
+        _upperRightChild = new Quadtree<T>(rightX, upperY, childWidth, childHeight, _maxLeafNumber, _minWidth, _minHeight, this);
+        _lowerRightChild = new Quadtree<T>(rightX, _rect.y, childWidth, childHeight, _maxLeafNumber, _minWidth, _minHeight, this);
+        _lowerLeftChild = new Quadtree<T>(_rect.x, _rect.y, childWidth, childHeight, _maxLeafNumber, _minWidth, _minHeight, this);
+        _upperLeftChild = new Quadtree<T>(_rect.x, upperY, childWidth, childHeight, _maxLeafNumber, _minWidth, _minHeight, this);
 
         foreach (QuadtreeLeaf<T> leaf in _leafs)
         {
