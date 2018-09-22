@@ -92,13 +92,21 @@ public class QuadtreeBasic<T>
 
     List<QuadtreeBasicLeaf<T>> _leafs = new List<QuadtreeBasicLeaf<T>>();   //叶子List，用来存储这个节点里的叶子
 
-    int _maxLeafsNomber;                  //
-    float _minWidth;
-    float _minHeight;
+    int _maxLeafsNomber;                    //这个节点里最多能容纳多少叶子，如果超过了这个值则要分割节点
+    float _minWidth;                        //可以分割到的最小宽度，如果节点的宽度已经小于这个值，那么不管有多少叶子都不能分割
+    float _minHeight;                       //最小高度，与最小宽度相同的作用
+    /*
+     *  最小宽高的设计是应对一种极端情况的：假设有大量的碰撞器他们的位置完全一样，那么无论怎么分割节点都不会把他们分隔开，分割将会无限循环下去
+     *  增加最小宽高之后就可以应对这种情况：就算是最极端情况也只会一口气分割到最小大小，不会无线分割下去
+     */
 
+
+    /*
+     *  参数默认值，就是在参数后面写 = 值，有默认值的参数必须在没有默认值的参数后面，因为在前面的话编译器无法分辨调用时是传给有默认值的参数还是传给没默认值的参数
+     */
     public QuadtreeBasic(float x, float y, float width, float height, int splitLeafsNumber = 10, float minWidth = 1, float minHeight = 1)
     {
-        _rect = new Rect(x, y, width, height);
+        _rect = new Rect(x, y, width, height);          //Rect的一种构造方法，四个参数依次是：x坐标，y坐标，宽度，高度。x,y两个参数不是中心坐标，是在角上的
 
         _maxLeafsNomber = splitLeafsNumber;
         _minWidth = minWidth;
@@ -106,6 +114,7 @@ public class QuadtreeBasic<T>
     }
 
 
+    //存入叶子，原理和二叉树一样，通过递归一路向下找到正确的节点，把叶子存进那个节点里
     public void SetLeaf(QuadtreeBasicLeaf<T> leaf)
     {
         if (DontHaveChildren())
@@ -116,19 +125,29 @@ public class QuadtreeBasic<T>
     void SetLeafToSelf(QuadtreeBasicLeaf<T> leaf)
     {
         _leafs.Add(leaf);
-
+        CheckAndDoSplit();
+    }
+    void CheckAndDoSplit()
+    {
         if (_leafs.Count > _maxLeafsNomber && _rect.width > _minWidth && _rect.height > _minHeight)
             Split();
     }
+
     void SetLeafToChildren(QuadtreeBasicLeaf<T> leaf)
     {
-        if (_upperRightChild._rect.pointToRectDistance(leaf.position) == 0)
+        /*
+         *  计算存入的叶子的位置和子节点空间的距离，距离为0则说明在子节点范围里，向这个子节点里存入叶子
+         *  用 else if 的原因是计算距离的方法把处在矩形边缘的点距离算成0，处于两个子节点交界处的叶子在多个子节点的范围里，只用 if 会导致一个叶子存进多个节点里
+         *  
+         *  PointToRectDistance 是一个扩展方法，位置在 Quadtree 里，用处是计算一个点到矩形的距离，如果点在矩形内部则是0
+         */
+        if (_upperRightChild._rect.PointToRectDistance(leaf.position) == 0)
             _upperRightChild.SetLeaf(leaf);
-        if (_lowerRightChild._rect.pointToRectDistance(leaf.position) == 0)
+        else if (_lowerRightChild._rect.PointToRectDistance(leaf.position) == 0)
             _lowerRightChild.SetLeaf(leaf);
-        if (_lowerLeftChild._rect.pointToRectDistance(leaf.position) == 0)
+        else if (_lowerLeftChild._rect.PointToRectDistance(leaf.position) == 0)
             _lowerLeftChild.SetLeaf(leaf);
-        if (_upperLeftChild._rect.pointToRectDistance(leaf.position) == 0)
+        else if (_upperLeftChild._rect.PointToRectDistance(leaf.position) == 0)
             _upperLeftChild.SetLeaf(leaf);
     }
 
@@ -168,13 +187,13 @@ public class QuadtreeBasic<T>
         }
         else
         {
-            if (_upperRightChild._rect.pointToRectDistance(checkPosition) <= checkRadius)
+            if (_upperRightChild._rect.PointToRectDistance(checkPosition) <= checkRadius)
                 objs.AddRange(_upperRightChild.CheckCollision(checkPosition, checkRadius));
-            if (_lowerRightChild._rect.pointToRectDistance(checkPosition) <= checkRadius)
+            if (_lowerRightChild._rect.PointToRectDistance(checkPosition) <= checkRadius)
                 objs.AddRange(_lowerRightChild.CheckCollision(checkPosition, checkRadius));
-            if (_lowerLeftChild._rect.pointToRectDistance(checkPosition) <= checkRadius)
+            if (_lowerLeftChild._rect.PointToRectDistance(checkPosition) <= checkRadius)
                 objs.AddRange(_lowerLeftChild.CheckCollision(checkPosition, checkRadius));
-            if (_upperLeftChild._rect.pointToRectDistance(checkPosition) <= checkRadius)
+            if (_upperLeftChild._rect.PointToRectDistance(checkPosition) <= checkRadius)
                 objs.AddRange(_upperLeftChild.CheckCollision(checkPosition, checkRadius));
         }
         return objs.ToArray();
@@ -189,13 +208,13 @@ public class QuadtreeBasic<T>
         }
         else
         {
-            if (_upperRightChild._rect.pointToRectDistance(leaf.position) == 0)
+            if (_upperRightChild._rect.PointToRectDistance(leaf.position) == 0)
                 _upperRightChild.RemoveLeaf(leaf);
-            if (_lowerRightChild._rect.pointToRectDistance(leaf.position) == 0)
+            if (_lowerRightChild._rect.PointToRectDistance(leaf.position) == 0)
                 _lowerRightChild.RemoveLeaf(leaf);
-            if (_lowerLeftChild._rect.pointToRectDistance(leaf.position) == 0)
+            if (_lowerLeftChild._rect.PointToRectDistance(leaf.position) == 0)
                 _lowerLeftChild.RemoveLeaf(leaf);
-            if (_upperLeftChild._rect.pointToRectDistance(leaf.position) == 0)
+            if (_upperLeftChild._rect.PointToRectDistance(leaf.position) == 0)
                 _upperLeftChild.RemoveLeaf(leaf);
         }
     }
