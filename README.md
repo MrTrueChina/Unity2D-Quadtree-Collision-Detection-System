@@ -4,7 +4,7 @@
 </br>
 ### 文件夹内容：
 Assets/Quadtree：里面是实用版的四叉树碰撞检测</br>
-Assets/Step：里面是从简单逐步复杂的代码，如果是刚开始研究四叉树可以按照这个文件夹的顺序阅读</br>
+Assets/Step：里面是从简单逐步复杂的代码，加了面向新人的大批量注释，如果是刚开始研究四叉树可以按照这个文件夹的顺序阅读</br>
 ProjectSettings：就是Unity的那个ProjectSettings文件夹，里面设置了代码执行顺序</br>
 UnityPackageManager：说实话我不知道这个文件夹有什么用，但 Github for Unity 把他识别出来了，应该是有用的</br>
 </br>
