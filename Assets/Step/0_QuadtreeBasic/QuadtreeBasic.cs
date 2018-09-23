@@ -95,7 +95,7 @@ public class QuadtreeBasic<T>
 
     List<QuadtreeBasicLeaf<T>> _leafs = new List<QuadtreeBasicLeaf<T>>();   //叶子List，用来存储这个节点里的叶子
 
-    int _maxLeafsNomber;                    //这个节点里最多能容纳多少叶子，如果超过了这个值则要分割节点
+    int _maxLeafsNumber;                    //这个节点里最多能容纳多少叶子，如果超过了这个值则要分割节点
     float _minWidth;                        //可以分割到的最小宽度，如果节点的宽度已经小于这个值，那么不管有多少叶子都不能分割
     float _minHeight;                       //最小高度，与最小宽度相同的作用
     /*
@@ -111,7 +111,7 @@ public class QuadtreeBasic<T>
     {
         _rect = new Rect(x, y, width, height);          //Rect的一种构造方法，四个参数依次是：x坐标，y坐标，宽度，高度。x,y两个参数不是中心坐标，是在角上的
 
-        _maxLeafsNomber = maxLeafsNumber;
+        _maxLeafsNumber = maxLeafsNumber;
         _minWidth = minWidth;
         _minHeight = minHeight;
     }
@@ -150,7 +150,7 @@ public class QuadtreeBasic<T>
     }
     void CheckAndDoSplit()
     {
-        if (_leafs.Count > _maxLeafsNomber && _rect.width > _minWidth && _rect.height > _minHeight)
+        if (_leafs.Count > _maxLeafsNumber && _rect.width > _minWidth && _rect.height > _minHeight)
             Split();
     }
 
@@ -190,10 +190,10 @@ public class QuadtreeBasic<T>
         float upperY = _rect.y + childHeight;
 
         //用上面计算的宽高和坐标组合出四个子节点的区域来，并且把最大叶子数、最小宽高一起传给子节点
-        _upperRightChild = new QuadtreeBasic<T>(rightX, upperY, childWidth, childHeight, _maxLeafsNomber, _minWidth, _minHeight);
-        _lowerRightChild = new QuadtreeBasic<T>(rightX, _rect.y, childWidth, childHeight, _maxLeafsNomber, _minWidth, _minHeight);
-        _lowerLeftChild = new QuadtreeBasic<T>(_rect.x, _rect.y, childWidth, childHeight, _maxLeafsNomber, _minWidth, _minHeight);
-        _upperLeftChild = new QuadtreeBasic<T>(_rect.x, upperY, childWidth, childHeight, _maxLeafsNomber, _minWidth, _minHeight);
+        _upperRightChild = new QuadtreeBasic<T>(rightX, upperY, childWidth, childHeight, _maxLeafsNumber, _minWidth, _minHeight);
+        _lowerRightChild = new QuadtreeBasic<T>(rightX, _rect.y, childWidth, childHeight, _maxLeafsNumber, _minWidth, _minHeight);
+        _lowerLeftChild = new QuadtreeBasic<T>(_rect.x, _rect.y, childWidth, childHeight, _maxLeafsNumber, _minWidth, _minHeight);
+        _upperLeftChild = new QuadtreeBasic<T>(_rect.x, upperY, childWidth, childHeight, _maxLeafsNumber, _minWidth, _minHeight);
 
         //生成完子节点后把这个节点里的所有叶子分给子节点
         foreach (QuadtreeBasicLeaf<T> leaf in _leafs)   //假设你不会用 foreach ，请看 QuadtreeBasicDetector
