@@ -55,7 +55,7 @@ public class QuadtreeCollider : MonoBehaviour
     }
     void UpdateLeafRadius()
     {
-        _leaf.radius = Mathf.Max(_transform.localScale.x, _transform.localScale.y) * _radius;
+        _leaf.radius = Mathf.Max(_transform.lossyScale.x, _transform.lossyScale.y) * _radius;
     }
 
 
@@ -84,7 +84,7 @@ public class QuadtreeCollider : MonoBehaviour
     {
         Gizmos.color = _checkCollision ? Color.yellow * 0.8f : Color.green * 0.8f;
 
-        MyGizmos.DrawCircle(transform.position, _radius * Mathf.Max(transform.localScale.x, transform.localScale.y), 60);
+        MyGizmos.DrawCircle(transform.position, _radius * Mathf.Max(transform.lossyScale.x, transform.lossyScale.y), 60);
     }
 }
 
