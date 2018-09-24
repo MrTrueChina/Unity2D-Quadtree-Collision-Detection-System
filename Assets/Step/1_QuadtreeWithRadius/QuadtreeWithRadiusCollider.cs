@@ -1,12 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿/*
+ *  增加了半径的碰撞器，跟第零步的碰撞器基本没区别
+ */
+
 using UnityEngine;
 
 public class QuadtreeWithRadiusCollider : MonoBehaviour
 {
-    /*
-     *  下一步实现类似 OnCollision 的功能，这一步加的东西太多了
-     */
     [SerializeField]
     float _radius;
 

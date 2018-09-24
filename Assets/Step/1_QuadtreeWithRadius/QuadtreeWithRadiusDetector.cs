@@ -1,10 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class QuadtreeWithRadiusDetector : MonoBehaviour
 {
-    [SerializeField]        //关于[SerializeField]请看 QuadtreeBasicObject
+    [SerializeField]
     float _radius;
 
     private void Update()

@@ -198,7 +198,9 @@ public class QuadtreeWithRadius<T>
     }
 
 
-
+    /*
+     *  碰撞检测，比第零步多了个叶子半径，原理还是根据距离做判断
+     */
     public T[] CheckCollision(Vector2 checkPoint, float checkRadius)
     {
         List<T> objs = new List<T>();
@@ -210,7 +212,7 @@ public class QuadtreeWithRadius<T>
         }
         else
         {
-            if (_upperRightChild._rect.PointToRectDistance(checkPoint, _maxRadius) <= checkRadius)
+            if (_upperRightChild._rect.PointToRectDistance(checkPoint, _maxRadius) <= checkRadius)      //PointToRectDistance的位置在 Quadtree 里
                 objs.AddRange(_upperRightChild.CheckCollision(checkPoint, checkRadius));
             if (_lowerRightChild._rect.PointToRectDistance(checkPoint, _maxRadius) <= checkRadius)
                 objs.AddRange(_lowerRightChild.CheckCollision(checkPoint, checkRadius));
@@ -221,23 +223,18 @@ public class QuadtreeWithRadius<T>
         }
         return objs.ToArray();
     }
-    public T[] CheckCollision(QuadtreeWithRadiusLeaf<T> leaf)
-    {
-        List<T> objs = new List<T>(CheckCollision(leaf.position, leaf.radius));
-
-        objs.Remove(leaf.obj);
-
-        return objs.ToArray();
-    }
 
 
 
+    /*
+     *  移除叶子，比第零步多了更新最大半径的步骤和移除是否成功的返回
+     */
     public bool RemoveLeaf(QuadtreeWithRadiusLeaf<T> leaf)
     {
         if (DontHaveChildren())
         {
             bool removeLeafBool = _leafs.Remove(leaf);
-
+            UpdateMaxRadiusWhenRemoveLeaf();
             return removeLeafBool;
         }
         else
@@ -257,20 +254,23 @@ public class QuadtreeWithRadius<T>
     }
     void UpdateMaxRadiusWhenRemoveLeaf()
     {
-        float newMaxRadius = GetLeafsMinRadius();
-        if (_maxRadius != newMaxRadius)
+        float newMaxRadius = GetLeafsMaxRadiusOnRemoveLeaf();
+        if (_maxRadius != newMaxRadius)             //只有在最大半径变化的时候才需要更新半径。
         {
             _maxRadius = newMaxRadius;
-
             CallParentUpdateMaxRadius();
         }
     }
-    float GetLeafsMinRadius()
+    float GetLeafsMaxRadiusOnRemoveLeaf()
     {
-        float newMaxRadius = float.MinValue;                //默认值是负最小需要解释
+        float newMaxRadius = float.MinValue;        //默认值设置为float的最小值，原理在开头就说过，是为了在没有叶子的时候可以直接跳过节省计算量。
+
         foreach (QuadtreeWithRadiusLeaf<T> leaf in _leafs)
             if (leaf.radius > newMaxRadius)
-                newMaxRadius = leaf.radius;
+                if (leaf.radius == _maxRadius)      //首先节点最大半径就是所有叶子里最大的半径，所以如果遍历到了和节点最大半径相同的叶子，就不会有更大的叶子了，直接return，节省计算量。
+                    return _maxRadius;
+                else
+                    newMaxRadius = leaf.radius;
 
         return newMaxRadius;
     }
