@@ -32,7 +32,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class QuadtreeWithUpdateLeaf<T>
+public class QuadtreeWithEventDelegateLeaf<T>
 {
     public T obj
     {
@@ -55,7 +55,7 @@ public class QuadtreeWithUpdateLeaf<T>
     float _radius;
 
 
-    public QuadtreeWithUpdateLeaf(T obj, Vector2 position, float radius)
+    public QuadtreeWithEventDelegateLeaf(T obj, Vector2 position, float radius)
     {
         _obj = obj;
         _position = position;
@@ -64,32 +64,32 @@ public class QuadtreeWithUpdateLeaf<T>
 }
 
 
-public class QuadtreeWithUpdate<T>
+public class QuadtreeWithEventDelegate<T>
 {
     Rect _rect;
 
     float _maxRadius = float.MinValue;
 
-    QuadtreeWithUpdate<T> _root;
+    QuadtreeWithEventDelegate<T> _root;
     /*
      *  根节点，前面已经说到更新位置时需要从根节点再次存入叶子。
      *  虽然可以通过向上递归父节点查到根节点但找个字段存下来计算量小。
      */
 
-    QuadtreeWithUpdate<T> _parent;
-    QuadtreeWithUpdate<T> _upperRightChild;
-    QuadtreeWithUpdate<T> _lowerRightChild;
-    QuadtreeWithUpdate<T> _lowerLeftChild;
-    QuadtreeWithUpdate<T> _upperLeftChild;
+    QuadtreeWithEventDelegate<T> _parent;
+    QuadtreeWithEventDelegate<T> _upperRightChild;
+    QuadtreeWithEventDelegate<T> _lowerRightChild;
+    QuadtreeWithEventDelegate<T> _lowerLeftChild;
+    QuadtreeWithEventDelegate<T> _upperLeftChild;
 
-    List<QuadtreeWithUpdateLeaf<T>> _leafs = new List<QuadtreeWithUpdateLeaf<T>>();
+    List<QuadtreeWithEventDelegateLeaf<T>> _leafs = new List<QuadtreeWithEventDelegateLeaf<T>>();
 
     int _maxLeafsNumber;
     float _minWidth;
     float _minHeight;
 
     //这里有关于三目运算符和根节点需要注释
-    public QuadtreeWithUpdate(float x, float y, float width, float height, int maxLeafNumber, float minWidth, float minHeight, QuadtreeWithUpdate<T> root = null, QuadtreeWithUpdate<T> parent = null)
+    public QuadtreeWithEventDelegate(float x, float y, float width, float height, int maxLeafNumber, float minWidth, float minHeight, QuadtreeWithEventDelegate<T> root = null, QuadtreeWithEventDelegate<T> parent = null)
     {
         _rect = new Rect(x, y, width, height);
 
@@ -106,7 +106,7 @@ public class QuadtreeWithUpdate<T>
     /*
      *  存入叶子跟上一步一点变化没有，我就复制粘贴改了个类名，连注释都没删
      */
-    public bool SetLeaf(QuadtreeWithUpdateLeaf<T> leaf)
+    public bool SetLeaf(QuadtreeWithEventDelegateLeaf<T> leaf)
     {
         if (DontHaveChildren())
             return SetLeafToSelf(leaf);
@@ -118,7 +118,7 @@ public class QuadtreeWithUpdate<T>
         return _upperRightChild == null || _lowerRightChild == null || _lowerLeftChild == null || _upperLeftChild == null;      //四个子节点是一起创建的，原理上说一个不存在另外三个也不存在，但假设只有一个不存在插入的叶子又在这个位置就要出事了
     }
 
-    private bool SetLeafToSelf(QuadtreeWithUpdateLeaf<T> leaf)
+    private bool SetLeafToSelf(QuadtreeWithEventDelegateLeaf<T> leaf)
     {
         _leafs.Add(leaf);
         UpdateMaxRadiusWhenSetLeaf(leaf);
@@ -127,7 +127,7 @@ public class QuadtreeWithUpdate<T>
         CheckAndDoSplit();
         return true;
     }
-    void UpdateMaxRadiusWhenSetLeaf(QuadtreeWithUpdateLeaf<T> leaf)
+    void UpdateMaxRadiusWhenSetLeaf(QuadtreeWithEventDelegateLeaf<T> leaf)
     {
         if (leaf.radius > _maxRadius)       //只有存入的叶子的半径超过了现在节点的最大半径才需要更新最大半径，存入更小的叶子并不会影响到检测。
         {
@@ -156,7 +156,7 @@ public class QuadtreeWithUpdate<T>
         return Mathf.Max(_upperRightChild._maxRadius, _lowerRightChild._maxRadius, _lowerLeftChild._maxRadius, _upperLeftChild._maxRadius);
     }
 
-    bool SetLeafToChildren(QuadtreeWithUpdateLeaf<T> leaf)
+    bool SetLeafToChildren(QuadtreeWithEventDelegateLeaf<T> leaf)
     {
         Debug.Log("<color=#0040A0>位置在" + _rect.position + "宽高是" + _rect.size + "的树枝节点向子节点存入位置在" + leaf.position + "半径是" + leaf.radius + "的叶子</color>");
         if (_upperRightChild._rect.PointToRectDistance(leaf.position) == 0)
@@ -190,12 +190,12 @@ public class QuadtreeWithUpdate<T>
         float rightX = _rect.x + childWidth;
         float upperY = _rect.y + childHeight;
 
-        _upperRightChild = new QuadtreeWithUpdate<T>(rightX, upperY, childWidth, childHeight, _maxLeafsNumber, _minWidth, _minHeight, _root, this);
-        _lowerRightChild = new QuadtreeWithUpdate<T>(rightX, _rect.y, childWidth, childHeight, _maxLeafsNumber, _minWidth, _minHeight, _root, this);
-        _lowerLeftChild = new QuadtreeWithUpdate<T>(_rect.x, _rect.y, childWidth, childHeight, _maxLeafsNumber, _minWidth, _minHeight, _root, this);
-        _upperLeftChild = new QuadtreeWithUpdate<T>(_rect.x, upperY, childWidth, childHeight, _maxLeafsNumber, _minWidth, _minHeight, _root, this);
+        _upperRightChild = new QuadtreeWithEventDelegate<T>(rightX, upperY, childWidth, childHeight, _maxLeafsNumber, _minWidth, _minHeight, _root, this);
+        _lowerRightChild = new QuadtreeWithEventDelegate<T>(rightX, _rect.y, childWidth, childHeight, _maxLeafsNumber, _minWidth, _minHeight, _root, this);
+        _lowerLeftChild = new QuadtreeWithEventDelegate<T>(_rect.x, _rect.y, childWidth, childHeight, _maxLeafsNumber, _minWidth, _minHeight, _root, this);
+        _upperLeftChild = new QuadtreeWithEventDelegate<T>(_rect.x, upperY, childWidth, childHeight, _maxLeafsNumber, _minWidth, _minHeight, _root, this);
 
-        foreach (QuadtreeWithUpdateLeaf<T> leaf in _leafs)
+        foreach (QuadtreeWithEventDelegateLeaf<T> leaf in _leafs)
             SetLeafToChildren(leaf);
         _leafs = null;
     }
@@ -218,16 +218,16 @@ public class QuadtreeWithUpdate<T>
     }
     void UpdatePositionSelf()
     {
-        List<QuadtreeWithUpdateLeaf<T>> resetLeafs = new List<QuadtreeWithUpdateLeaf<T>>();
+        List<QuadtreeWithEventDelegateLeaf<T>> resetLeafs = new List<QuadtreeWithEventDelegateLeaf<T>>();
 
-        foreach (QuadtreeWithUpdateLeaf<T> leaf in _leafs)
+        foreach (QuadtreeWithEventDelegateLeaf<T> leaf in _leafs)
             if (_rect.PointToRectDistance(leaf.position) > 0)
                 resetLeafs.Add(leaf);
 
-        foreach (QuadtreeWithUpdateLeaf<T> leaf in resetLeafs)
+        foreach (QuadtreeWithEventDelegateLeaf<T> leaf in resetLeafs)
             ResetLeaf(leaf);
     }
-    void ResetLeaf(QuadtreeWithUpdateLeaf<T> leaf)
+    void ResetLeaf(QuadtreeWithEventDelegateLeaf<T> leaf)
     {
         Debug.Log("<color=#800080>位置在" + _rect.position + "宽高是" + _rect.size + "的树梢节点移除位置在" + leaf.position + "半径是" + leaf.radius + "的叶子，重新存入树</color>");
         RemoveLeafSelf(leaf);
@@ -260,7 +260,7 @@ public class QuadtreeWithUpdate<T>
     float GetLeafsMaxRadiusOnUpdate()
     {
         float newMaxRadius = float.MinValue;
-        foreach (QuadtreeWithUpdateLeaf<T> leaf in _leafs)
+        foreach (QuadtreeWithEventDelegateLeaf<T> leaf in _leafs)
             if (leaf.radius > newMaxRadius)
                 newMaxRadius = leaf.radius;
         return newMaxRadius;
@@ -283,7 +283,7 @@ public class QuadtreeWithUpdate<T>
         List<T> objs = new List<T>();
         if (DontHaveChildren())
         {
-            foreach (QuadtreeWithUpdateLeaf<T> leaf in _leafs)
+            foreach (QuadtreeWithEventDelegateLeaf<T> leaf in _leafs)
                 if (Vector2.Distance(checkPoint, leaf.position) <= checkRadius + leaf.radius)
                     objs.Add(leaf.obj);
         }
@@ -300,7 +300,7 @@ public class QuadtreeWithUpdate<T>
         }
         return objs.ToArray();
     }
-    public T[] CheckCollision(QuadtreeWithUpdateLeaf<T> leaf)
+    public T[] CheckCollision(QuadtreeWithEventDelegateLeaf<T> leaf)
     {
         List<T> objs = new List<T>(CheckCollision(leaf.position, leaf.radius));
         objs.Remove(leaf.obj);
@@ -312,14 +312,14 @@ public class QuadtreeWithUpdate<T>
     /*
      *  移除叶子，又是一点变化没有，又是复制粘贴
      */
-    public bool RemoveLeaf(QuadtreeWithUpdateLeaf<T> leaf)
+    public bool RemoveLeaf(QuadtreeWithEventDelegateLeaf<T> leaf)
     {
         if (DontHaveChildren())
             return RemoveLeafSelf(leaf);
         else
             return CallChildrenRemoveLeaf(leaf);
     }
-    private bool RemoveLeafSelf(QuadtreeWithUpdateLeaf<T> leaf)
+    private bool RemoveLeafSelf(QuadtreeWithEventDelegateLeaf<T> leaf)
     {
         bool removeLeafBool = _leafs.Remove(leaf);
         UpdateMaxRadiusWhenRemoveLeaf();
@@ -340,7 +340,7 @@ public class QuadtreeWithUpdate<T>
     {
         float newMaxRadius = float.MinValue;
 
-        foreach (QuadtreeWithUpdateLeaf<T> leaf in _leafs)
+        foreach (QuadtreeWithEventDelegateLeaf<T> leaf in _leafs)
             if (leaf.radius > newMaxRadius)
                 if (leaf.radius == _maxRadius)
                     return _maxRadius;
@@ -350,7 +350,7 @@ public class QuadtreeWithUpdate<T>
         return newMaxRadius;
     }
 
-    private bool CallChildrenRemoveLeaf(QuadtreeWithUpdateLeaf<T> leaf)
+    private bool CallChildrenRemoveLeaf(QuadtreeWithEventDelegateLeaf<T> leaf)
     {
         Debug.Log("<color=#802030>位置在" + _rect.position + "宽高是" + _rect.size + "的树枝节点从子节点移除位置在" + leaf.position + "半径是" + leaf.radius + "的叶子</color>");
         if (_upperRightChild._rect.PointToRectDistance(leaf.position) == 0)

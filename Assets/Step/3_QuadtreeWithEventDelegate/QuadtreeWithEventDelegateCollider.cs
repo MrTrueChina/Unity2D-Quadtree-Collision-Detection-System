@@ -4,7 +4,7 @@
 
 using UnityEngine;
 
-public delegate void QuadtreeWithUpdateCollisionEventDelegate(GameObject colliderGameObject);
+public delegate void QuadtreeWithEventDelegateCollisionEventDelegate(GameObject colliderGameObject);
 /*
  *  这是一个事件委托类型，看起来像是一个方法，有返回、有参数，只不过多了一个 delegate。
  *  他的格式是这样的： 
@@ -39,7 +39,7 @@ public delegate void QuadtreeWithUpdateCollisionEventDelegate(GameObject collide
  *  第三步，你要进行一个叫“订阅”的操作，就是通过委托把某个方法和事件联系起来，这样事件发出时方法就会执行。这一步在 QuadtreeWithUpdateDetector 里有写。
  */
 
-public class QuadtreeWithUpdateCollider : MonoBehaviour
+public class QuadtreeWithEventDelegateCollider : MonoBehaviour
 {
     [SerializeField]
     float _radius;
@@ -47,13 +47,13 @@ public class QuadtreeWithUpdateCollider : MonoBehaviour
     bool _checkCollision;
 
     Transform _transform;
-    QuadtreeWithUpdateLeaf<GameObject> _leaf;
+    QuadtreeWithEventDelegateLeaf<GameObject> _leaf;
 
 
     private void Awake()
     {
         _transform = transform;
-        _leaf = new QuadtreeWithUpdateLeaf<GameObject>(gameObject, GetLeafPosition(), _radius);
+        _leaf = new QuadtreeWithEventDelegateLeaf<GameObject>(gameObject, GetLeafPosition(), _radius);
     }
     Vector2 GetLeafPosition()
     {
@@ -64,7 +64,7 @@ public class QuadtreeWithUpdateCollider : MonoBehaviour
     private void OnEnable()
     {
         UpdateLeaf();
-        QuadtreeWithUpdateObject.SetLeaf(_leaf);
+        QuadtreeWithEventDelegateObject.SetLeaf(_leaf);
     }
 
 
@@ -86,18 +86,18 @@ public class QuadtreeWithUpdateCollider : MonoBehaviour
     {
         _leaf.radius = Mathf.Max(_transform.lossyScale.x, _transform.lossyScale.y) * _radius;       //注意是 lossyScale 不是localScale，lossyScale 是全局缩放，可以应对父物体缩放后碰撞器一起缩放的情况
     }
-
+    
     void CheckCollision()
     {
         if (_checkCollision)
             DoCheckCollision();
     }
-    public event QuadtreeWithUpdateCollisionEventDelegate collisionEvent;
+    public event QuadtreeWithEventDelegateCollisionEventDelegate collisionEvent;
     void DoCheckCollision()
     {
         if (collisionEvent == null) return;
 
-        GameObject[] colliderGameObjects = QuadtreeWithUpdateObject.CheckCollision(_leaf);
+        GameObject[] colliderGameObjects = QuadtreeWithEventDelegateObject.CheckCollision(_leaf);
         foreach (GameObject colliderGameObject in colliderGameObjects)
             collisionEvent(colliderGameObject);
     }
@@ -105,7 +105,7 @@ public class QuadtreeWithUpdateCollider : MonoBehaviour
 
     private void OnDisable()
     {
-        QuadtreeWithUpdateObject.RemoveLeaf(_leaf);
+        QuadtreeWithEventDelegateObject.RemoveLeaf(_leaf);
     }
 
     //有三目运算符可能需要解释

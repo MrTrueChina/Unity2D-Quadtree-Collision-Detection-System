@@ -4,7 +4,7 @@
 
 using UnityEngine;
 
-public class QuadtreeWithUpdateObject : MonoBehaviour
+public class QuadtreeWithEventDelegateObject : MonoBehaviour
 {
     [SerializeField]
     float _x = 0;
@@ -21,15 +21,15 @@ public class QuadtreeWithUpdateObject : MonoBehaviour
     [SerializeField]
     float _minHeight = 1;
 
-    static QuadtreeWithUpdate<GameObject> _quadtree;
+    static QuadtreeWithEventDelegate<GameObject> _quadtree;
 
 
     private void Awake()
     {
-        _quadtree = new QuadtreeWithUpdate<GameObject>(_x, _y, _width, _height, _maxLeafsNumber, _minWidth, _minHeight);
+        _quadtree = new QuadtreeWithEventDelegate<GameObject>(_x, _y, _width, _height, _maxLeafsNumber, _minWidth, _minHeight);
     }
 
-    public static bool SetLeaf(QuadtreeWithUpdateLeaf<GameObject> leaf)
+    public static bool SetLeaf(QuadtreeWithEventDelegateLeaf<GameObject> leaf)
     {
         return _quadtree.SetLeaf(leaf);
     }
@@ -48,13 +48,13 @@ public class QuadtreeWithUpdateObject : MonoBehaviour
     {
         return _quadtree.CheckCollision(checkPoint, checkRadius);
     }
-    public static GameObject[] CheckCollision(QuadtreeWithUpdateLeaf<GameObject> leaf)
+    public static GameObject[] CheckCollision(QuadtreeWithEventDelegateLeaf<GameObject> leaf)
     {
         return _quadtree.CheckCollision(leaf);
     }
 
 
-    public static bool RemoveLeaf(QuadtreeWithUpdateLeaf<GameObject> leaf)
+    public static bool RemoveLeaf(QuadtreeWithEventDelegateLeaf<GameObject> leaf)
     {
         return _quadtree.RemoveLeaf(leaf);
     }
