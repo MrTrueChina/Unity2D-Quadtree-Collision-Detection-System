@@ -96,6 +96,10 @@ public class QuadtreeWithRadius<T>
     float _minHeight;
 
 
+    /*
+     *  构造方法增加一个父节点参数，默认值是null。
+     *  创建四叉树时不传参数，分割时传当前节点，这样根节点就没有父节点，其他节点都有父节点，向上更新半径就可以进行。
+     */
     public QuadtreeWithRadius(float x, float y, float width, float height, int maxLeafNumber, float minWidth, float minHeight, QuadtreeWithRadius<T> parent = null)
     {
         _rect = new Rect(x, y, width, height);
