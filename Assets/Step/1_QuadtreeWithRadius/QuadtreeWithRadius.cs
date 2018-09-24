@@ -159,29 +159,6 @@ public class QuadtreeWithRadius<T>
         return Mathf.Max(_upperRightChild._maxRadius, _lowerRightChild._maxRadius, _lowerLeftChild._maxRadius, _upperLeftChild._maxRadius);
     }
 
-    void CheckAndDoSplit()
-    {
-        if (_leafs.Count > _maxLeafsNumber && _rect.width > _minWidth && _rect.height > _minHeight)
-            Split();
-    }
-    void Split()    //对应叶子位置在子节点精度问题造成的夹缝中的极端情况是否需要增加边缘扩展值
-    {
-        float childWidth = _rect.width / 2;
-        float childHeight = _rect.height / 2;
-        
-        float rightX = _rect.x + childWidth;
-        float upperY = _rect.y + childHeight;
-        
-        _upperRightChild = new QuadtreeWithRadius<T>(rightX, upperY, childWidth, childHeight, _maxLeafsNumber, _minWidth, _minHeight);
-        _lowerRightChild = new QuadtreeWithRadius<T>(rightX, _rect.y, childWidth, childHeight, _maxLeafsNumber, _minWidth, _minHeight);
-        _lowerLeftChild = new QuadtreeWithRadius<T>(_rect.x, _rect.y, childWidth, childHeight, _maxLeafsNumber, _minWidth, _minHeight);
-        _upperLeftChild = new QuadtreeWithRadius<T>(_rect.x, upperY, childWidth, childHeight, _maxLeafsNumber, _minWidth, _minHeight);
-        
-        foreach (QuadtreeWithRadiusLeaf<T> leaf in _leafs)
-            SetLeafToChildren(leaf);
-        _leafs = null;
-    }
-
     bool SetLeafToChildren(QuadtreeWithRadiusLeaf<T> leaf)
     {
         if (_upperRightChild._rect.PointToRectDistance(leaf.position) == 0)
@@ -196,6 +173,34 @@ public class QuadtreeWithRadius<T>
         Debug.LogError("向位置在" + _rect.position + "宽高是" + _rect.size + "的节点存入叶子时发生错误：叶子不在所有子节点的范围里。");   //Debug.LogError：在Console面板输出Error，就是红色那种消息
         return false;
     }
+
+
+    /*
+     *  分割跟第零步完全一样
+     */
+    void CheckAndDoSplit()
+    {
+        if (_leafs.Count > _maxLeafsNumber && _rect.width > _minWidth && _rect.height > _minHeight)
+            Split();
+    }
+    void Split()    //对应叶子位置在子节点精度问题造成的夹缝中的极端情况是否需要增加边缘扩展值
+    {
+        float childWidth = _rect.width / 2;
+        float childHeight = _rect.height / 2;
+        
+        float rightX = _rect.x + childWidth;
+        float upperY = _rect.y + childHeight;
+
+        _upperRightChild = new QuadtreeWithRadius<T>(rightX, upperY, childWidth, childHeight, _maxLeafsNumber, _minWidth, _minHeight, this);
+        _lowerRightChild = new QuadtreeWithRadius<T>(rightX, _rect.y, childWidth, childHeight, _maxLeafsNumber, _minWidth, _minHeight, this);
+        _lowerLeftChild = new QuadtreeWithRadius<T>(_rect.x, _rect.y, childWidth, childHeight, _maxLeafsNumber, _minWidth, _minHeight, this);
+        _upperLeftChild = new QuadtreeWithRadius<T>(_rect.x, upperY, childWidth, childHeight, _maxLeafsNumber, _minWidth, _minHeight, this);
+        
+        foreach (QuadtreeWithRadiusLeaf<T> leaf in _leafs)
+            SetLeafToChildren(leaf);
+        _leafs = null;
+    }
+
 
 
     /*
