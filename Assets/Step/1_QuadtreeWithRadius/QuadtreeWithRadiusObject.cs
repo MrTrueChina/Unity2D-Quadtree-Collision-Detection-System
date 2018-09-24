@@ -1,4 +1,8 @@
-﻿using UnityEngine;
+﻿/*
+ *  跟第零步几乎完全一样的四叉树物体脚本，同样要设置执行顺序在碰撞器之前
+ */
+
+using UnityEngine;
 
 public class QuadtreeWithRadiusObject : MonoBehaviour
 {
