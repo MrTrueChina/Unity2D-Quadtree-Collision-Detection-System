@@ -1,8 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿/*
+ *  还是那个四叉树物体，就是加了个更新，还是要设置执行顺序在碰撞器之前。
+ */
+
 using UnityEngine;
 
-public class QuadtreeWithUpdateObject : MonoBehaviour
+public class QuadtreeWithEventDelegateObject : MonoBehaviour
 {
     [SerializeField]
     float _x = 0;
@@ -19,33 +21,40 @@ public class QuadtreeWithUpdateObject : MonoBehaviour
     [SerializeField]
     float _minHeight = 1;
 
-    static QuadtreeWithUpdate<GameObject> _quadtree;
+    static QuadtreeWithEventDelegate<GameObject> _quadtree;
 
 
     private void Awake()
     {
-        _quadtree = new QuadtreeWithUpdate<GameObject>(_x, _y, _width, _height, _maxLeafsNumber, _minWidth, _minHeight);
+        _quadtree = new QuadtreeWithEventDelegate<GameObject>(_x, _y, _width, _height, _maxLeafsNumber, _minWidth, _minHeight);
     }
 
-    public static bool SetLeaf(QuadtreeWithUpdateLeaf<GameObject> leaf)
+    public static bool SetLeaf(QuadtreeWithEventDelegateLeaf<GameObject> leaf)
     {
         return _quadtree.SetLeaf(leaf);
     }
 
 
+    /*
+     *  每帧更新一次四叉树
+     */
     private void Update()
     {
         _quadtree.Update();
     }
 
 
-    public static GameObject[] CheckCollision(QuadtreeWithUpdateLeaf<GameObject> leaf)
+    public static GameObject[] CheckCollision(Vector2 checkPoint, float checkRadius)
+    {
+        return _quadtree.CheckCollision(checkPoint, checkRadius);
+    }
+    public static GameObject[] CheckCollision(QuadtreeWithEventDelegateLeaf<GameObject> leaf)
     {
         return _quadtree.CheckCollision(leaf);
     }
 
 
-    public static bool RemoveLeaf(QuadtreeWithUpdateLeaf<GameObject> leaf)
+    public static bool RemoveLeaf(QuadtreeWithEventDelegateLeaf<GameObject> leaf)
     {
         return _quadtree.RemoveLeaf(leaf);
     }

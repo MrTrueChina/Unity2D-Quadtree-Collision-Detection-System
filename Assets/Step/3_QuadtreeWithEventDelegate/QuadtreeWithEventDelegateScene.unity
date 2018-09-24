@@ -122,6 +122,7 @@ GameObject:
   m_Component:
   - component: {fileID: 166172534}
   - component: {fileID: 166172535}
+  - component: {fileID: 166172536}
   m_Layer: 0
   m_Name: CheckCollider
   m_TagString: Untagged
@@ -155,6 +156,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _radius: 1.25
   _checkCollision: 1
+--- !u!114 &166172536
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 166172533}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28287217f880fec479f9aa328300b8a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &201425839
 GameObject:
   m_ObjectHideFlags: 0
