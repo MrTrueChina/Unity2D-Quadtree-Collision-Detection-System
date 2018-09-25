@@ -48,10 +48,6 @@ public class QuadtreeWithUpdateObject : MonoBehaviour
     {
         return _quadtree.CheckCollision(checkPoint, checkRadius);
     }
-    public static GameObject[] CheckCollision(QuadtreeWithUpdateLeaf<GameObject> leaf)
-    {
-        return _quadtree.CheckCollision(leaf);
-    }
 
 
     public static bool RemoveLeaf(QuadtreeWithUpdateLeaf<GameObject> leaf)

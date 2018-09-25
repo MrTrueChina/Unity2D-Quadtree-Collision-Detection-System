@@ -1,31 +1,8 @@
 ﻿/*
- *  经过艰难险阻终于到这一步了：四叉树的更新
+ *  跟上一步几乎一样。
  *  
- *  前面两步的四叉树都没有更新功能，只要一移动碰撞器就会出错，就是因为缺了一个更新叶子的功能，这一步就来完成这个功能。
- *  
- *  更新分为两部分：叶子位置的更新和叶子半径的更新。
- *  叶子位置的更新是这样的：
- *      首先由根节点发起更新
- *      更新顺着树枝节点递归传递给每一个树梢节点
- *      树梢节点检测所有的叶子的位置
- *          如果叶子还在树梢节点的范围里就不用管它
- *          但如果叶子已经离开了树梢的范围则需要重新从根节点插入叶子，这样叶子就会自动到正确的树梢去
- *          
- *  半径更新是这样的：
- *      还是根节点发出
- *      还是递归到每个树梢
- *      之后树梢要遍历所有叶子，找出新的最大半径
- *          如果这个新的最大半径和原本的最大半径一样那就什么都不用干
- *          但如果这个新的最大半径和原来的最大半径不一样，就要向上更新最大半径
- *          
- *  看了上面两个之后我们可以考虑一下更新顺序：
- *  
- *  是先位置后半径？还是先半径后位置？或者同时进行好像也不错，只用遍历一遍。
- *  
- *  这个坑我已经踩过了，要先更新位置，因为叶子可以从一个树梢的范围移动到另一个树梢的范围，但在位置更新之前所有叶子都被视为在原来的树梢上，这样更新半径的时候就会把半径算到错误的树梢上。
- */
-/*
- *  除了增加更新外还增加了一堆 Debug 输出，用来检查各个步骤是不是正确进行的。 
+ *  增加了传入叶子检测碰撞的方法。
+ *  把Debug输出改成彩色的了，Unity的Console是支持HTML标签的。
  */
 
 using System.Collections.Generic;
@@ -71,11 +48,6 @@ public class QuadtreeWithEventDelegate<T>
     float _maxRadius = float.MinValue;
 
     QuadtreeWithEventDelegate<T> _root;
-    /*
-     *  根节点，前面已经说到更新位置时需要从根节点再次存入叶子。
-     *  虽然可以通过向上递归父节点查到根节点但找个字段存下来计算量小。
-     */
-
     QuadtreeWithEventDelegate<T> _parent;
     QuadtreeWithEventDelegate<T> _upperRightChild;
     QuadtreeWithEventDelegate<T> _lowerRightChild;
@@ -87,8 +59,8 @@ public class QuadtreeWithEventDelegate<T>
     int _maxLeafsNumber;
     float _minWidth;
     float _minHeight;
+    
 
-    //这里有关于三目运算符和根节点需要注释
     public QuadtreeWithEventDelegate(float x, float y, float width, float height, int maxLeafNumber, float minWidth, float minHeight, QuadtreeWithEventDelegate<T> root = null, QuadtreeWithEventDelegate<T> parent = null)
     {
         _rect = new Rect(x, y, width, height);
@@ -102,10 +74,7 @@ public class QuadtreeWithEventDelegate<T>
         _parent = parent;
     }
 
-
-    /*
-     *  存入叶子跟上一步一点变化没有，我就复制粘贴改了个类名，连注释都没删
-     */
+    
     public bool SetLeaf(QuadtreeWithEventDelegateLeaf<T> leaf)
     {
         if (DontHaveChildren())
@@ -172,10 +141,7 @@ public class QuadtreeWithEventDelegate<T>
         return false;
     }
 
-
-    /*
-     *  分割多了存入根节点
-     */
+    
     void CheckAndDoSplit()
     {
         if (_leafs.Count > _maxLeafsNumber && _rect.width > _minWidth && _rect.height > _minHeight)
@@ -200,10 +166,7 @@ public class QuadtreeWithEventDelegate<T>
         _leafs = null;
     }
 
-
-    /*
-     *  更新
-     */
+    
     public void Update()
     {
         UpdatePosition();
@@ -308,10 +271,6 @@ public class QuadtreeWithEventDelegate<T>
     }
 
 
-
-    /*
-     *  移除叶子，又是一点变化没有，又是复制粘贴
-     */
     public bool RemoveLeaf(QuadtreeWithEventDelegateLeaf<T> leaf)
     {
         if (DontHaveChildren())
