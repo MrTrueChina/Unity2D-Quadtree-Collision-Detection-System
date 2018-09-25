@@ -1,8 +1,9 @@
-﻿using UnityEngine;
-
-/*
+﻿/*
  *  需要设置执行顺序在碰撞器之前
  */
+
+ using UnityEngine;
+
 public class QuadtreeObject : MonoBehaviour
 {
     [SerializeField]
@@ -28,31 +29,36 @@ public class QuadtreeObject : MonoBehaviour
         _quadtree = new Quadtree<GameObject>(_x, _y, _width, _height, _maxLeafsNumber, _minWidth, _minHeight);
     }
 
+    public static bool SetLeaf(QuadtreeLeaf<GameObject> leaf)
+    {
+        return _quadtree.SetLeaf(leaf);
+    }
 
+
+    /*
+     *  每帧更新一次四叉树
+     */
     private void Update()
     {
         _quadtree.Update();
     }
 
 
-    public static bool SetLeaf(QuadtreeLeaf<GameObject> leaf)
+    public static GameObject[] CheckCollision(Vector2 checkPoint, float checkRadius)
     {
-        return _quadtree.SetLeaf(leaf);
+        return _quadtree.CheckCollision(checkPoint, checkRadius);
     }
+    public static GameObject[] CheckCollision(QuadtreeLeaf<GameObject> leaf)
+    {
+        return _quadtree.CheckCollision(leaf);
+    }
+
 
     public static bool RemoveLeaf(QuadtreeLeaf<GameObject> leaf)
     {
         return _quadtree.RemoveLeaf(leaf);
     }
 
-    public static GameObject[] CheckCollision(Vector2 checkPosition, float radius)
-    {
-        return _quadtree.CheckCollision(checkPosition, radius);
-    }
-    public static GameObject[] CheckCollision(QuadtreeLeaf<GameObject> leaf)
-    {
-        return _quadtree.CheckCollision(leaf);
-    }
 
 
     private void OnDrawGizmos()
