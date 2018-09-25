@@ -1,31 +1,23 @@
 ﻿using UnityEngine;
 
-[RequireComponent(typeof(QuadtreeWithUpdateCollider))]      //[RequireComponent(type)]：保证这个脚本挂载时参数脚本也会挂载
 public class QuadtreeWithUpdateDetector : MonoBehaviour
 {
-    QuadtreeWithUpdateCollider _quadTreeCollider;
+    [SerializeField]
+    float _radius;
 
-    QuadtreeWithUpdateCollisionEventDelegate _collisionDelegate;
 
-    private void Awake()
+    private void Update()
     {
-        _quadTreeCollider = GetComponent<QuadtreeWithUpdateCollider>();
+        GameObject[] objs = QuadtreeWithUpdateObject.CheckCollision(transform.position, _radius);
 
-        _collisionDelegate = new QuadtreeWithUpdateCollisionEventDelegate(OnQuadtreeCollision);
+        foreach (GameObject obj in objs)
+            Debug.Log("检测到碰撞器 " + obj.name + " ，位置在 " + obj.transform.position);
     }
 
-    private void OnEnable()
-    {
-        _quadTreeCollider.collisionEvent += _collisionDelegate;
-    }
 
-    private void OnDisable()
+    private void OnDrawGizmos()
     {
-        _quadTreeCollider.collisionEvent -= _collisionDelegate;
-    }
-
-    void OnQuadtreeCollision(GameObject collisionGameObject)
-    {
-        Debug.Log(name + "检测到与" + collisionGameObject.name + "发生碰撞");
+        Gizmos.color = Color.yellow * 0.8f;
+        MyGizmos.DrawCircle(transform.position, _radius, 60);
     }
 }
