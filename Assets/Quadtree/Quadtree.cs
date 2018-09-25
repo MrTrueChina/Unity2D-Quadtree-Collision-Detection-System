@@ -1,5 +1,13 @@
-﻿using System.Collections.Generic;
+﻿/*
+ *  跟上一步几乎一样。
+ *  
+ *  增加了传入叶子检测碰撞的方法。
+ *  把Debug输出改成彩色的了，Unity的Console是支持HTML标签的。
+ */
+
+using System.Collections.Generic;
 using UnityEngine;
+
 
 public class QuadtreeLeaf<T>
 {
@@ -26,74 +34,20 @@ public class QuadtreeLeaf<T>
 
     public QuadtreeLeaf(T obj, Vector2 position, float radius)
     {
-        Constructed(obj, position, radius);
-    }
-    void Constructed(T obj, Vector2 position, float radius)
-    {
         _obj = obj;
         _position = position;
         _radius = radius;
     }
 }
 
-/*
- *  增加半径：
- *  增加半径必然涉及到严肃问题：移除叶子，之后需要确定节点里最大半径的叶子是谁，之后把他设为最大半径，之后向父级传输
- *  
- *  最简单暴力的方法是移除叶子时做遍历
- *  优化一下：
- *      添加叶子：
- *      果叶子半径比节点最大半径大，换半径，否则不管，也就是 _maxRadius = Mathf.Max(_maxRadius, leaf.radius);
- *      
- *      移除叶子：
- *      如果移除的这个叶子不是最大半径的，不管他
- *      如果是最大半径的，遍历同时记录最大半径，如果遇到同样半径的，结束不作处理，没找到一样半径的，更改最大半径
- *  
- *  换一个思路：二叉堆，用最大堆存放，堆的标志量是半径，堆里的T是List，每次叶子的增删都在二叉堆里做操作，堆顶就是最大半径
- *  
- *  列表法：
- *  每次移除叶子，最快只需1次，最慢遍历全表
- *  每次添加叶子，只需1次比较
- *  堆：
- *  每次移除叶子，可能造成一次堆的调整，只需一次赋值
- *  每次添加叶子，可能造成一次堆调整，一次赋值
- *  
- *  
- *  之后会有更大的问题：更新
- *  首先半径更新需要在移动更新之后进行
- *  如果没有二叉堆，更新就是将所有叶的半径更新，之后遍历出最大半径
- *  
- *  如果有二叉堆
- *  首先按照二叉堆顺序进行是没用的，因为半径的变化带来节点增删，进而堆顺序变化
- *  
- *  列表法：更新每个叶子，一次遍历全表
- *  堆：由于更新过程中的堆调整，可能需要重新建立堆
- */
-
-/*
- *  用列表法
- *  
- *  半径属性
- *  
- *  检测：连半径一起判断
- *  
- *  更新：只按照节点空间分配位置
- */
-
-/*
- *  更新位置、分割也有矛盾
- *  更新位置可能导致分割，分割后有些节点的位置不在范围内
- */
-
-/*
- *  正式版碰撞检测四叉树，存入、更新、检测、移除功能都有了
- */
 
 public class Quadtree<T>
 {
     Rect _rect;
-    float _maxRadius = float.MinValue;          //最大半径，存入叶子、移除叶子、更新叶子半径时都需要一起向上更新
 
+    float _maxRadius = float.MinValue;
+
+    Quadtree<T> _root;
     Quadtree<T> _parent;
     Quadtree<T> _upperRightChild;
     Quadtree<T> _lowerRightChild;
@@ -102,257 +56,276 @@ public class Quadtree<T>
 
     List<QuadtreeLeaf<T>> _leafs = new List<QuadtreeLeaf<T>>();
 
-    int _maxLeafNumber;
+    int _maxLeafsNumber;
     float _minWidth;
     float _minHeight;
 
 
-    //构造
-    public Quadtree(float x, float y, float width, float height,int maxLeafsNumber = 10,float minWidth = 1,float minHeight = 1, Quadtree<T> parent = null)
+    public Quadtree(float x, float y, float width, float height, int maxLeafNumber, float minWidth, float minHeight, Quadtree<T> root = null, Quadtree<T> parent = null)
     {
         _rect = new Rect(x, y, width, height);
-        _parent = parent;
 
-        _maxLeafNumber = maxLeafsNumber;
+        _maxLeafsNumber = maxLeafNumber;
         _minWidth = minWidth;
         _minHeight = minHeight;
+
+        _root = root != null ? root : this;
+
+        _parent = parent;
     }
 
 
-    //存入
     public bool SetLeaf(QuadtreeLeaf<T> leaf)
     {
-        if (_rect.PointToRectDistance(leaf.position) > 0) return false;
-
         if (DontHaveChildren())
-        {
-            _leafs.Add(leaf);
-            if (_maxRadius < leaf.radius)
-            {
-                _maxRadius = leaf.radius;
-                if (_parent != null)
-                    _parent.UpwardsUpdateMaxRaiuds();//需要一个同时兼容叶子表和子节点的更新方法，或将上向下、最底层、下向上做成三个连续方法，上向下必然执行最底层，最底层必然考虑下向上
-            }
-            Debug.Log("位置在" + _rect.position + "宽高是" + _rect.size + "的节点，存入一个半径为 " + leaf.radius + " 的叶子，存入后节点最大半径是 " + _maxRadius);
-
-            if (_leafs.Count > _maxLeafNumber && _rect.width > _minWidth && _rect.height > _minHeight)
-                Split();
-
-            return true;
-        }
+            return SetLeafToSelf(leaf);
         else
-        {
-            return SetLeafToChild(leaf);
-        }
+            return SetLeafToChildren(leaf);
     }
     bool DontHaveChildren()
     {
         return _upperRightChild == null || _lowerRightChild == null || _lowerLeftChild == null || _upperLeftChild == null;      //四个子节点是一起创建的，原理上说一个不存在另外三个也不存在，但假设只有一个不存在插入的叶子又在这个位置就要出事了
     }
-    private bool SetLeafToChild(QuadtreeLeaf<T> leaf)
+
+    private bool SetLeafToSelf(QuadtreeLeaf<T> leaf)
     {
-        if (_upperRightChild._rect.PointToRectDistance(leaf.position, 0) == 0)
+        _leafs.Add(leaf);
+        UpdateMaxRadiusWhenSetLeaf(leaf);
+        Debug.Log("<color=#0040A0>位置在" + _rect.position + "宽高是" + _rect.size + "的树梢节点存入位置在" + leaf.position + "半径是" + leaf.radius + "的叶子，存入后的最大半径是" + _maxRadius + "</color>");
+        //是的！Log输出同样支持HTML标签，颜色、粗体、斜体等都可以做到
+        CheckAndDoSplit();
+        return true;
+    }
+    void UpdateMaxRadiusWhenSetLeaf(QuadtreeLeaf<T> leaf)
+    {
+        if (leaf.radius > _maxRadius)       //只有存入的叶子的半径超过了现在节点的最大半径才需要更新最大半径，存入更小的叶子并不会影响到检测。
+        {
+            _maxRadius = leaf.radius;
+
+            CallParentUpdateMaxRadius();
+        }
+    }
+    void CallParentUpdateMaxRadius()
+    {
+        if (_parent != null)
+            _parent.UpwardUpdateMaxRadius();
+    }
+    void UpwardUpdateMaxRadius()
+    {
+        float newManRaiuds = GetChildrenMaxRadius();
+        if (newManRaiuds != _maxRadius)
+        {
+            _maxRadius = newManRaiuds;
+            Debug.Log("<color=#A000A0>位置在" + _rect.position + "宽高是" + _rect.size + "的树枝节点更新最大半径，更新后的最大半径是" + _maxRadius + "</color>");
+            CallParentUpdateMaxRadius();
+        }
+    }
+    float GetChildrenMaxRadius()
+    {
+        return Mathf.Max(_upperRightChild._maxRadius, _lowerRightChild._maxRadius, _lowerLeftChild._maxRadius, _upperLeftChild._maxRadius);
+    }
+
+    bool SetLeafToChildren(QuadtreeLeaf<T> leaf)
+    {
+        Debug.Log("<color=#0040A0>位置在" + _rect.position + "宽高是" + _rect.size + "的树枝节点向子节点存入位置在" + leaf.position + "半径是" + leaf.radius + "的叶子</color>");
+        if (_upperRightChild._rect.PointToRectDistance(leaf.position) == 0)
             return _upperRightChild.SetLeaf(leaf);
-        if (_lowerRightChild._rect.PointToRectDistance(leaf.position, 0) == 0)
+        if (_lowerRightChild._rect.PointToRectDistance(leaf.position) == 0)
             return _lowerRightChild.SetLeaf(leaf);
-        if (_lowerLeftChild._rect.PointToRectDistance(leaf.position, 0) == 0)
+        if (_lowerLeftChild._rect.PointToRectDistance(leaf.position) == 0)
             return _lowerLeftChild.SetLeaf(leaf);
-        if (_upperLeftChild._rect.PointToRectDistance(leaf.position, 0) == 0)
+        if (_upperLeftChild._rect.PointToRectDistance(leaf.position) == 0)
             return _upperLeftChild.SetLeaf(leaf);
 
-        Debug.LogError("SetLeafToChild，存入的叶子的位置" + leaf.position + "不在四个子节点的范围里");
-        return false;   //缕一下逻辑，执行到这一步的条件是：叶子的位置在这个节点的范围里、这个节点有子节点。四个子节点的范围覆盖父节点的全部范围，也就是说四个if应该至少有一个通过（如果在交界处则都可以通过，所以要找到正确的子节点后马上return），假设执行到这一步，说明叶子根本不在这个节点的范围里，存错节点了
+        Debug.LogError("向位置在" + _rect.position + "宽高是" + _rect.size + "的节点存入叶子时发生错误：叶子不在所有子节点的范围里。");   //Debug.LogError：在Console面板输出Error，就是红色那种消息
+        return false;
     }
 
 
-    //分割
+    void CheckAndDoSplit()
+    {
+        if (_leafs.Count > _maxLeafsNumber && _rect.width > _minWidth && _rect.height > _minHeight)
+            Split();
+    }
     void Split()    //对应叶子位置在子节点精度问题造成的夹缝中的极端情况是否需要增加边缘扩展值
     {
+        Debug.Log("<color=#808000>位置在" + _rect.position + "宽高是" + _rect.size + "的树梢节点达到分割条件，进行分割</color>");
         float childWidth = _rect.width / 2;
         float childHeight = _rect.height / 2;
 
         float rightX = _rect.x + childWidth;
         float upperY = _rect.y + childHeight;
 
-        _upperRightChild = new Quadtree<T>(rightX, upperY, childWidth, childHeight, _maxLeafNumber, _minWidth, _minHeight, this);
-        _lowerRightChild = new Quadtree<T>(rightX, _rect.y, childWidth, childHeight, _maxLeafNumber, _minWidth, _minHeight, this);
-        _lowerLeftChild = new Quadtree<T>(_rect.x, _rect.y, childWidth, childHeight, _maxLeafNumber, _minWidth, _minHeight, this);
-        _upperLeftChild = new Quadtree<T>(_rect.x, upperY, childWidth, childHeight, _maxLeafNumber, _minWidth, _minHeight, this);
+        _upperRightChild = new Quadtree<T>(rightX, upperY, childWidth, childHeight, _maxLeafsNumber, _minWidth, _minHeight, _root, this);
+        _lowerRightChild = new Quadtree<T>(rightX, _rect.y, childWidth, childHeight, _maxLeafsNumber, _minWidth, _minHeight, _root, this);
+        _lowerLeftChild = new Quadtree<T>(_rect.x, _rect.y, childWidth, childHeight, _maxLeafsNumber, _minWidth, _minHeight, _root, this);
+        _upperLeftChild = new Quadtree<T>(_rect.x, upperY, childWidth, childHeight, _maxLeafsNumber, _minWidth, _minHeight, _root, this);
 
         foreach (QuadtreeLeaf<T> leaf in _leafs)
-        {
-            if (_rect.Contains(leaf.position))
-                SetLeafToChild(leaf);
-            else
-                GetRoot().SetLeaf(leaf);                //有这样一种情况：有的叶子的位置已经移出了节点范围但还没有更新位置，此时分割节点，这些叶子就会超出范围。把这些叶子直接从根节点重新存入
-        }
-
-        _leafs = null;  //分割后叶子List就没用了，清除掉
+            SetLeafToChildren(leaf);
+        _leafs = null;
     }
 
 
-    //检测
-    public T[] CheckCollision(Vector2 checkPosition, float checkRadius)
-    {
-        List<T> objs = new List<T>();
-
-        if (DontHaveChildren())
-        {
-            foreach (QuadtreeLeaf<T> leaf in _leafs)
-                if (Vector2.Distance(leaf.position, checkPosition) <= checkRadius + leaf.radius)
-                    objs.Add(leaf.obj);
-        }
-        else
-        {
-            if (_upperRightChild._rect.PointToRectDistance(checkPosition, _maxRadius) <= checkRadius)
-                objs.AddRange(_upperRightChild.CheckCollision(checkPosition, checkRadius));
-            if (_lowerRightChild._rect.PointToRectDistance(checkPosition, _maxRadius) <= checkRadius)
-                objs.AddRange(_lowerRightChild.CheckCollision(checkPosition, checkRadius));
-            if (_lowerLeftChild._rect.PointToRectDistance(checkPosition, _maxRadius) <= checkRadius)
-                objs.AddRange(_lowerLeftChild.CheckCollision(checkPosition, checkRadius));
-            if (_upperLeftChild._rect.PointToRectDistance(checkPosition, _maxRadius) <= checkRadius)
-                objs.AddRange(_upperLeftChild.CheckCollision(checkPosition, checkRadius));
-        }
-
-        return objs.ToArray();
-    }
-    public T[] CheckCollision(QuadtreeLeaf<T> checkLeaf)
-    {
-        List<T> objs = new List<T>(CheckCollision(checkLeaf.position, checkLeaf.radius));
-
-        objs.Remove(checkLeaf.obj);
-
-        return objs.ToArray();
-    }
-
-
-    //更新
     public void Update()
     {
-        UpdateLeafsPosition();
-        UpdateNodesMaxRadius();
+        UpdatePosition();
+        UpdateMaxRadius();
     }
-
-    void UpdateLeafsPosition()
+    void UpdatePosition()
     {
         if (DontHaveChildren())
-        {
-            List<QuadtreeLeaf<T>> resetLeafs = new List<QuadtreeLeaf<T>>();     //如果直接在叶子List里移动，会导致更新到一半List变了，可能导致有的叶子没更新到。在这里先准备一个要移动的叶子的List，之后再按照这个List移动
-            foreach (QuadtreeLeaf<T> leaf in _leafs)
-                if (_rect.PointToRectDistance(leaf.position, 0) > 0)
-                    resetLeafs.Add(leaf);
-            foreach (QuadtreeLeaf<T> leaf in resetLeafs)
-                ResetLeaf(leaf);
-        }
+            UpdatePositionSelf();
         else
-        {
-            _upperRightChild.UpdateLeafsPosition();
-            _lowerRightChild.UpdateLeafsPosition();
-            _lowerLeftChild.UpdateLeafsPosition();
-            _upperLeftChild.UpdateLeafsPosition();
-        }
+            CallChildrenUpdatePosition();
     }
-    private void ResetLeaf(QuadtreeLeaf<T> leaf)
+    void UpdatePositionSelf()
     {
-        Debug.Log("从位置在" + _rect.position + "宽高为" + _rect.size + "的节点移除并重新存入叶子，叶子位置在" + leaf.position);
-        RemoveLeaf(leaf);
-        GetRoot().SetLeaf(leaf);
+        List<QuadtreeLeaf<T>> resetLeafs = new List<QuadtreeLeaf<T>>();
+
+        foreach (QuadtreeLeaf<T> leaf in _leafs)
+            if (_rect.PointToRectDistance(leaf.position) > 0)
+                resetLeafs.Add(leaf);
+
+        foreach (QuadtreeLeaf<T> leaf in resetLeafs)
+            ResetLeaf(leaf);
     }
-    Quadtree<T> GetRoot()
+    void ResetLeaf(QuadtreeLeaf<T> leaf)
     {
-        Quadtree<T> currentNode = this;
-
-        while (currentNode._parent != null)
-            currentNode = currentNode._parent;
-
-        return currentNode;
+        Debug.Log("<color=#800080>位置在" + _rect.position + "宽高是" + _rect.size + "的树梢节点移除位置在" + leaf.position + "半径是" + leaf.radius + "的叶子，重新存入树</color>");
+        RemoveLeafSelf(leaf);
+        _root.SetLeaf(leaf);
+    }
+    void CallChildrenUpdatePosition()
+    {
+        _upperRightChild.UpdatePosition();
+        _lowerRightChild.UpdatePosition();
+        _lowerLeftChild.UpdatePosition();
+        _upperLeftChild.UpdatePosition();
     }
 
-    void UpdateNodesMaxRadius()
+    void UpdateMaxRadius()
     {
         if (DontHaveChildren())
-        {
-            float newMaxRadius = GetMaxRadius();
-            if (newMaxRadius != _maxRadius)
-            {
-                _maxRadius = newMaxRadius;
-                if(_parent != null)
-                    _parent.UpwardsUpdateMaxRaiuds();
-            }
-        }
+            UpdateMaxRadiusSelf();
         else
+            CallChildrenUpdateMaxRadius();
+    }
+    void UpdateMaxRadiusSelf()
+    {
+        float newMaxRadius = GetLeafsMaxRadiusOnUpdate();
+        if (newMaxRadius != _maxRadius)
         {
-            _upperRightChild.UpdateNodesMaxRadius();
-            _lowerRightChild.UpdateNodesMaxRadius();
-            _lowerLeftChild.UpdateNodesMaxRadius();
-            _upperLeftChild.UpdateNodesMaxRadius();
+            _maxRadius = newMaxRadius;
+            CallParentUpdateMaxRadius();
         }
     }
-    float GetMaxRadius()
+    float GetLeafsMaxRadiusOnUpdate()
     {
         float newMaxRadius = float.MinValue;
         foreach (QuadtreeLeaf<T> leaf in _leafs)
             if (leaf.radius > newMaxRadius)
                 newMaxRadius = leaf.radius;
-        Debug.Log("计算新半径，新半径 = " + newMaxRadius);
         return newMaxRadius;
     }
-    void UpwardsUpdateMaxRaiuds()
+    void CallChildrenUpdateMaxRadius()
     {
-        float newMaxRadius = GetChildrenMaxRaius();
-        if (newMaxRadius != _maxRadius)
-        {
-            _maxRadius = newMaxRadius;
-            if (_parent != null)
-                _parent.UpwardsUpdateMaxRaiuds();
-        }
-    }
-    float GetChildrenMaxRaius()
-    {
-        return Mathf.Max(_upperRightChild._maxRadius, _lowerRightChild._maxRadius, _lowerLeftChild._maxRadius, _upperLeftChild._maxRadius);
+        _upperRightChild.UpdateMaxRadius();
+        _lowerRightChild.UpdateMaxRadius();
+        _lowerLeftChild.UpdateMaxRadius();
+        _upperLeftChild.UpdateMaxRadius();
     }
 
 
-    //移除
-    public bool RemoveLeaf(QuadtreeLeaf<T> removeLeaf)
+    /*
+     *  碰撞检测，加了一个传叶子检测碰撞的方法，这样碰撞器就可以自己检测碰撞了。
+     *  原理很简单，先检测碰撞，之后把叶子自己剔除出去就行了。
+     */
+    public T[] CheckCollision(Vector2 checkPoint, float checkRadius)
     {
+        List<T> objs = new List<T>();
         if (DontHaveChildren())
         {
-            bool removebool = _leafs.Remove(removeLeaf);
-            ChangeMaxRadiusOnRemoveLeaf(removeLeaf.radius);
-
-            Debug.Log("位置在" + _rect.position + "宽高是" + _rect.size + "的节点，移除一个半径为 " + removeLeaf.radius + " 的叶子，移除后节点最大半径是 " + _maxRadius);
-
-            if (!removebool) Debug.LogError("RmoveLeaf，移除叶子失败，可能是子节点下找不到叶子");
-            return removebool;
+            foreach (QuadtreeLeaf<T> leaf in _leafs)
+                if (Vector2.Distance(checkPoint, leaf.position) <= checkRadius + leaf.radius)
+                    objs.Add(leaf.obj);
         }
         else
         {
-            if (_upperRightChild._rect.PointToRectDistance(removeLeaf.position) == 0)
-                return _upperRightChild.RemoveLeaf(removeLeaf);
-            if (_lowerRightChild._rect.PointToRectDistance(removeLeaf.position) == 0)
-                return _lowerRightChild.RemoveLeaf(removeLeaf);
-            if (_lowerLeftChild._rect.PointToRectDistance(removeLeaf.position) == 0)
-                return _lowerLeftChild.RemoveLeaf(removeLeaf);
-            if (_upperLeftChild._rect.PointToRectDistance(removeLeaf.position) == 0)
-                return _upperLeftChild.RemoveLeaf(removeLeaf);
+            if (_upperRightChild._rect.PointToRectDistance(checkPoint, _maxRadius) <= checkRadius)      //PointToRectDistance的位置在 Quadtree 里
+                objs.AddRange(_upperRightChild.CheckCollision(checkPoint, checkRadius));
+            if (_lowerRightChild._rect.PointToRectDistance(checkPoint, _maxRadius) <= checkRadius)
+                objs.AddRange(_lowerRightChild.CheckCollision(checkPoint, checkRadius));
+            if (_lowerLeftChild._rect.PointToRectDistance(checkPoint, _maxRadius) <= checkRadius)
+                objs.AddRange(_lowerLeftChild.CheckCollision(checkPoint, checkRadius));
+            if (_upperLeftChild._rect.PointToRectDistance(checkPoint, _maxRadius) <= checkRadius)
+                objs.AddRange(_upperLeftChild.CheckCollision(checkPoint, checkRadius));
+        }
+        return objs.ToArray();
+    }
+    public T[] CheckCollision(QuadtreeLeaf<T> leaf)
+    {
+        List<T> objs = new List<T>(CheckCollision(leaf.position, leaf.radius));
+        objs.Remove(leaf.obj);
+        return objs.ToArray();
+    }
 
-            Debug.LogError("RemoveLeaf，移除叶子的坐标不在所有子节点范围内");
-            return false;
+
+    public bool RemoveLeaf(QuadtreeLeaf<T> leaf)
+    {
+        if (DontHaveChildren())
+            return RemoveLeafSelf(leaf);
+        else
+            return CallChildrenRemoveLeaf(leaf);
+    }
+    private bool RemoveLeafSelf(QuadtreeLeaf<T> leaf)
+    {
+        bool removeLeafBool = _leafs.Remove(leaf);
+        UpdateMaxRadiusWhenRemoveLeaf();
+        Debug.Log("<color=#802030>位置在" + _rect.position + "宽高是" + _rect.size + "的树梢节点移除位置在" + leaf.position + "半径是" + leaf.radius + "的叶子，移除后的最大半径是" + _maxRadius + "</color>");
+        return removeLeafBool;
+    }
+    void UpdateMaxRadiusWhenRemoveLeaf()
+    {
+        float newMaxRadius = GetLeafsMaxRadiusOnRemoveLeaf();
+        if (_maxRadius != newMaxRadius)
+        {
+            _maxRadius = newMaxRadius;
+            Debug.Log("<color=#108010>位置在" + _rect.position + "宽高是" + _rect.size + "的树梢节点半径发生变化，新半径是" + _maxRadius + "</color>");
+            CallParentUpdateMaxRadius();
         }
     }
-    void ChangeMaxRadiusOnRemoveLeaf(float ramoveLeafRadius)
+    float GetLeafsMaxRadiusOnRemoveLeaf()
     {
-        float newMaxRadius = 0;
-        foreach (QuadtreeLeaf<T> leaf in _leafs)
-        {
-            if (leaf.radius == _maxRadius) return;  //剩余的叶子里有叶子的最大半径等于现在的最大半径，则说明最大半径不需要调整
+        float newMaxRadius = float.MinValue;
 
-            if (leaf.radius > newMaxRadius) newMaxRadius = leaf.radius;
-        }
-        _maxRadius = newMaxRadius;
+        foreach (QuadtreeLeaf<T> leaf in _leafs)
+            if (leaf.radius > newMaxRadius)
+                if (leaf.radius == _maxRadius)
+                    return _maxRadius;
+                else
+                    newMaxRadius = leaf.radius;
+
+        return newMaxRadius;
+    }
+
+    private bool CallChildrenRemoveLeaf(QuadtreeLeaf<T> leaf)
+    {
+        Debug.Log("<color=#802030>位置在" + _rect.position + "宽高是" + _rect.size + "的树枝节点从子节点移除位置在" + leaf.position + "半径是" + leaf.radius + "的叶子</color>");
+        if (_upperRightChild._rect.PointToRectDistance(leaf.position) == 0)
+            return _upperRightChild.RemoveLeaf(leaf);
+        if (_lowerRightChild._rect.PointToRectDistance(leaf.position) == 0)
+            return _lowerRightChild.RemoveLeaf(leaf);
+        if (_lowerLeftChild._rect.PointToRectDistance(leaf.position) == 0)
+            return _lowerLeftChild.RemoveLeaf(leaf);
+        if (_upperLeftChild._rect.PointToRectDistance(leaf.position) == 0)
+            return _upperLeftChild.RemoveLeaf(leaf);
+
+        Debug.LogError("位置在" + _rect.position + "宽高是" + _rect.size + "的节点，移除叶子失败，叶子不在任何一个子节点的区域里");
+        return false;
     }
 }
+
 
 
 public static partial class RectExtension
