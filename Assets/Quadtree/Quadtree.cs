@@ -1,8 +1,8 @@
 ﻿/*
- *  跟上一步几乎一样。
- *  
- *  增加了传入叶子检测碰撞的方法。
- *  把Debug输出改成彩色的了，Unity的Console是支持HTML标签的。
+ *  正式第二版四叉树
+ *  第一版由于实现过于肮脏以至于找不到重构方式惨遭删除。
+ *  第二版基于Step3修改而来，删除大部分注释和注释掉Debug输出。如果觉得不需要这些Debug输出的话也可以删掉，删除输出对再次重构可能有帮助。
+ *  对各个步骤里都没写的 Rect.PointToRectDistance 单独写注释
  */
 
 using System.Collections.Generic;
@@ -91,8 +91,7 @@ public class Quadtree<T>
     {
         _leafs.Add(leaf);
         UpdateMaxRadiusWhenSetLeaf(leaf);
-        Debug.Log("<color=#0040A0>位置在" + _rect.position + "宽高是" + _rect.size + "的树梢节点存入位置在" + leaf.position + "半径是" + leaf.radius + "的叶子，存入后的最大半径是" + _maxRadius + "</color>");
-        //是的！Log输出同样支持HTML标签，颜色、粗体、斜体等都可以做到
+        //Debug.log("<color=#0040A0>位置在" + _rect.position + "宽高是" + _rect.size + "的树梢节点存入位置在" + leaf.position + "半径是" + leaf.radius + "的叶子，存入后的最大半径是" + _maxRadius + "</color>");
         CheckAndDoSplit();
         return true;
     }
@@ -116,7 +115,7 @@ public class Quadtree<T>
         if (newManRaiuds != _maxRadius)
         {
             _maxRadius = newManRaiuds;
-            Debug.Log("<color=#A000A0>位置在" + _rect.position + "宽高是" + _rect.size + "的树枝节点更新最大半径，更新后的最大半径是" + _maxRadius + "</color>");
+            //Debug.log("<color=#A000A0>位置在" + _rect.position + "宽高是" + _rect.size + "的树枝节点更新最大半径，更新后的最大半径是" + _maxRadius + "</color>");
             CallParentUpdateMaxRadius();
         }
     }
@@ -127,7 +126,7 @@ public class Quadtree<T>
 
     bool SetLeafToChildren(QuadtreeLeaf<T> leaf)
     {
-        Debug.Log("<color=#0040A0>位置在" + _rect.position + "宽高是" + _rect.size + "的树枝节点向子节点存入位置在" + leaf.position + "半径是" + leaf.radius + "的叶子</color>");
+        //Debug.log("<color=#0040A0>位置在" + _rect.position + "宽高是" + _rect.size + "的树枝节点向子节点存入位置在" + leaf.position + "半径是" + leaf.radius + "的叶子</color>");
         if (_upperRightChild._rect.PointToRectDistance(leaf.position) == 0)
             return _upperRightChild.SetLeaf(leaf);
         if (_lowerRightChild._rect.PointToRectDistance(leaf.position) == 0)
@@ -149,7 +148,7 @@ public class Quadtree<T>
     }
     void Split()    //对应叶子位置在子节点精度问题造成的夹缝中的极端情况是否需要增加边缘扩展值
     {
-        Debug.Log("<color=#808000>位置在" + _rect.position + "宽高是" + _rect.size + "的树梢节点达到分割条件，进行分割</color>");
+        //Debug.log("<color=#808000>位置在" + _rect.position + "宽高是" + _rect.size + "的树梢节点达到分割条件，进行分割</color>");
         float childWidth = _rect.width / 2;
         float childHeight = _rect.height / 2;
 
@@ -192,7 +191,7 @@ public class Quadtree<T>
     }
     void ResetLeaf(QuadtreeLeaf<T> leaf)
     {
-        Debug.Log("<color=#800080>位置在" + _rect.position + "宽高是" + _rect.size + "的树梢节点移除位置在" + leaf.position + "半径是" + leaf.radius + "的叶子，重新存入树</color>");
+        //Debug.log("<color=#800080>位置在" + _rect.position + "宽高是" + _rect.size + "的树梢节点移除位置在" + leaf.position + "半径是" + leaf.radius + "的叶子，重新存入树</color>");
         RemoveLeafSelf(leaf);
         _root.SetLeaf(leaf);
     }
@@ -237,10 +236,7 @@ public class Quadtree<T>
     }
 
 
-    /*
-     *  碰撞检测，加了一个传叶子检测碰撞的方法，这样碰撞器就可以自己检测碰撞了。
-     *  原理很简单，先检测碰撞，之后把叶子自己剔除出去就行了。
-     */
+    
     public T[] CheckCollision(Vector2 checkPoint, float checkRadius)
     {
         List<T> objs = new List<T>();
@@ -252,7 +248,7 @@ public class Quadtree<T>
         }
         else
         {
-            if (_upperRightChild._rect.PointToRectDistance(checkPoint, _maxRadius) <= checkRadius)      //PointToRectDistance的位置在 Quadtree 里
+            if (_upperRightChild._rect.PointToRectDistance(checkPoint, _maxRadius) <= checkRadius)
                 objs.AddRange(_upperRightChild.CheckCollision(checkPoint, checkRadius));
             if (_lowerRightChild._rect.PointToRectDistance(checkPoint, _maxRadius) <= checkRadius)
                 objs.AddRange(_lowerRightChild.CheckCollision(checkPoint, checkRadius));
@@ -282,7 +278,7 @@ public class Quadtree<T>
     {
         bool removeLeafBool = _leafs.Remove(leaf);
         UpdateMaxRadiusWhenRemoveLeaf();
-        Debug.Log("<color=#802030>位置在" + _rect.position + "宽高是" + _rect.size + "的树梢节点移除位置在" + leaf.position + "半径是" + leaf.radius + "的叶子，移除后的最大半径是" + _maxRadius + "</color>");
+        //Debug.log("<color=#802030>位置在" + _rect.position + "宽高是" + _rect.size + "的树梢节点移除位置在" + leaf.position + "半径是" + leaf.radius + "的叶子，移除后的最大半径是" + _maxRadius + "</color>");
         return removeLeafBool;
     }
     void UpdateMaxRadiusWhenRemoveLeaf()
@@ -291,7 +287,7 @@ public class Quadtree<T>
         if (_maxRadius != newMaxRadius)
         {
             _maxRadius = newMaxRadius;
-            Debug.Log("<color=#108010>位置在" + _rect.position + "宽高是" + _rect.size + "的树梢节点半径发生变化，新半径是" + _maxRadius + "</color>");
+            //Debug.log("<color=#108010>位置在" + _rect.position + "宽高是" + _rect.size + "的树梢节点半径发生变化，新半径是" + _maxRadius + "</color>");
             CallParentUpdateMaxRadius();
         }
     }
@@ -311,7 +307,7 @@ public class Quadtree<T>
 
     private bool CallChildrenRemoveLeaf(QuadtreeLeaf<T> leaf)
     {
-        Debug.Log("<color=#802030>位置在" + _rect.position + "宽高是" + _rect.size + "的树枝节点从子节点移除位置在" + leaf.position + "半径是" + leaf.radius + "的叶子</color>");
+        //Debug.log("<color=#802030>位置在" + _rect.position + "宽高是" + _rect.size + "的树枝节点从子节点移除位置在" + leaf.position + "半径是" + leaf.radius + "的叶子</color>");
         if (_upperRightChild._rect.PointToRectDistance(leaf.position) == 0)
             return _upperRightChild.RemoveLeaf(leaf);
         if (_lowerRightChild._rect.PointToRectDistance(leaf.position) == 0)
