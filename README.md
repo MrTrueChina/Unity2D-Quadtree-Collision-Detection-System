@@ -13,6 +13,7 @@ Assets/Step/2_QuadtreeWithUpdate：在1的基础上增加更新功能，从这�
 Assets/Step/3_QuadtreeWithEventDelegate：在2的基础上增加事件委托，实现类似Unity的 OnCollision 的效果，解释了什么是事件和委托，大概应该没准能让人理解什么是事件什么是委托。</br>
 </br>
 ProjectSettings：就是Unity的那个ProjectSettings文件夹，里面设置了代码执行顺序</br>
+</br>
 UnityPackageManager：说实话我不知道这个文件夹有什么用，但 Github for Unity 把他识别出来了，应该是有用的</br>
 </br>
 ## 注意：由于没有物理功能，四叉树的碰撞不会像Unity自带碰撞一样互相弹开，而是像触发器一样互相穿过
