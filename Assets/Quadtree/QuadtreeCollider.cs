@@ -92,6 +92,11 @@ public class QuadtreeCollider : MonoBehaviour
 }
 
 
+/*
+ *  Unity自带的Gizmos方法功能很少，要绘制出更多的Gizmo就要自写
+ *  
+ *  partical在 Quadtree 里写了
+ */
 public static partial class MyGizmos
 {
     public static void DrawCircle(Vector3 center, float radius, int edgeNumber = 360)
