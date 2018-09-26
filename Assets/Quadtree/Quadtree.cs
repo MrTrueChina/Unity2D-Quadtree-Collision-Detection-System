@@ -324,30 +324,52 @@ public class Quadtree<T>
 
 
 
+/*
+ *  Rect的扩展方法，给Rect增加了计算点到Rect的距离的方法。
+ *  
+ *  扩展方法：给现有的类增加方法的方法。
+ *      扩展方法的结构和普通方法几乎一样，只不过在参数里要增加一个 this 类型 变量名 ，这个参数是什么类型就是谁的扩展方法。
+ *      虽然扩展方法是静态方法但他要按照非静态方法的方式来使用：先创建对象，后调用方法，不能通过类名调用。
+ *      因为这个写了 this 的参数是直接把调用这个方法的对象拉过来做参数的，通过类名调用就少了一个参数没法运行了。
+ *      
+ *      写扩展方法需要注意以下几点：
+ *          扩展方法必须写在静态类里。
+ *          扩展方法必须是静态方法。
+ *          扩展方法不能通过类名调用，只能由类的对象调用。
+ *          因为不能通过类名调用，所以给静态类写扩展方法是没有用的。
+ *          
+ *  partial：加了这个的类可以分成好几部分写，可写在一个.cs里也可以写在好几个.cs里，最后在编译的时候编译器会把这个类的各个部分组合到一起编译成一个类。
+ *  正好可以用来写扩展类，因为扩展方法必须写在静态类里，所以经常要写一个静态的扩展类来装他，用partial就可以在需要的地方写需要的扩展方法，可读性瞬间提高。
+ */
 public static partial class RectExtension
 {
-    public static float PointToRectDistance(this Rect rect, Vector2 point, float extendedDistance = 0)
+    public static float PointToRectDistance(this Rect rect, Vector2 point, float extendedDistance = 0)      //参数里的 this Rect rect 代表了这是个扩展方法，调用这个方法的对象在方法里就是 rect
     {
         return Mathf.Max(0, GetDistance(GetXDistance(rect, point), GetYDistance(rect, point)) - extendedDistance);
+        /*
+         *  extendedDistance这个参数是说把这个rect向周围扩展出去那么长的距离，在第一步 QuadtreeWithRadius 里面写了这个设计的用处。
+         *  
+         *  真的扩展距离比较麻烦，这里直接在最后减掉扩展距离再限制大于0就解决了。
+         */
+    }
+    static float GetDistance(float xDistance, float yDistance)
+    {
+        return Mathf.Sqrt(xDistance * xDistance + yDistance * yDistance);   //简单的勾股定理求出距离
     }
     static float GetXDistance(Rect rect, Vector2 point)
     {
-        if (point.x > rect.xMax) return point.x - rect.xMax;
+        if (point.x > rect.xMax) return point.x - rect.xMax;    //如果点的x坐标比rect的x最大值还要大，说明x在右边（假设x轴正方向是右），点到rect的x轴距离是 x坐标 - rect的x最大值
 
-        if (point.x < rect.xMin) return rect.xMin - point.x;
+        if (point.x < rect.xMin) return rect.xMin - point.x;    //在左边则是rect的x最小值 - 点x坐标
 
-        return 0;
+        return 0;                                               //既不在左边也不在右边，说明点的x坐标在rect的x轴范围里，距离是0
     }
     static float GetYDistance(Rect rect, Vector2 point)
     {
-        if (point.y > rect.yMax) return point.y - rect.yMax;
+        if (point.y > rect.yMax) return point.y - rect.yMax;    //y轴同理
 
         if (point.y < rect.yMin) return rect.yMin - point.y;
 
         return 0;
-    }
-    static float GetDistance(float xDistance, float yDistance)
-    {
-        return Mathf.Sqrt(xDistance * xDistance + yDistance * yDistance);
     }
 }
