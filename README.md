@@ -16,19 +16,34 @@
     <td>Assets/Quadtree/Editor</td>
     <td>测试代码，用来在Unity的 Test Runnner 窗口做TDD（测试驱动开发），删掉不影响功能</td>
   </tr>
+  <tr>
+    <td>Assets/Step</td>
+    <td>从简单逐步复杂的代码，加了面向新人的大批量注释，如果是刚开始研究四叉树可以按照这个文件夹的顺序阅读</td>
+  </tr>
+  <tr>
+    <td>Assets/Step/0_QuadtreeBasic</td>
+    <td>最初版的四叉树，碰撞器不能移动也没有半径，就是一个个固定的点，主要用来理解碰撞检测的原理和四叉树基础的核心功能。此外还有大量的新人入门、名词解释等注释</td>
+  </tr>
+  <tr>
+    <td>Assets/Step/1_QuadtreeWithRadius</td>
+    <td>在0的基础上增加了碰撞器的半径，但碰撞器依然不能移动，半径也不能改变</td>
+  </tr>
+  <tr>
+    <td>Assets/Step/2_QuadtreeWithUpdate</td>
+    <td>在1的基础上增加更新功能，从这一步开始碰撞器可以移动也可以改变半径了</td>
+  </tr>
+  <tr>
+    <td>Assets/Step/3_QuadtreeWithEventDelegate</td>
+    <td>在2的基础上增加事件委托，实现类似Unity的 OnCollision 的效果，解释了什么是事件和委托，大概应该没准能让人理解什么是事件什么是委托</td>
+  </tr>
+  <tr>
+    <td>ProjectSettings</td>
+    <td>就是Unity的那个ProjectSettings文件夹，里面设置了代码执行顺序</td>
+  </tr>
+  <tr>
+    <td>UnityPackageManager</td>
+    <td>说实话我不知道这个文件夹有什么用，但 Github for Unity 把他识别出来了，应该是有用的</td>
+  </tr>
 </table>
-Assets/Quadtree：里面是实用版的四叉树碰撞检测</br>
-Assets/Quadtree/Editor：里面是测试代码，用来在Unity的 Test Runnner 窗口做TDD（测试驱动开发），删掉不影响功能</br>
-</br>
-Assets/Step：里面是从简单逐步复杂的代码，加了面向新人的大批量注释，如果是刚开始研究四叉树可以按照这个文件夹的顺序阅读</br>
-Assets/Step/0_QuadtreeBasic：最初版的四叉树，碰撞器不能移动也没有半径，就是一个个固定的点，主要用来理解碰撞检测的原理和四叉树基础的核心功能。此外还有大量的新人入门、名词解释等注释。</br>
-Assets/Step/1_QuadtreeWithRadius：在0的基础上增加了碰撞器的半径，但碰撞器依然不能移动，半径也不能改变。</br>
-Assets/Step/2_QuadtreeWithUpdate：在1的基础上增加更新功能，从这一步开始碰撞器可以移动也可以改变半径了。</br>
-Assets/Step/3_QuadtreeWithEventDelegate：在2的基础上增加事件委托，实现类似Unity的 OnCollision 的效果，解释了什么是事件和委托，大概应该没准能让人理解什么是事件什么是委托。</br>
-</br>
-ProjectSettings：就是Unity的那个ProjectSettings文件夹，里面设置了代码执行顺序</br>
-</br>
-UnityPackageManager：说实话我不知道这个文件夹有什么用，但 Github for Unity 把他识别出来了，应该是有用的</br>
-</br>
 ## 注意：由于没有物理功能，四叉树的碰撞不会像Unity自带碰撞一样互相弹开，而是像触发器一样互相穿过
 ## 注意：这个四叉树碰撞检测涉及多个互相关联的脚本，如果下载后发现功能不对，可能是咸鱼作者还没写到或者弃坑了(ﾉﾟ▽ﾟ)ﾉ
