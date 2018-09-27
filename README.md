@@ -11,8 +11,8 @@
 | Assets/Step/0_QuadtreeBasic | 最初版的四叉树，碰撞器不能移动也没有半径，就是一个个固定的点，主要用来理解碰撞检测的原理和四叉树基础的核心功能。此外还有大量的新人入门、名词解释等注释 |
 | Assets/Step/1_QuadtreeWithRadius | 在0的基础上增加了碰撞器的半径，但碰撞器依然不能移动，半径也不能改变 |
 | Assets/Step/2_QuadtreeWithUpdate | 在1的基础上增加更新功能，从这一步开始碰撞器可以移动也可以改变半径了 |
-| Assets/Step/3_QuadtreeWithEventDelegate | 在2的基础上增加事件委托，实现类似Unity的 OnCollision 的效果，解释了什么是事件和委托，大概应该没准能让人理解什么是事件什么是委托 |
-| ProjectSettings | 就是Unity的那个ProjectSettings文件夹，里面设置了代码执行顺序 |
+| Assets/Step/3_QuadtreeWithEventDelegate | 在2的基础上增加事件委托，实现类似Unity的 OnCollision 的效果，解释了什么是事件和委托，应该让新人理解什么是事件什么是委托 |
+| ProjectSettings | Unity的ProjectSettings文件夹，里面设置了代码执行顺序 |
 | UnityPackageManager | 说实话我不知道这个文件夹有什么用，但 Github for Unity 把他识别出来了，应该是有用的 |
 ## 注意：由于没有物理功能，四叉树的碰撞不会像Unity自带碰撞一样互相弹开，而是像触发器一样互相穿过
 ## 注意：这个四叉树碰撞检测涉及多个互相关联的脚本，如果下载后发现功能不对，可能是咸鱼作者还没写到或者弃坑了(ﾉﾟ▽ﾟ)ﾉ
