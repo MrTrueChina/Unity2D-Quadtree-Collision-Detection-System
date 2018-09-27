@@ -3,6 +3,20 @@
 四叉树碰撞检测是四叉树的常见应用之一，因为Unity的碰撞系统是基于物理计算的，成本相当高昂，如果制作弹幕类游戏很难保证高帧数（说的就是你，过气车万）。使用没有物理功能的四叉树进行碰撞检测可以解决这个问题。</br>
 </br>
 ### 文件夹内容：
+<table>
+  <tr>
+    <th>文件夹</th>
+    <th>内容</th>
+  </tr>
+  <tr>
+    <td>Assets/Quadtree</td>
+    <td>实用版四叉树碰撞检测脚本</td>
+  </tr>
+  <tr>
+    <td>Assets/Quadtree/Editor</td>
+    <td>测试代码，用来在Unity的 Test Runnner 窗口做TDD（测试驱动开发），删掉不影响功能</td>
+  </tr>
+</table>
 Assets/Quadtree：里面是实用版的四叉树碰撞检测</br>
 Assets/Quadtree/Editor：里面是测试代码，用来在Unity的 Test Runnner 窗口做TDD（测试驱动开发），删掉不影响功能</br>
 </br>
