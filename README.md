@@ -5,19 +5,8 @@
 ### 文件夹内容：
 | 文件夹 | 内容 |
 | ------------- |:-------------| 
-<table>
-  <tr>
-    <th>文件夹</th>
-    <th>内容</th>
-  </tr>
-  <tr>
-    <td>Assets/Quadtree</td>
-    <td>实用版四叉树碰撞检测脚本</td>
-  </tr>
-  <tr>
-    <td>Assets/Quadtree/Editor</td>
-    <td>测试代码，用来在Unity的 Test Runnner 窗口做TDD（测试驱动开发），删掉不影响功能</td>
-  </tr>
+| Assets/Quadtree | 实用版四叉树碰撞检测脚本 |
+| Assets/Quadtree/Editor | 测试代码，用来在Unity的 Test Runnner 窗口做TDD（测试驱动开发），删掉不影响功能 |
   <tr>
     <td>Assets/Step</td>
     <td>从简单逐步复杂的代码，加了面向新人的大批量注释，如果是刚开始研究四叉树可以按照这个文件夹的顺序阅读</td>
