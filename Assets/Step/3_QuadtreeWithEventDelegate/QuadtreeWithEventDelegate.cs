@@ -45,7 +45,7 @@ public class QuadtreeWithEventDelegate<T>
 {
     Rect _rect;
 
-    float _maxRadius = float.MinValue;
+    float _maxRadius = Mathf.NegativeInfinity;
 
     QuadtreeWithEventDelegate<T> _root;
     QuadtreeWithEventDelegate<T> _parent;
@@ -222,7 +222,7 @@ public class QuadtreeWithEventDelegate<T>
     }
     float GetLeafsMaxRadiusOnUpdate()
     {
-        float newMaxRadius = float.MinValue;
+        float newMaxRadius = Mathf.NegativeInfinity;
         foreach (QuadtreeWithEventDelegateLeaf<T> leaf in _leafs)
             if (leaf.radius > newMaxRadius)
                 newMaxRadius = leaf.radius;
@@ -297,7 +297,7 @@ public class QuadtreeWithEventDelegate<T>
     }
     float GetLeafsMaxRadiusOnRemoveLeaf()
     {
-        float newMaxRadius = float.MinValue;
+        float newMaxRadius = Mathf.NegativeInfinity;
 
         foreach (QuadtreeWithEventDelegateLeaf<T> leaf in _leafs)
             if (leaf.radius > newMaxRadius)
