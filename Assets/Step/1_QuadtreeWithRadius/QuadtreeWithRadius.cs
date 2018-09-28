@@ -67,7 +67,7 @@ public class QuadtreeWithRadius<T>
 {
     Rect _rect;
 
-    float _maxRadius = float.MinValue;
+    float _maxRadius = Mathf.NegativeInfinity;
     /*
      *  这个值代表着这个节点里半径最大的那个叶子的半径，节点里没有叶子时设为0或者任何负数都不影响正确性，设为 float 的最小值的原因如下：
      *  
@@ -103,7 +103,7 @@ public class QuadtreeWithRadius<T>
     public QuadtreeWithRadius(float x, float y, float width, float height, int maxLeafNumber, float minWidth, float minHeight, QuadtreeWithRadius<T> parent = null)
     {
         _rect = new Rect(x, y, width, height);
-
+        
         _maxLeafsNumber = maxLeafNumber;
         _minWidth = minWidth;
         _minHeight = minHeight;
@@ -272,7 +272,7 @@ public class QuadtreeWithRadius<T>
     }
     float GetLeafsMaxRadiusOnRemoveLeaf()
     {
-        float newMaxRadius = float.MinValue;        //默认值设置为float的最小值，原理在开头就说过，是为了在没有叶子的时候可以直接跳过节省计算量。
+        float newMaxRadius = Mathf.NegativeInfinity;        //默认值设置为float的最小值，原理在开头就说过，是为了在没有叶子的时候可以直接跳过节省计算量。
 
         foreach (QuadtreeWithRadiusLeaf<T> leaf in _leafs)
             if (leaf.radius > newMaxRadius)

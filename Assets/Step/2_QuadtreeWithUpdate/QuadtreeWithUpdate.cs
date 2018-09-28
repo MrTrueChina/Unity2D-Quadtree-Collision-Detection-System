@@ -68,7 +68,7 @@ public class QuadtreeWithUpdate<T>
 {
     Rect _rect;
 
-    float _maxRadius = float.MinValue;
+    float _maxRadius = Mathf.NegativeInfinity;
 
     QuadtreeWithUpdate<T> _root;
     /*
@@ -275,7 +275,7 @@ public class QuadtreeWithUpdate<T>
     }
     float GetLeafsMaxRadiusOnUpdate()
     {
-        float newMaxRadius = float.MinValue;
+        float newMaxRadius = Mathf.NegativeInfinity;
         foreach (QuadtreeWithUpdateLeaf<T> leaf in _leafs)
             if (leaf.radius > newMaxRadius)
                 newMaxRadius = leaf.radius;
@@ -351,7 +351,7 @@ public class QuadtreeWithUpdate<T>
     }
     float GetLeafsMaxRadiusOnRemoveLeaf()
     {
-        float newMaxRadius = float.MinValue;
+        float newMaxRadius = Mathf.NegativeInfinity;
 
         foreach (QuadtreeWithUpdateLeaf<T> leaf in _leafs)
             if (leaf.radius > newMaxRadius)
