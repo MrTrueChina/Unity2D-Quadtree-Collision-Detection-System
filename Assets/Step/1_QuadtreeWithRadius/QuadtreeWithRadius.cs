@@ -67,16 +67,16 @@ public class QuadtreeWithRadius<T>
 {
     Rect _rect;
 
-    float _maxRadius = float.MinValue;
+    float _maxRadius = Mathf.NegativeInfinity;
     /*
-     *  这个值代表着这个节点里半径最大的那个叶子的半径，节点里没有叶子时设为0或者任何负数都不影响正确性，设为 float 的最小值的原因如下：
+     *  这个值代表着这个节点里半径最大的那个叶子的半径，节点里没有叶子时设为0或者任何负数都不影响正确性，设为负无穷的原因如下：
      *  
      *  由于这个四叉树在第零步的基础上增加了叶子的半径，碰撞检测向下递归时判断子节点有没有可能有叶子发生碰撞就变得复杂了：
      *  一个节点里可以有好多种半径的叶子，每个叶子可能在任意位置，因此要判断一个子节点里有没有叶子可能发生碰撞的方法变成了 计算检测点到子节点区域的距离，如果这个距离小于测试半径和子节点最大半径的叶子的半径，则说明这个子节点里有可能有叶子会碰撞到。
      *  
      *  根据这个方法，如果一个子节点的最大半径是负数，则判断会发生有趣的现象：检测范围已经覆盖到了这个节点的范围，但因为节点半径是负数，判断上要减去这个值。
-     *  那么如果一个子节点的最大半径是float最小值，那么即使测试半径是float的最大值，这个节点也不会被判断为可能发生碰撞。
-     *  如果将没有叶子的节点的最大半径设为float最小值，则碰撞检测时这个节点判断为不会发生碰撞，就不会向下迭代这个节点，可以节省一点计算量。
+     *  那么如果一个子节点的最大半径是负无穷，那么即使测试半径再怎么大，这个节点也不会被判断为可能发生碰撞。（除非测试半径是正无穷，设为正无穷肯定不是正常流程，至少不是这个四叉树的正常流程）
+     *  如果将没有叶子的节点的最大半径设为负无穷，则碰撞检测时这个节点判断为不会发生碰撞，就不会向下迭代这个节点，可以节省一点计算量。
      */
 
     QuadtreeWithRadius<T> _parent;
@@ -103,7 +103,7 @@ public class QuadtreeWithRadius<T>
     public QuadtreeWithRadius(float x, float y, float width, float height, int maxLeafNumber, float minWidth, float minHeight, QuadtreeWithRadius<T> parent = null)
     {
         _rect = new Rect(x, y, width, height);
-
+        
         _maxLeafsNumber = maxLeafNumber;
         _minWidth = minWidth;
         _minHeight = minHeight;
@@ -272,7 +272,7 @@ public class QuadtreeWithRadius<T>
     }
     float GetLeafsMaxRadiusOnRemoveLeaf()
     {
-        float newMaxRadius = float.MinValue;        //默认值设置为float的最小值，原理在开头就说过，是为了在没有叶子的时候可以直接跳过节省计算量。
+        float newMaxRadius = Mathf.NegativeInfinity;        //默认值设置为负无穷，原理在开头就说过，是为了在没有叶子的时候可以直接跳过节省计算量。
 
         foreach (QuadtreeWithRadiusLeaf<T> leaf in _leafs)
             if (leaf.radius > newMaxRadius)
