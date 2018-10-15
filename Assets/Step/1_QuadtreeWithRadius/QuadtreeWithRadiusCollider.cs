@@ -38,6 +38,8 @@ public class QuadtreeWithRadiusCollider : MonoBehaviour
     
     private void OnDrawGizmos()
     {
+        if (!enabled) return;
+
         Gizmos.color = Color.green * 0.8f;
 
         MyGizmos.DrawCircle(transform.position, _radius * Mathf.Max(transform.localScale.x, transform.localScale.y), 60);

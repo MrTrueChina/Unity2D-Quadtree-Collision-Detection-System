@@ -61,9 +61,11 @@ public class QuadtreeWithUpdateCollider : MonoBehaviour
         QuadtreeWithUpdateObject.RemoveLeaf(_leaf);
     }
 
-    //有三目运算符可能需要解释
+    
     private void OnDrawGizmos()
     {
+        if (!enabled) return;
+
         Gizmos.color = Color.green * 0.8f;
 
         MyGizmos.DrawCircle(transform.position, _radius * Mathf.Max(transform.lossyScale.x, transform.lossyScale.y), 60);

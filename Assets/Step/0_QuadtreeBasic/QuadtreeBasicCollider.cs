@@ -50,8 +50,10 @@ public class QuadtreeBasicCollider : MonoBehaviour
          *  知道了对应关系和对应出错之后再看前面的问题：同一场景里有多种映射规则会怎么样？
          *  答案是：其实也不会怎么样。只要不怕乱尽管用。
          *  
-         *  咸鱼作者以前玩过一个游戏，地图是上下两部分，下面的部分是倒影，有意思的是上下两部分都只显示一部分物体，两边加起来才是真的地图，这种功能就可以上面的物体争着映射，下面的物体反着映射。
+         *  咸鱼作者以前玩过一个游戏，地图是上下两部分，下面的部分是倒影，有意思的是上下两部分都只显示一部分物体，两边加起来才是真的地图，这种功能就可以上面的物体正着映射，下面的物体反着映射。
          *  开发本来就是随意发挥成分很多的，只要自己控制得住就尽管放手去用。
+         *  
+         *  万一玩脱了不要找咸鱼作者撒气→_→
          */
     }
 
@@ -78,6 +80,8 @@ public class QuadtreeBasicCollider : MonoBehaviour
     //关于 OnDrawGizmos 请看 QuadtreeBaiscObject
     private void OnDrawGizmos()
     {
+        if (!enabled) return;                                   //在更新到正式第二版之后才发现OnDrawGizmos就算是停用了组件也会运行，于是加上这个组件停用直接返回
+
         Gizmos.color = Color.green;
 
         MyGizmos.DrawCircle(transform.position, 0.05f, 20);     //Mygizmos是一个自写的类，位置在 QuadtreeCollider 里，这个方法是画圆圈的

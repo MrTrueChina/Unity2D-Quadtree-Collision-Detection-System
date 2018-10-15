@@ -123,11 +123,16 @@ public class QuadtreeWithEventDelegateCollider : MonoBehaviour
 
         GameObject[] colliderGameObjects = QuadtreeWithEventDelegateObject.CheckCollision(_leaf);
         foreach (GameObject colliderGameObject in colliderGameObjects)
+        {
+            if (collisionEvent == null) break;
             collisionEvent(colliderGameObject);
-            /*
-             *  发出事件很简单：像方法一样用，名字(参数)
-             *  很明显能看出来这里的使用方式和前面定义委托类型的时候的参数和返回是相同的。
-             */
+        }
+        /*
+         *  发出事件很简单：像方法一样用，名字(参数)
+         *  很明显能看出来这里的使用方式和前面定义委托类型的时候的参数和返回是相同的。
+         *  
+         *  需要注意这里又进行了一次判断，原因是这里循环多次发出事件，但有时候有的组件接到事件后各种操作最后取消了订阅，如果正巧所有订阅都取消了，这里继续循环的时候就会出错，所以要每发出一次判断一次
+         */
     }
 
 
@@ -139,6 +144,8 @@ public class QuadtreeWithEventDelegateCollider : MonoBehaviour
     //有三目运算符可能需要解释
     private void OnDrawGizmos()
     {
+        if (!enabled) return;
+
         Gizmos.color = _checkCollision ? Color.yellow * 0.8f : Color.green * 0.8f;
 
         MyGizmos.DrawCircle(transform.position, _radius * Mathf.Max(transform.lossyScale.x, transform.lossyScale.y), 60);

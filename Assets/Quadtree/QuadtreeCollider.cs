@@ -73,8 +73,24 @@ public class QuadtreeCollider : MonoBehaviour
 
         GameObject[] colliderGameObjects = QuadtreeObject.CheckCollision(_leaf);
         foreach (GameObject colliderGameObject in colliderGameObjects)
+        {
+            if (collisionEvent == null) break;      //这里是一个很难发现的天坑，容我在下面讲解
             collisionEvent(colliderGameObject);
+        }
     }
+    /*
+     *  为什么要每发出一次碰撞事件都检测一次事件是不是还有订阅？
+     *  
+     *  因为发出事件后无法保证这个事件会不会被取消订阅。
+     *  
+     *  而且这还是个碰撞检测的事件，还是个有可能用在车万那种弹幕游戏的碰撞检测事件
+     *  
+     *  这种情况下一个中弹就可能导致物体销毁，然后如果订阅事件的那个脚本写的比较漂亮，加了取消订阅的功能
+     *  
+     *  中弹 -> 销毁物体 -> 所有组件在销毁前取消对碰撞器的订阅 -> 碰撞器傻傻的发出下一个事件 -> 已经没有订阅了 -> bug
+     *  
+     *  为了安全就在每次发事件之前都做检测，如果没订阅就跳出，反正继续循环下去也不会有什么用了
+     */
 
 
     private void OnDisable()
@@ -85,6 +101,8 @@ public class QuadtreeCollider : MonoBehaviour
     
     private void OnDrawGizmos()
     {
+        if (!enabled) return;
+
         Gizmos.color = _checkCollision ? Color.yellow * 0.8f : Color.green * 0.8f;
 
         MyGizmos.DrawCircle(transform.position, _radius * Mathf.Max(transform.lossyScale.x, transform.lossyScale.y), 60);
