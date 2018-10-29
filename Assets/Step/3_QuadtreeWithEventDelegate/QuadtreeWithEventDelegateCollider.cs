@@ -140,8 +140,9 @@ public class QuadtreeWithEventDelegateCollider : MonoBehaviour
     {
         QuadtreeWithEventDelegateObject.RemoveLeaf(_leaf);
     }
+    
 
-    //有三目运算符可能需要解释
+
     private void OnDrawGizmos()
     {
         if (!enabled) return;

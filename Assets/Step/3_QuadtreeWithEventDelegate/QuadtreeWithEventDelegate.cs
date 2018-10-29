@@ -150,6 +150,9 @@ public class QuadtreeWithEventDelegate<T>
     void Split()    //对应叶子位置在子节点精度问题造成的夹缝中的极端情况是否需要增加边缘扩展值
     {
         Debug.Log("<color=#808000>位置在" + _rect.position + "宽高是" + _rect.size + "的树梢节点达到分割条件，进行分割</color>");
+
+        Update();
+
         float childWidth = _rect.width / 2;
         float childHeight = _rect.height / 2;
 
