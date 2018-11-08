@@ -9,26 +9,24 @@ using UnityEngine;
 public class QuadtreeWithRadiusObject : MonoBehaviour
 {
     [SerializeField]
-    float _x = 0;
+    float _top = 0;
     [SerializeField]
-    float _y = 0;
+    float _right = 0;
     [SerializeField]
-    float _width = 50;
+    float _bottom = 50;
     [SerializeField]
-    float _height = 100;
+    float _left = 100;
     [SerializeField]
     int _maxLeafsNumber = 50;
     [SerializeField]
-    float _minWidth = 1;
-    [SerializeField]
-    float _minHeight = 1;
+    float _minSideLength;
 
     static QuadtreeWithRadius<GameObject> _quadtree;
 
 
     private void Awake()
     {
-        _quadtree = new QuadtreeWithRadius<GameObject>(_x, _y, _width, _height, _maxLeafsNumber, _minWidth, _minHeight);
+        _quadtree = new QuadtreeWithRadius<GameObject>(_top, _right, _bottom, _left, _maxLeafsNumber, _minSideLength);
     }
 
     
@@ -53,10 +51,10 @@ public class QuadtreeWithRadiusObject : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        Vector3 upperRight = new Vector3(_x + _width, _y + _height, transform.position.z);
-        Vector3 lowerRight = new Vector3(_x + _width, _y, transform.position.z);
-        Vector3 lowerLeft = new Vector3(_x, _y, transform.position.z);
-        Vector3 upperLeft = new Vector3(_x, _y + _height, transform.position.z);
+        Vector3 upperRight = new Vector3(_right, _top, transform.position.z);
+        Vector3 lowerRight = new Vector3(_right, _bottom, transform.position.z);
+        Vector3 lowerLeft = new Vector3(_left, _bottom, transform.position.z);
+        Vector3 upperLeft = new Vector3(_left, _top, transform.position.z);
 
         Gizmos.color = Color.red * 0.8f;
 
@@ -64,5 +62,19 @@ public class QuadtreeWithRadiusObject : MonoBehaviour
         Gizmos.DrawLine(lowerRight, lowerLeft);
         Gizmos.DrawLine(lowerLeft, upperLeft);
         Gizmos.DrawLine(upperLeft, upperRight);
+    }
+
+
+
+    private void OnValidate()
+    {
+        if (_top < _bottom)
+            _top = _bottom;
+        if (_right < _left)
+            _right = _left;
+        if (_maxLeafsNumber < 1)
+            _maxLeafsNumber = 1;
+        if (_minSideLength < 0.001f)
+            _minSideLength = 0.001f;
     }
 }

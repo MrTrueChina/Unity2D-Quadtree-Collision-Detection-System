@@ -74,4 +74,21 @@ public class QuadtreeBasicObject : MonoBehaviour
         Gizmos.DrawLine(lowerLeft, upperLeft);
         Gizmos.DrawLine(upperLeft, upperRight);
     }
+
+
+
+    /*
+     *  OnValidate：Unity自带方法之一，当 Inspector 面板的数值变化时调用，一般用来限制数据的调整，防止误操作导致的bug
+     */
+    private void OnValidate()
+    {
+        if (_top < _bottom)
+            _top = _bottom;
+        if (_right < _left)
+            _right = _left;
+        if (_maxLeafsNumber < 1)
+            _maxLeafsNumber = 1;
+        if (_minSideLength < 0.001f)
+            _minSideLength = 0.001f;
+    }
 }
