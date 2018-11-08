@@ -343,8 +343,8 @@ public class QuadtreeWithRadiusField
     //计算一个点到区域的距离，如果在区域里则返回0
     public float PointToFieldDistance(Vector2 point)
     {
-        float xDistance = Mathf.Max(0, point.x - _right, _left - point.x);      //这一步是这样的：如果点在左边，则左边坐标 - 点是正数，返回距离；如果在右边，则点 - 右边坐标是正数，返回距离；如果在中间，则两个计算都是负数，返回0
+        float xDistance = Mathf.Max(0, point.x - _right, _left - point.x);
         float yDistance = Mathf.Max(0, point.y - _top, _bottom - point.y);
-        return Mathf.Sqrt(xDistance * xDistance + yDistance * yDistance);       //三角函数，别说这个你不会
+        return Mathf.Sqrt(xDistance * xDistance + yDistance * yDistance);
     }
 }
