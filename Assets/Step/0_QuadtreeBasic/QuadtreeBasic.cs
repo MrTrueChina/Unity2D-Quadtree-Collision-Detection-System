@@ -84,9 +84,11 @@ public class QuadtreeBasicLeaf<T>
     }
 }
 
+
+
 public class QuadtreeBasic<T>
 {
-    Rect _rect;                             //Rect是Unity自带的类，用来表示矩形，用这个矩形代表这个节点的空间
+    QuadtreeBasicField _field;              //这个类在下面
     
     QuadtreeBasic<T> _upperRightChild;      //四个子节点
     QuadtreeBasic<T> _lowerRightChild;
@@ -96,25 +98,22 @@ public class QuadtreeBasic<T>
     List<QuadtreeBasicLeaf<T>> _leafs = new List<QuadtreeBasicLeaf<T>>();   //叶子List，用来存储这个节点里的叶子
 
     int _maxLeafsNumber;                    //这个节点里最多能容纳多少叶子，如果超过了这个值则要分割节点
-    float _minWidth;                        //可以分割到的最小宽度，如果节点的宽度已经小于这个值，那么不管有多少叶子都不能分割
-    float _minHeight;                       //最小高度，与最小宽度相同的作用
+    float _minSideLength;                   //可以分割到的最小边长，如果节点的宽或高已经小于这个值，那么不管有多少叶子都不能分割
     /*
-     *  最小宽高的设计是应对一种极端情况的：假设有大量的碰撞器他们的位置完全一样，那么无论怎么分割节点都不会把他们分隔开，分割将会无限循环下去
-     *  增加最小宽高之后就可以应对这种情况：就算是最极端情况也只会一口气分割到最小大小，不会无限分割下去
+     *  最小边长的设计是应对一种极端情况的：假设有大量的碰撞器他们的位置完全一样，那么无论怎么分割节点都不会把他们分隔开，分割将会无限循环下去
+     *  增加最小边长之后就可以应对这种情况：就算是最极端情况也只会一口气分割到最小大小，不会无限分割下去
      */
 
 
-    /*
-     *  参数默认值，就是在参数后面写 = 值，有默认值的参数必须在没有默认值的参数后面，因为在前面的话编译器无法分辨调用时是传给有默认值的参数还是传给没默认值的参数
-     */
-    public QuadtreeBasic(float x, float y, float width, float height, int maxLeafsNumber = 10, float minWidth = 1, float minHeight = 1)
+
+    public QuadtreeBasic(float top, float right, float bottom, float left, int maxLeafsNumber, float minSideLength)
     {
-        _rect = new Rect(x, y, width, height);          //Rect的一种构造方法，四个参数依次是：x坐标，y坐标，宽度，高度。x,y两个参数不是中心坐标，是在角上的
+        _field = new QuadtreeBasicField(top, right, bottom, left);
 
         _maxLeafsNumber = maxLeafsNumber;
-        _minWidth = minWidth;
-        _minHeight = minHeight;
+        _minSideLength = minSideLength;
     }
+
 
 
     /*
@@ -150,27 +149,26 @@ public class QuadtreeBasic<T>
     }
     void CheckAndDoSplit()
     {
-        if (_leafs.Count > _maxLeafsNumber && _rect.width > _minWidth && _rect.height > _minHeight)
+        if (_leafs.Count > _maxLeafsNumber && _field.width > _minSideLength && _field.height > _minSideLength)
             Split();
     }
 
     void SetLeafToChildren(QuadtreeBasicLeaf<T> leaf)
     {
         /*
-         *  计算存入的叶子的位置和子节点空间的距离，距离为0则说明在子节点范围里，向这个子节点里存入叶子
-         *  用 else if 的原因是计算距离的方法把处在矩形边缘的点距离算成0，处于两个子节点交界处的叶子在多个子节点的范围里，只用 if 会导致一个叶子存进多个节点里
-         *  
-         *  PointToRectDistance 是一个扩展方法，位置在 Quadtree 里，用处是计算一个点到矩形的距离，如果点在矩形内部则是0
+         *  如果叶子在子节点的范围里，向这个子节点里存入叶子
+         *  用 else if 的原因是 Field.Contains 把边缘处的点也算在范围里，这如果一个叶子在两个节点的交界处只用一个 if 就会重复存入
          */
-        if (_upperRightChild._rect.PointToRectDistance(leaf.position) == 0)
+        if (_upperRightChild._field.Contains(leaf.position))
             _upperRightChild.SetLeaf(leaf);
-        else if (_lowerRightChild._rect.PointToRectDistance(leaf.position) == 0)
+        else if (_lowerRightChild._field.Contains(leaf.position))
             _lowerRightChild.SetLeaf(leaf);
-        else if (_lowerLeftChild._rect.PointToRectDistance(leaf.position) == 0)
+        else if (_lowerLeftChild._field.Contains(leaf.position))
             _lowerLeftChild.SetLeaf(leaf);
-        else if (_upperLeftChild._rect.PointToRectDistance(leaf.position) == 0)
+        else if (_upperLeftChild._field.Contains(leaf.position))
             _upperLeftChild.SetLeaf(leaf);
     }
+
 
 
     /*
@@ -179,27 +177,24 @@ public class QuadtreeBasic<T>
      *  分割就是先把这个节点的范围分成四份，分别给四个子节点，之后把这个节点里的所有叶子按位置存进四个子节点里。
      *  分割完成后这个节点就从树梢变成了树枝，而四个子节点成为了新的树梢。
      */
-    void Split()    //对应叶子位置在子节点精度问题造成的夹缝中的极端情况是否需要增加边缘扩展值
+    void Split()
     {
-        //计算子节点的宽高，就是当前节点宽高的一半
-        float childWidth = _rect.width / 2;
-        float childHeight = _rect.height / 2;
-        
-        //同样计算出两个新的x,y
-        float rightX = _rect.x + childWidth;
-        float upperY = _rect.y + childHeight;
+        //计算出横竖的中心坐标
+        float xCenter = (_field.left + _field.right) / 2;
+        float yCenter = (_field.bottom + _field.top) / 2;
 
-        //用上面计算的宽高和坐标组合出四个子节点的区域来，并且把最大叶子数、最小宽高一起传给子节点
-        _upperRightChild = new QuadtreeBasic<T>(rightX, upperY, childWidth, childHeight, _maxLeafsNumber, _minWidth, _minHeight);
-        _lowerRightChild = new QuadtreeBasic<T>(rightX, _rect.y, childWidth, childHeight, _maxLeafsNumber, _minWidth, _minHeight);
-        _lowerLeftChild = new QuadtreeBasic<T>(_rect.x, _rect.y, childWidth, childHeight, _maxLeafsNumber, _minWidth, _minHeight);
-        _upperLeftChild = new QuadtreeBasic<T>(_rect.x, upperY, childWidth, childHeight, _maxLeafsNumber, _minWidth, _minHeight);
+        //用上面计算的中心坐标和原本的区域组合出四个子节点的区域来，并且把最大叶子数、最小宽高一起传给子节点
+        _upperRightChild = new QuadtreeBasic<T>(_field.top, _field.right, yCenter, xCenter, _maxLeafsNumber, _minSideLength);
+        _lowerRightChild = new QuadtreeBasic<T>(yCenter, _field.right, _field.bottom, xCenter, _maxLeafsNumber, _minSideLength);
+        _lowerLeftChild = new QuadtreeBasic<T>(yCenter, xCenter, _field.bottom, _field.left, _maxLeafsNumber, _minSideLength);
+        _upperLeftChild = new QuadtreeBasic<T>(_field.top, xCenter, yCenter, _field.left, _maxLeafsNumber, _minSideLength);
 
         //生成完子节点后把这个节点里的所有叶子分给子节点
         foreach (QuadtreeBasicLeaf<T> leaf in _leafs)   //假设你不会用 foreach ，请看 QuadtreeBasicDetector
             SetLeafToChildren(leaf);
         _leafs = null;                  //将叶子分给子节点后这个节点就不需要继续保留叶子了，把叶子List设为null，让C#的清理器来清理掉节省内存
     }
+
 
 
     /*
@@ -227,19 +222,20 @@ public class QuadtreeBasic<T>
         }
         else
         {
-            if (_upperRightChild._rect.PointToRectDistance(checkPosition) <= checkRadius)
+            if (_upperRightChild._field.PointToFieldDistance(checkPosition) <= checkRadius)
                 objs.AddRange(_upperRightChild.CheckCollision(checkPosition, checkRadius)); //这里用的不是 if else 而是连续存入，因为检测的范围是一个圆，基本不可能只在一个节点范围里，因此要把每个子节点都考虑到
-            if (_lowerRightChild._rect.PointToRectDistance(checkPosition) <= checkRadius)
+            if (_lowerRightChild._field.PointToFieldDistance(checkPosition) <= checkRadius)
                 objs.AddRange(_lowerRightChild.CheckCollision(checkPosition, checkRadius));
-            if (_lowerLeftChild._rect.PointToRectDistance(checkPosition) <= checkRadius)
+            if (_lowerLeftChild._field.PointToFieldDistance(checkPosition) <= checkRadius)
                 objs.AddRange(_lowerLeftChild.CheckCollision(checkPosition, checkRadius));
-            if (_upperLeftChild._rect.PointToRectDistance(checkPosition) <= checkRadius)
+            if (_upperLeftChild._field.PointToFieldDistance(checkPosition) <= checkRadius)
                 objs.AddRange(_upperLeftChild.CheckCollision(checkPosition, checkRadius));
         }
         return objs.ToArray();
     }
 
     
+
     /*
      *  移除叶子
      *  
@@ -253,14 +249,81 @@ public class QuadtreeBasic<T>
         }
         else
         {
-            if (_upperRightChild._rect.PointToRectDistance(leaf.position) == 0)
+            if (_upperRightChild._field.Contains(leaf.position))
                 _upperRightChild.RemoveLeaf(leaf);
-            if (_lowerRightChild._rect.PointToRectDistance(leaf.position) == 0)
+            if (_lowerRightChild._field.Contains(leaf.position))
                 _lowerRightChild.RemoveLeaf(leaf);
-            if (_lowerLeftChild._rect.PointToRectDistance(leaf.position) == 0)
+            if (_lowerLeftChild._field.Contains(leaf.position))
                 _lowerLeftChild.RemoveLeaf(leaf);
-            if (_upperLeftChild._rect.PointToRectDistance(leaf.position) == 0)
+            if (_upperLeftChild._field.Contains(leaf.position))
                 _upperLeftChild.RemoveLeaf(leaf);
         }
+    }
+}
+
+
+
+public class QuadtreeBasicField
+{
+    public float top
+    {
+        get { return _top; }
+    }
+    float _top;
+    public float right
+    {
+        get { return _right; }
+    }
+    float _right;
+    public float bottom
+    {
+        get { return _bottom; }
+    }
+    float _bottom;
+    public float left
+    {
+        get { return _left; }
+    }
+    float _left;
+    public float width
+    {
+        get { return _width; }
+    }
+    float _width;
+    public float height
+    {
+        get { return _height; }
+    }
+    float _height;
+
+
+
+    public QuadtreeBasicField(float top, float right, float bottom, float left)
+    {
+        _top = top;
+        _right = right;
+        _bottom = bottom;
+        _left = left;
+
+        _width = _right - _left;
+        _height = _top - _bottom;
+    }
+
+
+
+    //检测一个点是否在区域里
+    public bool Contains(Vector2 point)
+    {
+        return point.x >= _left && point.x <= _right && point.y >= _bottom && point.y <= _top;
+    }
+
+
+
+    //计算一个点到区域的距离，如果在区域里则返回0
+    public float PointToFieldDistance(Vector2 point)
+    {
+        float xDistance = Mathf.Max(0, point.x - _right, _left - point.x);      //这一步是这样的：如果点在左边，则左边坐标 - 点是正数，返回距离；如果在右边，则点 - 右边坐标是正数，返回距离；如果在中间，则两个计算都是负数，返回0
+        float yDistance = Mathf.Max(0, point.y - _top, _bottom - point.y);
+        return Mathf.Sqrt(xDistance * xDistance + yDistance * yDistance);       //三角函数，别说这个你不会
     }
 }

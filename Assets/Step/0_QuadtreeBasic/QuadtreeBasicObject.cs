@@ -3,32 +3,33 @@
  *  
  *  注意这个脚本的执行顺序必须在 QuadtreeBasicCollider 前面，设置方式是 Edit -> Project Settings -> Script Excution Order，点"+"选择要设置执行顺序的脚本，上下拖动，越靠上执行越早
  */
+
 using UnityEngine;
 
 public class QuadtreeBasicObject : MonoBehaviour
 {
     [SerializeField]                //加了这个的变量可以不写public就在 Inspector 面板展示，如果有变量需要在 Inspector 面板展示但又不需要public则应该用[SerializeField]
-    float _x = 0;
+    float _top = 0;
     [SerializeField]
-    float _y = 0;
+    float _right = 0;
     [SerializeField]
-    float _width = 50;
+    float _bottom = 50;
     [SerializeField]
-    float _height = 100;
+    float _left = 100;
     [SerializeField]
     int _maxLeafsNumber = 50;
     [SerializeField]
-    float _minWidth = 1;
-    [SerializeField]
-    float _minHeight = 1;
+    float _minSideLength;
 
     static QuadtreeBasic<GameObject> _quadtree;     //static方法必须要static变量，所以这里设为static
 
 
+
     private void Awake()
     {
-        _quadtree = new QuadtreeBasic<GameObject>(_x, _y, _width, _height, _maxLeafsNumber, _minWidth, _minHeight);
+        _quadtree = new QuadtreeBasic<GameObject>(_top, _right, _bottom, _left, _maxLeafsNumber, _minSideLength);
     }
+
 
 
     /*
@@ -50,6 +51,7 @@ public class QuadtreeBasicObject : MonoBehaviour
     }
 
 
+
     /*
      *  OnDrawGizmos：Unity自带方法之一，在绘制Gizmo的时候调用
      *  Gizmo是个很难解释的词汇，它直译叫“小工具”，Unity自带碰撞器的体积的线是Gizmo，移动、缩放。旋转物体的那几个工具同样是Gizmo，就是直译里说的“工具”
@@ -60,10 +62,10 @@ public class QuadtreeBasicObject : MonoBehaviour
      */
     private void OnDrawGizmos()
     {
-        Vector3 upperRight = new Vector3(_x + _width, _y + _height, transform.position.z);
-        Vector3 lowerRight = new Vector3(_x + _width, _y, transform.position.z);
-        Vector3 lowerLeft = new Vector3(_x, _y, transform.position.z);
-        Vector3 upperLeft = new Vector3(_x, _y + _height, transform.position.z);
+        Vector3 upperRight = new Vector3(_right, _top, transform.position.z);
+        Vector3 lowerRight = new Vector3(_right, _bottom, transform.position.z);
+        Vector3 lowerLeft = new Vector3(_left, _bottom, transform.position.z);
+        Vector3 upperLeft = new Vector3(_left, _top, transform.position.z);
 
         Gizmos.color = Color.red * 0.8f;            //Gizmos.color：绘制Gizmo的颜色
 

@@ -6,18 +6,17 @@ using UnityEngine;
 
 public class QuadtreeBasicCollider : MonoBehaviour
 {
-    Transform _transform;
     QuadtreeBasicLeaf<GameObject> _leaf;
+
 
 
     private void Awake()
     {
-        _transform = transform;
         _leaf = new QuadtreeBasicLeaf<GameObject>(gameObject, GetLeafPosition());
     }
     Vector2 GetLeafPosition()
     {
-        return new Vector2(_transform.position.x, _transform.position.y);
+        return new Vector2(transform.position.x, transform.position.y);
         /*
          *  阅读下面部分时请将碰撞器想成是固定的不能移动的。
          * 
@@ -80,10 +79,10 @@ public class QuadtreeBasicCollider : MonoBehaviour
     //关于 OnDrawGizmos 请看 QuadtreeBaiscObject
     private void OnDrawGizmos()
     {
-        if (!enabled) return;                                   //在更新到正式第二版之后才发现OnDrawGizmos就算是停用了组件也会运行，于是加上这个组件停用直接返回
+        if (!enabled) return;                               //在更新到正式第二版之后才发现OnDrawGizmos就算是停用了组件也会运行，于是加上这个组件停用直接返回
 
         Gizmos.color = Color.green;
 
-        MyGizmos.DrawCircle(transform.position, 0.05f, 20);     //Mygizmos是一个自写的类，位置在 QuadtreeCollider 里，这个方法是画圆圈的
+        MyGizmos.DrawCircle(transform.position, 10, 20);    //Mygizmos是一个自写的类，位置在 QuadtreeCollider 里，这个方法是画圆圈的
     }
 }
