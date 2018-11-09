@@ -9,10 +9,12 @@
 | Assets/Quadtree/Editor | 测试代码，用来在Unity的 Test Runnner 窗口做TDD（测试驱动开发），删掉不影响功能 |
 | Assets/Quadtree/Example | 实用版四叉树碰撞检测的演示场景和脚本 |
 | Assets/Step | 从简单逐步复杂的代码，加了面向新人的大批量注释，如果是刚开始研究四叉树可以按照这个文件夹的顺序阅读 |
-| Assets/Step/0_QuadtreeBasic | 最初版的四叉树，碰撞器不能移动也没有半径，就是一个个固定的点，主要用来理解碰撞检测的原理和四叉树基础的核心功能。此外还有大量的新人入门、名词解释等注释 |
-| Assets/Step/1_QuadtreeWithRadius | 在0的基础上增加了碰撞器的半径，但碰撞器依然不能移动，半径也不能改变 |
-| Assets/Step/2_QuadtreeWithUpdate | 在1的基础上增加更新功能，从这一步开始碰撞器可以移动也可以改变半径了 |
-| Assets/Step/3_QuadtreeWithEventDelegate | 在2的基础上增加事件委托，实现类似Unity的 OnCollision 的效果，解释了什么是事件和委托，可以帮助新人理解事件委托，但不保证看完就懂 |
-| ProjectSettings | Unity的ProjectSettings文件夹，里面设置了代码执行顺序（重要）和其他各种设置 |
+| Assets/Step/0_Basic | 最初版的四叉树，碰撞器不能移动也没有半径，就是一个个固定的点，主要用来理解碰撞检测的原理和四叉树基础的核心功能。此外还有大量的新人入门、名词解释等注释 |
+| Assets/Step/1_Radius | 在0的基础上增加了碰撞器的半径，但碰撞器依然不能移动，半径也不能改变 |
+| Assets/Step/2_Update | 在1的基础上增加更新功能，从这一步开始碰撞器可以移动也可以改变半径了 |
+| Assets/Step/3.0_Event | 在2的基础上增加事件委托，实现类似Unity的 OnCollision 的效果，解释了什么是事件和委托，可以帮助新人理解事件委托，但不保证看完就懂 |
+| Assets/Step/3.1_Action | 在3.0的基础上用 Action 代替了手写的委托，并介绍了 Action 和 Func |
+| Assets/Step/4_NestedClass | 在3.1的基础上把 Leaf 和 Field 改成了 Quadtree 的内部类 |
+| ProjectSettings | Unity的ProjectSettings文件夹，里面是各种设置 |
 | UnityPackageManager | 说实话我不知道这个文件夹有什么用，但 Github for Unity 把他识别出来了，应该是有用的 |
 ## 注意：由于没有物理功能，四叉树的碰撞不会像Unity自带碰撞一样互相弹开，而是像触发器一样互相穿过
