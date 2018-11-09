@@ -128,7 +128,7 @@ public class QuadtreeWithRadius<T>
         return _upperRightChild == null || _lowerRightChild == null || _lowerLeftChild == null || _upperLeftChild == null;      //四个子节点是一起创建的，原理上说一个不存在另外三个也不存在，但假设只有一个不存在插入的叶子又在这个位置就要出事了
     }
 
-    private bool SetLeafToSelf(QuadtreeWithRadiusLeaf<T> leaf)
+    bool SetLeafToSelf(QuadtreeWithRadiusLeaf<T> leaf)
     {
         _leafs.Add(leaf);
         UpdateMaxRadiusWhenSetLeaf(leaf);

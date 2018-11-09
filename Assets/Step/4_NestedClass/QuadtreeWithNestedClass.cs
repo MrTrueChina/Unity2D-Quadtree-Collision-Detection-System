@@ -149,7 +149,7 @@ public class QuadtreeWithNestedClass<T>
         return _upperRightChild == null || _lowerRightChild == null || _lowerLeftChild == null || _upperLeftChild == null;      //四个子节点是一起创建的，原理上说一个不存在另外三个也不存在，但假设只有一个不存在插入的叶子又在这个位置就要出事了
     }
 
-    private bool SetLeafToSelf(Leaf leaf)
+    bool SetLeafToSelf(Leaf leaf)
     {
         _leafs.Add(leaf);
         UpdateMaxRadiusWhenSetLeaf(leaf);
@@ -333,7 +333,7 @@ public class QuadtreeWithNestedClass<T>
     }
 
 
-    //移除，需要增加全树移除
+    //移除
     public bool RemoveLeaf(Leaf leaf)
     {
         if (DontHaveChildren())
@@ -341,7 +341,7 @@ public class QuadtreeWithNestedClass<T>
         else
             return CallChildrenRemoveLeaf(leaf);
     }
-    private bool RemoveLeafSelf(Leaf leaf)
+    bool RemoveLeafSelf(Leaf leaf)
     {
         if (_leafs.Remove(leaf))
         {
@@ -376,7 +376,7 @@ public class QuadtreeWithNestedClass<T>
         return newMaxRadius;
     }
 
-    private bool CallChildrenRemoveLeaf(Leaf leaf)
+    bool CallChildrenRemoveLeaf(Leaf leaf)
     {
         Debug.Log("<color=#802030>位置在" + _field.top + "," + _field.right + "," + _field.bottom + "," + _field.left + "的树枝节点从子节点移除位置在" + leaf.position + "半径是" + leaf.radius + "的叶子</color>");
         if (_upperRightChild._field.Contains(leaf.position))

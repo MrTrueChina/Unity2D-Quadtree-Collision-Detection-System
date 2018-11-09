@@ -85,7 +85,7 @@ public class QuadtreeWithEventDelegate<T>
         return _upperRightChild == null || _lowerRightChild == null || _lowerLeftChild == null || _upperLeftChild == null;      //四个子节点是一起创建的，原理上说一个不存在另外三个也不存在，但假设只有一个不存在插入的叶子又在这个位置就要出事了
     }
 
-    private bool SetLeafToSelf(QuadtreeWithEventDelegateLeaf<T> leaf)
+    bool SetLeafToSelf(QuadtreeWithEventDelegateLeaf<T> leaf)
     {
         _leafs.Add(leaf);
         UpdateMaxRadiusWhenSetLeaf(leaf);
@@ -277,7 +277,7 @@ public class QuadtreeWithEventDelegate<T>
         else
             return CallChildrenRemoveLeaf(leaf);
     }
-    private bool RemoveLeafSelf(QuadtreeWithEventDelegateLeaf<T> leaf)
+    bool RemoveLeafSelf(QuadtreeWithEventDelegateLeaf<T> leaf)
     {
         if (_leafs.Remove(leaf))
         {
@@ -312,7 +312,7 @@ public class QuadtreeWithEventDelegate<T>
         return newMaxRadius;
     }
 
-    private bool CallChildrenRemoveLeaf(QuadtreeWithEventDelegateLeaf<T> leaf)
+    bool CallChildrenRemoveLeaf(QuadtreeWithEventDelegateLeaf<T> leaf)
     {
         Debug.Log("<color=#802030>位置在" + _field.top + "," + _field.right + "," + _field.bottom + "," + _field.left + "的树枝节点从子节点移除位置在" + leaf.position + "半径是" + leaf.radius + "的叶子</color>");
         if (_upperRightChild._field.Contains(leaf.position))
