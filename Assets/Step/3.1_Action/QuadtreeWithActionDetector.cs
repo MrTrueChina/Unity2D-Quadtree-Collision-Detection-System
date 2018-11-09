@@ -1,17 +1,21 @@
-﻿using System.Collections.Generic;
+﻿/*
+ *  和上一步完全一样，区别在 Collider 里
+ */
+
+using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(QuadtreeWithEventDelegateCollider))]
-public class QuadtreeWithEventDelegateDetector : MonoBehaviour
+[RequireComponent(typeof(QuadtreeWithActionCollider))]
+public class QuadtreeWithActionDetector : MonoBehaviour
 {
-    QuadtreeWithEventDelegateCollider _quadTreeCollider;
+    QuadtreeWithActionCollider _quadTreeCollider;
 
     List<GameObject> _colliders = new List<GameObject>();
 
 
     private void Awake()
     {
-        _quadTreeCollider = GetComponent<QuadtreeWithEventDelegateCollider>();
+        _quadTreeCollider = GetComponent<QuadtreeWithActionCollider>();
     }
 
     private void OnEnable()
@@ -28,7 +32,7 @@ public class QuadtreeWithEventDelegateDetector : MonoBehaviour
          */
 
         /*
-         *  还有一种格式是 _quadTreeCollider.collisionEvent += new QuadtreeWithEventDelegateCollisionEventDelegate(OnQuadtreeCollision);
+         *  还有一种格式是 _quadTreeCollider.collisionEvent += new QuadtreeWithActionCollisionEventDelegate(OnQuadtreeCollision);
          *  这是 C#1.0 的格式，直接 +=方法 的是 C#2.0 的格式，官方说两者效果完全相同，这里就用了简单的2.0格式
          */
     }
@@ -38,8 +42,8 @@ public class QuadtreeWithEventDelegateDetector : MonoBehaviour
         _quadTreeCollider.collisionEvent -= OnQuadtreeCollision;
         /*
          *  取消订阅，就是 -=
-         *  如果不取消订阅的话好像就算是进行订阅的那个对象已经销毁了订阅也还会留在事件里，在无形中浪费掉内存和计算量。
-         *  有始有终本来就是代码的重要准则，你总不能因为某个bug只在退出游戏的时候出现就不去管它，那会损害你的程序员之魂的。
+         *  
+         *  【重要】 如果不取消订阅的话C#会将订阅了事件的对象当做还有引用不应该清除，也就是说即使销毁了物体内存也不会释放，从而导致内存泄漏
          */
     }
 
