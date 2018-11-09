@@ -53,7 +53,7 @@ public class QuadtreeBasicObject : MonoBehaviour
 
 
     /*
-     *  OnDrawGizmos：Unity自带方法之一，在绘制Gizmo的时候调用
+     *  OnDrawGizmos：Unity自带方法之一，在绘制Gizmo的时候调用，一般来说只要在Scene面板上做了操作就会绘制Gizmo
      *  Gizmo是个很难解释的词汇，它直译叫“小工具”，Unity自带碰撞器的体积的线是Gizmo，移动、缩放。旋转物体的那几个工具同样是Gizmo，就是直译里说的“工具”
      *  Gizmo在Unity里是一次次的“绘制”出来的，在绘制Unity自带Gizmo的同时也可以通过 OnDrawGizmo 自己设定需要绘制的Gizmo
      *  一般来说Gizmo只能在 Scene 面板里看到，在 Game 面板里看不到，因为这是为了方便开发才写的工具，在实际游戏过程里是没有用的

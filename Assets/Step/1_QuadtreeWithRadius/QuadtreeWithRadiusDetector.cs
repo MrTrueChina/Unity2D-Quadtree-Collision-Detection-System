@@ -5,18 +5,22 @@ public class QuadtreeWithRadiusDetector : MonoBehaviour
     [SerializeField]
     float _radius;
 
-    private void Update()
-    {
-        GameObject[] objs = QuadtreeWithRadiusObject.CheckCollision(transform.position, _radius);
-
-        foreach (GameObject obj in objs)
-            Debug.Log("检测到碰撞器 " + obj.name + " ，位置在 " + obj.transform.position);
-    }
-
     
     private void OnDrawGizmos()
     {
+        DrawRadius();
+        DrawCollision();
+    }
+
+    void DrawRadius()
+    {
         Gizmos.color = Color.yellow * 0.8f;
         MyGizmos.DrawCircle(transform.position, _radius, 60);
+    }
+
+    void DrawCollision()
+    {
+        foreach (GameObject collider in QuadtreeWithRadiusObject.CheckCollision(transform.position, _radius))
+            Gizmos.DrawLine(transform.position, collider.transform.position);
     }
 }

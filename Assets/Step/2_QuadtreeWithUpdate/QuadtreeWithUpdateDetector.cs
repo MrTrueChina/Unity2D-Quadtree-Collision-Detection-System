@@ -1,23 +1,28 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class QuadtreeWithUpdateDetector : MonoBehaviour
 {
     [SerializeField]
     float _radius;
 
-
-    private void Update()
-    {
-        GameObject[] objs = QuadtreeWithUpdateObject.CheckCollision(transform.position, _radius);
-
-        foreach (GameObject obj in objs)
-            Debug.Log("检测到碰撞器 " + obj.name + " ，位置在 " + obj.transform.position);
-    }
+    List<Transform> _colliders;
 
 
     private void OnDrawGizmos()
     {
+        DrawCheckRadius();
+        DrawCollision();
+    }
+    void DrawCheckRadius()
+    {
         Gizmos.color = Color.yellow * 0.8f;
         MyGizmos.DrawCircle(transform.position, _radius, 60);
+    }
+    void DrawCollision()
+    {
+        Gizmos.color = Color.yellow;
+        foreach (GameObject collider in QuadtreeWithUpdateObject.CheckCollision(transform.position, _radius))
+            Gizmos.DrawLine(transform.position, collider.transform.position);
     }
 }

@@ -12,12 +12,29 @@ public class QuadtreeBasicDetector : MonoBehaviour
     [SerializeField]        //关于[SerializeField]请看 QuadtreeBasicObject
     float _radius;
 
-    private void Update()
+
+
+    //关于 OnDrawGizmo 请看 QuadtreeBasicObject
+    private void OnDrawGizmos()
     {
-        GameObject[] objs = QuadtreeBasicObject.CheckCollision(transform.position, _radius);
-        
-        foreach (GameObject obj in objs)
-            Debug.Log("检测到碰撞器 " + obj.name + " ，位置在 " + obj.transform.position);
+        DrawRadius();
+        DrawCollision();
+    }
+
+    void DrawRadius()
+    {
+        Gizmos.color = Color.yellow * 0.8f;
+        MyGizmos.DrawCircle(transform.position, _radius, 60);   //Mygizmos是一个自写的类，位置在 QuadtreeCollider 里，这个方法是画圆圈的
+    }
+
+    void DrawCollision()
+    {
+        Gizmos.color = Color.yellow;
+
+        GameObject[] colliders = QuadtreeBasicObject.CheckCollision(transform.position, _radius);
+
+        foreach (GameObject collider in colliders)
+            Gizmos.DrawLine(transform.position, collider.transform.position);       //Gizmos.DrawLine：绘制一条线，参数是两个Vector3，就是线的两端
         /*
          *  假设你不会用foreach，它的格式是：
          *  foreach(类型 变量名A in 同类型的数组或List或其他集合类的变量B)
@@ -27,13 +44,5 @@ public class QuadtreeBasicDetector : MonoBehaviour
          *      假设你连“遍历”这个词都不知道，遍历的意思是从头到尾把每个元素都过一遍
          *  }
          */
-    }
-
-
-    //关于 OnDrawGizmo 请看 QuadtreeBasicObject
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.yellow * 0.8f;
-        MyGizmos.DrawCircle(transform.position, _radius, 60);   //Mygizmos是一个自写的类，位置在 QuadtreeCollider 里，这个方法是画圆圈的
     }
 }
