@@ -1,15 +1,68 @@
-﻿/*
- *  内部类，把一个类写在另一个类里面就是内部类
- *  
- *  访问内部类必须先通过外部类，如果内部类是隐藏的则只有外部类自己可以访问到
- *  
- *  这么写意义不是很大，主要是想少在命名空间里加几个名
- */
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class QuadtreeWithNestedClass<T>
+public class QuadtreeWithSingleton : MonoBehaviour
+{
+    static QuadtreeWithSingleton quadtreeObject
+    {
+        get
+        {
+            if (_quadtreeObject != null)
+                return _quadtreeObject;
+            
+            _quadtreeObject = new GameObject("Quadtree").AddComponent<QuadtreeWithSingleton>();
+            QuadtreeWithSingletonSetting setting = Resources.Load("QuadtreeWithSingletonSetting") as QuadtreeWithSingletonSetting;
+
+            //在这，如果有节点在四叉树范围外存入，创建四叉树会导致死循环
+            _quadtreeObject._quadtree = new QuadtreeWithSingletonData<GameObject>(setting.top, setting.right, setting.bottom, setting.left, setting.maxLeafsNumber, setting.minSideLength);
+            return _quadtreeObject;
+        }
+    }
+    static QuadtreeWithSingleton _quadtreeObject;
+
+    QuadtreeWithSingletonData<GameObject> _quadtree;
+
+    
+
+    public static bool SetLeaf(QuadtreeWithSingletonData<GameObject>.Leaf leaf)
+    {
+        return quadtreeObject._quadtree.SetLeaf(leaf);
+    }
+
+
+    /*
+     *  每帧更新一次四叉树
+     */
+    private void Update()
+    {
+        _quadtree.Update();
+    }
+
+
+    public static GameObject[] CheckCollision(Vector2 checkPoint, float checkRadius)
+    {
+        if (_quadtreeObject != null)
+            return quadtreeObject._quadtree.CheckCollision(checkPoint, checkRadius);
+        return new GameObject[0];
+    }
+    public static GameObject[] CheckCollision(QuadtreeWithSingletonData<GameObject>.Leaf leaf)
+    {
+        if (_quadtreeObject != null)
+            return quadtreeObject._quadtree.CheckCollision(leaf);
+        return new GameObject[0];
+    }
+
+
+    public static bool RemoveLeaf(QuadtreeWithSingletonData<GameObject>.Leaf leaf)
+    {
+        if (_quadtreeObject != null)
+            return _quadtreeObject._quadtree.RemoveLeaf(leaf);
+        return false;
+    }
+}
+
+
+public class QuadtreeWithSingletonData<T>
 {
     public class Leaf
     {
@@ -38,7 +91,7 @@ public class QuadtreeWithNestedClass<T>
         {
             _obj = obj;
             _position = position;
-            _radius = radius;            
+            _radius = radius;
         }
     }
     class Field
@@ -84,7 +137,7 @@ public class QuadtreeWithNestedClass<T>
             _left = left;
 
             _width = _right - _left;
-            _height = _top - _bottom;            
+            _height = _top - _bottom;
         }
 
 
@@ -111,12 +164,12 @@ public class QuadtreeWithNestedClass<T>
 
     float _maxRadius = Mathf.NegativeInfinity;
 
-    QuadtreeWithNestedClass<T> _root;
-    QuadtreeWithNestedClass<T> _parent;
-    QuadtreeWithNestedClass<T> _upperRightChild;
-    QuadtreeWithNestedClass<T> _lowerRightChild;
-    QuadtreeWithNestedClass<T> _lowerLeftChild;
-    QuadtreeWithNestedClass<T> _upperLeftChild;
+    QuadtreeWithSingletonData<T> _root;
+    QuadtreeWithSingletonData<T> _parent;
+    QuadtreeWithSingletonData<T> _upperRightChild;
+    QuadtreeWithSingletonData<T> _lowerRightChild;
+    QuadtreeWithSingletonData<T> _lowerLeftChild;
+    QuadtreeWithSingletonData<T> _upperLeftChild;
 
     List<Leaf> _leafs = new List<Leaf>();
 
@@ -124,7 +177,7 @@ public class QuadtreeWithNestedClass<T>
     float _minSideLength;
 
 
-    public QuadtreeWithNestedClass(float top, float right, float bottom, float left, int maxLeafNumber, float minSideLength, QuadtreeWithNestedClass<T> root = null, QuadtreeWithNestedClass<T> parent = null)
+    public QuadtreeWithSingletonData(float top, float right, float bottom, float left, int maxLeafNumber, float minSideLength, QuadtreeWithSingletonData<T> root = null, QuadtreeWithSingletonData<T> parent = null)
     {
         _field = new Field(top, right, bottom, left);
 
@@ -137,6 +190,8 @@ public class QuadtreeWithNestedClass<T>
     }
 
 
+
+    //存入
     public bool SetLeaf(Leaf leaf)
     {
         if (DontHaveChildren())
@@ -151,6 +206,12 @@ public class QuadtreeWithNestedClass<T>
 
     bool SetLeafToSelf(Leaf leaf)
     {
+        if (this == _root && !_field.Contains(leaf.position))
+        {
+            Debug.LogError("存入叶子失败，叶子不在四叉树范围内");
+            return false;
+        }
+
         _leafs.Add(leaf);
         UpdateMaxRadiusWhenSetLeaf(leaf);
         Debug.Log("<color=#0040A0>位置在" + _field.top + "," + _field.right + "," + _field.bottom + "," + _field.left + "的树梢节点存入位置在" + leaf.position + "半径是" + leaf.radius + "的叶子，存入后的最大半径是" + _maxRadius + "</color>");
@@ -218,10 +279,10 @@ public class QuadtreeWithNestedClass<T>
         float xCenter = (_field.left + _field.right) / 2;
         float yCenter = (_field.bottom + _field.top) / 2;
 
-        _upperRightChild = new QuadtreeWithNestedClass<T>(_field.top, _field.right, yCenter, xCenter, _maxLeafsNumber, _minSideLength, _root, this);
-        _lowerRightChild = new QuadtreeWithNestedClass<T>(yCenter, _field.right, _field.bottom, xCenter, _maxLeafsNumber, _minSideLength, _root, this);
-        _lowerLeftChild = new QuadtreeWithNestedClass<T>(yCenter, xCenter, _field.bottom, _field.left, _maxLeafsNumber, _minSideLength, _root, this);
-        _upperLeftChild = new QuadtreeWithNestedClass<T>(_field.top, xCenter, yCenter, _field.left, _maxLeafsNumber, _minSideLength, _root, this);
+        _upperRightChild = new QuadtreeWithSingletonData<T>(_field.top, _field.right, yCenter, xCenter, _maxLeafsNumber, _minSideLength, _root, this);
+        _lowerRightChild = new QuadtreeWithSingletonData<T>(yCenter, _field.right, _field.bottom, xCenter, _maxLeafsNumber, _minSideLength, _root, this);
+        _lowerLeftChild = new QuadtreeWithSingletonData<T>(yCenter, xCenter, _field.bottom, _field.left, _maxLeafsNumber, _minSideLength, _root, this);
+        _upperLeftChild = new QuadtreeWithSingletonData<T>(_field.top, xCenter, yCenter, _field.left, _maxLeafsNumber, _minSideLength, _root, this);
 
         foreach (Leaf leaf in _leafs)
             SetLeafToChildren(leaf);
@@ -229,6 +290,8 @@ public class QuadtreeWithNestedClass<T>
     }
 
 
+
+    //更新
     public void Update()
     {
         UpdatePosition();
@@ -299,10 +362,8 @@ public class QuadtreeWithNestedClass<T>
     }
 
 
-    /*
-     *  碰撞检测，加了一个传叶子检测碰撞的方法，这样碰撞器就可以自己检测碰撞了。
-     *  原理很简单，先检测碰撞，之后把叶子自己剔除出去就行了。
-     */
+
+    //检测
     public T[] CheckCollision(Vector2 checkPoint, float checkRadius)
     {
         List<T> objs = new List<T>();
@@ -331,6 +392,7 @@ public class QuadtreeWithNestedClass<T>
         objs.Remove(leaf.obj);
         return objs.ToArray();
     }
+
 
 
     //移除
