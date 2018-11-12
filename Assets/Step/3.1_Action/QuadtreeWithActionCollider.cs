@@ -11,10 +11,11 @@
  *  使用Action可以省略手写委托类型的步骤
  *  
  *  
- *  和 Action 相对的是 Func，Func同样是泛型委托，但他的第一个泛型参数是返回值，就像这样：
+ *  和 Action 相对的是 Func，Func同样是泛型委托，但他的最后一个泛型参数是返回值，就像这样：
  *  
  *  Func<string>        =   delegate string 委托名()
  *  Func<string,string> =   delegate string 委托名(string)
+ *  Func<string,int>    =   delegate int 委托名(string)
  */
 
 using System;
