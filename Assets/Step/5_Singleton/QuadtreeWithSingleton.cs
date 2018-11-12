@@ -1,4 +1,12 @@
-﻿using System.Collections.Generic;
+﻿/*
+ *  这一步使用方式有很大的变化，不是先设置执行顺序后在场景里创建四叉树物体！
+ *  
+ *  新的使用方式：在 Tool -> QuadtreeWithSingletonSettingWindow 里设置四叉树的属性。之后就可以随便用了！
+ *  
+ *  第五步：使用单例自动创建四叉树物体，再也不用手动创建四叉树物体，也不需要手动设置脚本执行顺序
+ */
+
+using System.Collections.Generic;
 using UnityEngine;
 
 public class QuadtreeWithSingleton : MonoBehaviour
@@ -12,8 +20,6 @@ public class QuadtreeWithSingleton : MonoBehaviour
             
             _quadtreeObject = new GameObject("Quadtree").AddComponent<QuadtreeWithSingleton>();
             QuadtreeWithSingletonSetting setting = Resources.Load("QuadtreeWithSingletonSetting") as QuadtreeWithSingletonSetting;
-
-            //在这，如果有节点在四叉树范围外存入，创建四叉树会导致死循环
             _quadtreeObject._quadtree = new QuadtreeWithSingletonData<GameObject>(setting.top, setting.right, setting.bottom, setting.left, setting.maxLeafsNumber, setting.minSideLength);
             return _quadtreeObject;
         }
@@ -30,15 +36,16 @@ public class QuadtreeWithSingleton : MonoBehaviour
     }
 
 
-    /*
-     *  每帧更新一次四叉树
-     */
+
+    //更新
     private void Update()
     {
         _quadtree.Update();
     }
 
 
+
+    //检测
     public static GameObject[] CheckCollision(Vector2 checkPoint, float checkRadius)
     {
         if (_quadtreeObject != null)
@@ -53,6 +60,8 @@ public class QuadtreeWithSingleton : MonoBehaviour
     }
 
 
+
+    //移除
     public static bool RemoveLeaf(QuadtreeWithSingletonData<GameObject>.Leaf leaf)
     {
         if (_quadtreeObject != null)

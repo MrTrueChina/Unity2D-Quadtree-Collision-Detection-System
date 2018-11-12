@@ -87,6 +87,12 @@ public class QuadtreeWithEventDelegate<T>
 
     bool SetLeafToSelf(QuadtreeWithEventDelegateLeaf<T> leaf)
     {
+        if (this == _root && !_field.Contains(leaf.position))
+        {
+            Debug.LogError("存入叶子失败，叶子不在四叉树范围内");
+            return false;
+        }
+
         _leafs.Add(leaf);
         UpdateMaxRadiusWhenSetLeaf(leaf);
         Debug.Log("<color=#0040A0>位置在" + _field.top + "," + _field.right + "," + _field.bottom + "," + _field.left + "的树梢节点存入位置在" + leaf.position + "半径是" + leaf.radius + "的叶子，存入后的最大半径是" + _maxRadius + "</color>");
