@@ -15,6 +15,7 @@
 | Assets/Step/3.0_Event | 在2的基础上增加事件委托，实现类似Unity的 OnCollision 的效果，解释了什么是事件和委托，可以帮助新人理解事件委托，但不保证看完就懂 |
 | Assets/Step/3.1_Action | 在3.0的基础上用 Action 代替了手写的委托，并介绍了 Action 和 Func |
 | Assets/Step/4_NestedClass | 在3.1的基础上把 Leaf 和 Field 改成了 Quadtree 的内部类 |
+| Asstes/Step/5_Singleton | 在4的基础上把Quadtree和QuadtreeObject合为一个脚本文件，用单例模式自动创建四叉树物体，用ScriptableObject和EditorWindow进行设置 |
 | ProjectSettings | Unity的ProjectSettings文件夹，里面是各种设置 |
 | UnityPackageManager | 说实话我不知道这个文件夹有什么用，但 Github for Unity 把他识别出来了，应该是有用的 |
 ## 注意：由于没有物理功能，四叉树的碰撞不会像Unity自带碰撞一样互相弹开，而是像触发器一样互相穿过
