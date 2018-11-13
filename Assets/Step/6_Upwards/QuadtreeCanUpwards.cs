@@ -9,6 +9,7 @@
  */
 
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class QuadtreeCanUpwards : MonoBehaviour
@@ -395,7 +396,7 @@ public class QuadtreeCanUpwardsData<T>
                 //自己
                 newRoot._upperRightChild = this;
                 //在正下方
-                newRoot._lowerRightChild = new QuadtreeCanUpwardsData<T>(_field.bottom, _field.right, _field.left, newBottom, _maxLeafsNumber, _minSideLength, newRoot, newRoot);
+                newRoot._lowerRightChild = new QuadtreeCanUpwardsData<T>(_field.bottom, _field.right, newBottom, _field.left, _maxLeafsNumber, _minSideLength, newRoot, newRoot);
                 //在左下方
                 newRoot._lowerLeftChild = new QuadtreeCanUpwardsData<T>(_field.bottom, _field.left, newBottom, newLeft, _maxLeafsNumber, _minSideLength, newRoot, newRoot);
                 //在正左方
@@ -432,6 +433,7 @@ public class QuadtreeCanUpwardsData<T>
     {
         UpdatePosition();
         UpdateMaxRadius();
+        DrawField();
     }
     void UpdatePosition()
     {
@@ -617,6 +619,33 @@ public class QuadtreeCanUpwardsData<T>
             if (_upperLeftChild.RemoveLeafInTotalTree(leaf))
                 return true;
             return false;
+        }
+    }
+
+
+
+
+    //Debug
+    void DrawField()
+    {
+        if (DontHaveChildren())
+        {
+            Vector3 upperRight = new Vector3(_field.right, _field.top, 0);
+            Vector3 lowerRight = new Vector3(_field.right, _field.bottom, 0);
+            Vector3 lowerLeft = new Vector3(_field.left, _field.bottom, 0);
+            Vector3 upperLeft = new Vector3(_field.left, _field.top, 0);
+
+            Debug.DrawLine(upperRight, lowerRight, Color.blue * 0.8f, 0.01f);
+            Debug.DrawLine(lowerRight, lowerLeft, Color.blue * 0.8f, 0.01f);
+            Debug.DrawLine(lowerLeft, upperLeft, Color.blue * 0.8f, 0.01f);
+            Debug.DrawLine(upperLeft, upperRight, Color.blue * 0.8f, 0.01f);
+        }
+        else
+        {
+            _upperRightChild.DrawField();
+            _lowerRightChild.DrawField();
+            _lowerLeftChild.DrawField();
+            _upperLeftChild.DrawField();
         }
     }
 }
