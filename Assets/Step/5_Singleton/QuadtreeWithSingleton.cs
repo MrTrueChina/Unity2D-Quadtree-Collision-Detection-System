@@ -19,8 +19,6 @@ public class QuadtreeWithSingleton : MonoBehaviour
                 return _quadtreeObject;
             
             _quadtreeObject = new GameObject("Quadtree").AddComponent<QuadtreeWithSingleton>();
-            QuadtreeWithSingletonSetting setting = Resources.Load("QuadtreeWithSingletonSetting") as QuadtreeWithSingletonSetting;
-            _quadtreeObject._quadtree = new QuadtreeWithSingletonData<GameObject>(setting.top, setting.right, setting.bottom, setting.left, setting.maxLeafsNumber, setting.minSideLength);
             return _quadtreeObject;
         }
     }
@@ -28,8 +26,18 @@ public class QuadtreeWithSingleton : MonoBehaviour
 
     QuadtreeWithSingletonData<GameObject> _quadtree;
 
-    
 
+
+    //初始化，在作为组件被挂载时读取设置创建四叉树
+    private void Awake()
+    {
+        QuadtreeWithSingletonSetting setting = Resources.Load("QuadtreeWithSingletonSetting") as QuadtreeWithSingletonSetting;
+        _quadtree = new QuadtreeWithSingletonData<GameObject>(setting.top, setting.right, setting.bottom, setting.left, setting.maxLeafsNumber, setting.minSideLength);
+    }
+
+
+
+    //存入
     public static bool SetLeaf(QuadtreeWithSingletonData<GameObject>.Leaf leaf)
     {
         return quadtreeObject._quadtree.SetLeaf(leaf);
