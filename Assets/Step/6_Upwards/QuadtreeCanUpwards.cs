@@ -337,7 +337,7 @@ public class QuadtreeCanUpwardsData<T>
 
                 newRoot.UpdateRoot(newRoot);
 
-                Debug.Log("位置在" + leafPosition + "的叶子存入树，树向右上方生长，生长后的树的范围是 " + newRoot._field.top + "  " + newRoot._field.right + " " + newRoot._field.bottom + "  " + newRoot._field.left);
+                Debug.Log("<color=#008510>位置在" + leafPosition + "的叶子存入树，树向右上方生长，生长后的树的范围是 " + newRoot._field.top + "  " + newRoot._field.right + " " + newRoot._field.bottom + "  " + newRoot._field.left + "</color>");
             }
             else
             {
@@ -359,7 +359,7 @@ public class QuadtreeCanUpwardsData<T>
 
                 newRoot.UpdateRoot(newRoot);
 
-                Debug.Log("位置在" + leafPosition + "的叶子存入树，树向右下方生长，生长后的树的范围是 " + newRoot._field.top + "  " + newRoot._field.right + " " + newRoot._field.bottom + "  " + newRoot._field.left);
+                Debug.Log("<color=#008510>位置在" + leafPosition + "的叶子存入树，树向右下方生长，生长后的树的范围是 " + newRoot._field.top + "  " + newRoot._field.right + " " + newRoot._field.bottom + "  " + newRoot._field.left + "</color>");
             }
         }
         else
@@ -384,7 +384,7 @@ public class QuadtreeCanUpwardsData<T>
 
                 newRoot.UpdateRoot(newRoot);
 
-                Debug.Log("位置在" + leafPosition + "的叶子存入树，树向左上方生长，生长后的树的范围是 " + newRoot._field.top + "  " + newRoot._field.right + " " + newRoot._field.bottom + "  " + newRoot._field.left);
+                Debug.Log("<color=#008510>位置在" + leafPosition + "的叶子存入树，树向左上方生长，生长后的树的范围是 " + newRoot._field.top + "  " + newRoot._field.right + " " + newRoot._field.bottom + "  " + newRoot._field.left + "</color>");
             }
             else
             {
@@ -406,7 +406,7 @@ public class QuadtreeCanUpwardsData<T>
 
                 newRoot.UpdateRoot(newRoot);
 
-                Debug.Log("位置在" + leafPosition + "的叶子存入树，树向左下方生长，生长后的树的范围是 " + newRoot._field.top + "  " + newRoot._field.right + " " + newRoot._field.bottom + "  " + newRoot._field.left);
+                Debug.Log("<color=#008510>位置在" + leafPosition + "的叶子存入树，树向左下方生长，生长后的树的范围是 " + newRoot._field.top + "  " + newRoot._field.right + " " + newRoot._field.bottom + "  " + newRoot._field.left + "</color>");
             }
         }
     }
