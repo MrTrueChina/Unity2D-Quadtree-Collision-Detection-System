@@ -112,6 +112,8 @@ public class QuadtreeBasic<T>
 
         _maxLeafsNumber = maxLeafsNumber;
         _minSideLength = minSideLength;
+
+        DrawField();                        //在 Scene 面板绘制四叉树范围，删掉不影响功能
     }
 
 
@@ -259,6 +261,26 @@ public class QuadtreeBasic<T>
                 _upperLeftChild.RemoveLeaf(leaf);
         }
     }
+
+
+
+
+    //从这开始是Debug代码，删掉不影响功能
+    //绘制四叉树节点的范围
+    void DrawField()
+    {
+        Vector3 upperRight = new Vector3(_field.right, _field.top, 0);
+        Vector3 lowerRight = new Vector3(_field.right, _field.bottom, 0);
+        Vector3 lowerLeft = new Vector3(_field.left, _field.bottom, 0);
+        Vector3 upperLeft = new Vector3(_field.left, _field.top, 0);
+
+        Debug.DrawLine(upperRight, lowerRight, Color.blue * 0.8f, Mathf.Infinity);      //Mathf.Infinity：正无穷，显示时间设置为正无穷就会一直显示
+        Debug.DrawLine(lowerRight, lowerLeft, Color.blue * 0.8f, Mathf.Infinity);       //Color：颜色类，Color.blue：自带的蓝色
+        Debug.DrawLine(lowerLeft, upperLeft, Color.blue * 0.8f, Mathf.Infinity);
+        Debug.DrawLine(upperLeft, upperRight, Color.blue * 0.8f, Mathf.Infinity);
+        //Debug.DrawLine(Vector3 start, Vector3 end, Color color, float duration)：画线，参数依次是：起点、终点、颜色、显示时间
+        //【注意】这个方法的持续时间是基于 Time.deltaTime 实现的，也就是说只有在游戏运行模式下才有效，如果在编辑模式下使用，绘制的线不管经过多长时间都不会消失
+    }
 }
 
 
@@ -295,8 +317,7 @@ public class QuadtreeBasicField
         get { return _height; }
     }
     float _height;
-
-
+    
 
     public QuadtreeBasicField(float top, float right, float bottom, float left)
     {
@@ -308,16 +329,14 @@ public class QuadtreeBasicField
         _width = _right - _left;
         _height = _top - _bottom;
     }
-
-
+    
 
     //检测一个点是否在区域里
     public bool Contains(Vector2 point)
     {
         return point.x >= _left && point.x <= _right && point.y >= _bottom && point.y <= _top;
     }
-
-
+    
 
     //计算一个点到区域的距离，如果在区域里则返回0
     public float PointToFieldDistance(Vector2 point)
