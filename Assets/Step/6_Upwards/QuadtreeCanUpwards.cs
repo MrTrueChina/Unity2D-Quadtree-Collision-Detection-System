@@ -213,35 +213,37 @@ public class QuadtreeCanUpwardsData<T>
 
 
     //存入
-    public void SetLeaf(Leaf leaf)
+    public bool SetLeaf(Leaf leaf)
     {
         if (_root._field.Contains(leaf.position))
-            _root.DoSetLeaf(leaf);
+            return _root.DoSetLeaf(leaf);
         else
         {
             _root.UpwardGrouth(leaf.position);
             SetLeaf(leaf);
         }
+        return false;
     }
-    void DoSetLeaf(Leaf leaf)
+    bool DoSetLeaf(Leaf leaf)
     {
         if (DontHaveChildren())
-            SetLeafToSelf(leaf);
+            return SetLeafToSelf(leaf);
         else
-            SetLeafToChildren(leaf);
+            return SetLeafToChildren(leaf);
     }
     bool DontHaveChildren()
     {
         return _upperRightChild == null || _lowerRightChild == null || _lowerLeftChild == null || _upperLeftChild == null;      //四个子节点是一起创建的，原理上说一个不存在另外三个也不存在，但假设只有一个不存在插入的叶子又在这个位置就要出事了
     }
 
-    void SetLeafToSelf(Leaf leaf)
+    bool SetLeafToSelf(Leaf leaf)
     {
         _leafs.Add(leaf);
         UpdateMaxRadiusWhenSetLeaf(leaf);
         Debug.Log("<color=#0040A0>位置在" + _field.top + "," + _field.right + "," + _field.bottom + "," + _field.left + "的树梢节点存入位置在" + leaf.position + "半径是" + leaf.radius + "的叶子，存入后的最大半径是" + _maxRadius + "</color>");
         //是的！Log输出同样支持HTML标签，颜色、粗体、斜体等都可以做到
         CheckAndDoSplit();
+        return true;
     }
     void UpdateMaxRadiusWhenSetLeaf(Leaf leaf)
     {
@@ -272,17 +274,20 @@ public class QuadtreeCanUpwardsData<T>
         return Mathf.Max(_upperRightChild._maxRadius, _lowerRightChild._maxRadius, _lowerLeftChild._maxRadius, _upperLeftChild._maxRadius);
     }
 
-    void SetLeafToChildren(Leaf leaf)
+    bool SetLeafToChildren(Leaf leaf)
     {
         Debug.Log("<color=#0040A0>位置在" + _field.top + "," + _field.right + "," + _field.bottom + "," + _field.left + "的树枝节点向子节点存入位置在" + leaf.position + "半径是" + leaf.radius + "的叶子</color>");
         if (_upperRightChild._field.Contains(leaf.position))
-            _upperRightChild.DoSetLeaf(leaf);
+            return _upperRightChild.DoSetLeaf(leaf);
         if (_lowerRightChild._field.Contains(leaf.position))
-            _lowerRightChild.DoSetLeaf(leaf);
+            return _lowerRightChild.DoSetLeaf(leaf);
         if (_lowerLeftChild._field.Contains(leaf.position))
-            _lowerLeftChild.DoSetLeaf(leaf);
+            return _lowerLeftChild.DoSetLeaf(leaf);
         if (_upperLeftChild._field.Contains(leaf.position))
-            _upperLeftChild.DoSetLeaf(leaf);
+            return _upperLeftChild.DoSetLeaf(leaf);
+
+        Debug.LogError("向位置在" + _field.top + "," + _field.right + "," + _field.bottom + "," + _field.left + "的节点存入叶子时发生错误：叶子不在所有子节点的范围里。");   //Debug.LogError：在Console面板输出Error，就是红色那种消息
+        return false;
     }
 
 
@@ -313,8 +318,18 @@ public class QuadtreeCanUpwardsData<T>
 
 
     //向上生长
+    /*
+     *  重构大业：
+     *  
+     *  完全重复、全部具备的内容：
+     *      1.设置自身父节点为新根节点
+     *      2.新根节点向下更新根节点
+     *      
+     *      这两个先拿出来
+     */
     void UpwardGrouth(Vector2 leafPosition)
     {
+        QuadtreeCanUpwardsData<T> newRoot;
         if (leafPosition.x > _field.left)       //不在左边
         {
             if (leafPosition.y > _field.bottom) //不在下方
@@ -322,7 +337,7 @@ public class QuadtreeCanUpwardsData<T>
                 float newRight = _field.right + _field.width;
                 float newTop = _field.top + _field.height;
 
-                QuadtreeCanUpwardsData<T> newRoot = new QuadtreeCanUpwardsData<T>(newTop, newRight, _field.bottom, _field.left, _maxLeafsNumber, _minSideLength);
+                newRoot = new QuadtreeCanUpwardsData<T>(newTop, newRight, _field.bottom, _field.left, _maxLeafsNumber, _minSideLength);
 
                 //在右上方
                 newRoot._upperRightChild = new QuadtreeCanUpwardsData<T>(newTop, newRight, _field.top, _field.right, _maxLeafsNumber, _minSideLength, newRoot, newRoot);
@@ -333,10 +348,6 @@ public class QuadtreeCanUpwardsData<T>
                 //在正上方
                 newRoot._upperLeftChild = new QuadtreeCanUpwardsData<T>(newTop, _field.right, _field.top, _field.left, _maxLeafsNumber, _minSideLength, newRoot, newRoot);
 
-                _parent = newRoot;
-
-                newRoot.UpdateRoot(newRoot);
-
                 Debug.Log("<color=#008510>位置在" + leafPosition + "的叶子存入树，树向右上方生长，生长后的树的范围是 " + newRoot._field.top + "  " + newRoot._field.right + " " + newRoot._field.bottom + "  " + newRoot._field.left + "</color>");
             }
             else
@@ -344,7 +355,7 @@ public class QuadtreeCanUpwardsData<T>
                 float newRight = _field.right + _field.width;
                 float newBottom = _field.bottom - _field.height;
 
-                QuadtreeCanUpwardsData<T> newRoot = new QuadtreeCanUpwardsData<T>(_field.top, newRight, newBottom, _field.left, _maxLeafsNumber, _minSideLength);
+                newRoot = new QuadtreeCanUpwardsData<T>(_field.top, newRight, newBottom, _field.left, _maxLeafsNumber, _minSideLength);
 
                 //在正右方
                 newRoot._upperRightChild = new QuadtreeCanUpwardsData<T>(_field.top, newRight, _field.bottom, _field.right, _maxLeafsNumber, _minSideLength, newRoot, newRoot);
@@ -354,10 +365,6 @@ public class QuadtreeCanUpwardsData<T>
                 newRoot._lowerLeftChild = new QuadtreeCanUpwardsData<T>(_field.bottom, _field.right, newBottom, _field.left, _maxLeafsNumber, _minSideLength, newRoot, newRoot);
                 //自己
                 newRoot._upperLeftChild = this;
-
-                _parent = newRoot;
-
-                newRoot.UpdateRoot(newRoot);
 
                 Debug.Log("<color=#008510>位置在" + leafPosition + "的叶子存入树，树向右下方生长，生长后的树的范围是 " + newRoot._field.top + "  " + newRoot._field.right + " " + newRoot._field.bottom + "  " + newRoot._field.left + "</color>");
             }
@@ -369,7 +376,7 @@ public class QuadtreeCanUpwardsData<T>
                 float newLeft = _field.left - _field.width;
                 float newTop = _field.top + _field.height;
 
-                QuadtreeCanUpwardsData<T> newRoot = new QuadtreeCanUpwardsData<T>(newTop, _field.right, _field.bottom, newLeft, _maxLeafsNumber, _minSideLength);
+                newRoot = new QuadtreeCanUpwardsData<T>(newTop, _field.right, _field.bottom, newLeft, _maxLeafsNumber, _minSideLength);
 
                 //在正上方
                 newRoot._upperRightChild = new QuadtreeCanUpwardsData<T>(newTop, _field.right, _field.top, _field.left, _maxLeafsNumber, _minSideLength, newRoot, newRoot);
@@ -380,10 +387,6 @@ public class QuadtreeCanUpwardsData<T>
                 //在左上方
                 newRoot._upperLeftChild = new QuadtreeCanUpwardsData<T>(newTop, _field.left, _field.top, newLeft, _maxLeafsNumber, _minSideLength, newRoot, newRoot);
 
-                _parent = newRoot;
-
-                newRoot.UpdateRoot(newRoot);
-
                 Debug.Log("<color=#008510>位置在" + leafPosition + "的叶子存入树，树向左上方生长，生长后的树的范围是 " + newRoot._field.top + "  " + newRoot._field.right + " " + newRoot._field.bottom + "  " + newRoot._field.left + "</color>");
             }
             else
@@ -391,7 +394,7 @@ public class QuadtreeCanUpwardsData<T>
                 float newLeft = _field.left - _field.width;
                 float newBottom = _field.bottom - _field.height;
 
-                QuadtreeCanUpwardsData<T> newRoot = new QuadtreeCanUpwardsData<T>(_field.top, _field.right, newBottom, newLeft, _maxLeafsNumber, _minSideLength);
+                newRoot = new QuadtreeCanUpwardsData<T>(_field.top, _field.right, newBottom, newLeft, _maxLeafsNumber, _minSideLength);
 
                 //自己
                 newRoot._upperRightChild = this;
@@ -402,13 +405,11 @@ public class QuadtreeCanUpwardsData<T>
                 //在正左方
                 newRoot._upperLeftChild = new QuadtreeCanUpwardsData<T>(_field.top, _field.left, _field.bottom, newLeft, _maxLeafsNumber, _minSideLength, newRoot, newRoot);
 
-                _parent = newRoot;
-
-                newRoot.UpdateRoot(newRoot);
-
                 Debug.Log("<color=#008510>位置在" + leafPosition + "的叶子存入树，树向左下方生长，生长后的树的范围是 " + newRoot._field.top + "  " + newRoot._field.right + " " + newRoot._field.bottom + "  " + newRoot._field.left + "</color>");
             }
         }
+        _parent = newRoot;
+        newRoot.UpdateRoot(newRoot);
     }
     void UpdateRoot(QuadtreeCanUpwardsData<T> root)
     {
