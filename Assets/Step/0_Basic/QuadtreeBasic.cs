@@ -144,6 +144,7 @@ public class QuadtreeBasic<T>
     {
         return _upperRightChild == null || _lowerRightChild == null || _lowerLeftChild == null || _upperLeftChild == null;      //四个子节点是一起创建的，原理上说一个不存在另外三个也不存在，但假设只有一个不存在插入的叶子又在这个位置就要出事了
     }
+
     void SetLeafToSelf(QuadtreeBasicLeaf<T> leaf)
     {
         _leafs.Add(leaf);
@@ -215,28 +216,40 @@ public class QuadtreeBasic<T>
      */
     public T[] CheckCollision(Vector2 checkPosition, float checkRadius)
     {
-        List<T> objs = new List<T>();
         if (DontHaveChildren())
-        {
-            foreach (QuadtreeBasicLeaf<T> leaf in _leafs)
-                if (Vector2.Distance(checkPosition, leaf.position) <= checkRadius)          //开头说的没有一丁点技术含量的距离检测， Vector2.Distance可以计算出两个点的距离，之后和检测半径一比较就知道有没有检测到了
-                    objs.Add(leaf.obj);
-        }
+            return GetCollisionObjectsFromSelf(checkPosition, checkRadius);
         else
-        {
-            if (_upperRightChild._field.PointToFieldDistance(checkPosition) <= checkRadius)
-                objs.AddRange(_upperRightChild.CheckCollision(checkPosition, checkRadius)); //这里用的不是 if else 而是连续存入，因为检测的范围是一个圆，基本不可能只在一个节点范围里，因此要把每个子节点都考虑到
-            if (_lowerRightChild._field.PointToFieldDistance(checkPosition) <= checkRadius)
-                objs.AddRange(_lowerRightChild.CheckCollision(checkPosition, checkRadius));
-            if (_lowerLeftChild._field.PointToFieldDistance(checkPosition) <= checkRadius)
-                objs.AddRange(_lowerLeftChild.CheckCollision(checkPosition, checkRadius));
-            if (_upperLeftChild._field.PointToFieldDistance(checkPosition) <= checkRadius)
-                objs.AddRange(_upperLeftChild.CheckCollision(checkPosition, checkRadius));
-        }
+            return GetCollisionObjectsFromChildren(checkPosition, checkRadius);
+    }
+
+    T[] GetCollisionObjectsFromSelf(Vector2 checkPosition, float checkRadius)
+    {
+        List<T> objs = new List<T>();
+
+        foreach (QuadtreeBasicLeaf<T> leaf in _leafs)
+            if (Vector2.Distance(checkPosition, leaf.position) <= checkRadius)          //开头说的没有一丁点技术含量的距离检测， Vector2.Distance可以计算出两个点的距离，之后和检测半径一比较就知道有没有检测到了
+                objs.Add(leaf.obj);
+
         return objs.ToArray();
     }
 
-    
+    T[] GetCollisionObjectsFromChildren(Vector2 checkPosition, float checkRadius)
+    {
+        List<T> objs = new List<T>();
+
+        if (_upperRightChild._field.PointToFieldDistance(checkPosition) <= checkRadius)
+            objs.AddRange(_upperRightChild.CheckCollision(checkPosition, checkRadius)); //这里用的不是 if else 而是连续存入，因为检测的范围是一个圆，基本不可能只在一个节点范围里，因此要把每个子节点都考虑到
+        if (_lowerRightChild._field.PointToFieldDistance(checkPosition) <= checkRadius)
+            objs.AddRange(_lowerRightChild.CheckCollision(checkPosition, checkRadius));
+        if (_lowerLeftChild._field.PointToFieldDistance(checkPosition) <= checkRadius)
+            objs.AddRange(_lowerLeftChild.CheckCollision(checkPosition, checkRadius));
+        if (_upperLeftChild._field.PointToFieldDistance(checkPosition) <= checkRadius)
+            objs.AddRange(_upperLeftChild.CheckCollision(checkPosition, checkRadius));
+
+        return objs.ToArray();
+    }
+
+
 
     /*
      *  移除叶子
