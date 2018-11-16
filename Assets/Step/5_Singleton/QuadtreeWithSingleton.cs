@@ -337,7 +337,7 @@ public class QuadtreeWithSingletonData<T>
     void ResetLeaf(Leaf leaf)
     {
         Debug.Log("<color=#800080>位置在" + _field.top + "," + _field.right + "," + _field.bottom + "," + _field.left + "的树梢节点移除位置在" + leaf.position + "半径是" + leaf.radius + "的叶子，重新存入树</color>");
-        RemoveLeafSelf(leaf);
+        RemoveLeafFromSelf(leaf);
         _root.SetLeaf(leaf);
     }
     void CallChildrenUpdatePosition()
@@ -383,33 +383,47 @@ public class QuadtreeWithSingletonData<T>
 
 
     //检测
-    public T[] CheckCollision(Vector2 checkPoint, float checkRadius)
-    {
-        List<T> objs = new List<T>();
-        if (DontHaveChildren())
-        {
-            foreach (Leaf leaf in _leafs)
-                if (Vector2.Distance(checkPoint, leaf.position) <= checkRadius + leaf.radius)
-                    objs.Add(leaf.obj);
-        }
-        else
-        {
-            if (_upperRightChild._field.PointToFieldDistance(checkPoint) <= _maxRadius + checkRadius)
-                objs.AddRange(_upperRightChild.CheckCollision(checkPoint, checkRadius));
-            if (_lowerRightChild._field.PointToFieldDistance(checkPoint) <= _maxRadius + checkRadius)
-                objs.AddRange(_lowerRightChild.CheckCollision(checkPoint, checkRadius));
-            if (_lowerLeftChild._field.PointToFieldDistance(checkPoint) <= _maxRadius + checkRadius)
-                objs.AddRange(_lowerLeftChild.CheckCollision(checkPoint, checkRadius));
-            if (_upperLeftChild._field.PointToFieldDistance(checkPoint) <= _maxRadius + checkRadius)
-                objs.AddRange(_upperLeftChild.CheckCollision(checkPoint, checkRadius));
-        }
-        return objs.ToArray();
-    }
     public T[] CheckCollision(Leaf leaf)
     {
         List<T> objs = new List<T>(CheckCollision(leaf.position, leaf.radius));
         objs.Remove(leaf.obj);
         return objs.ToArray();
+    }
+    public T[] CheckCollision(Vector2 checkPoint, float checkRadius)
+    {
+        if (DontHaveChildren())
+            return GetCollisionObjectsFromSelf(checkPoint, checkRadius);
+        else
+            return GetCollisionObjectsFromChildren(checkPoint, checkRadius);
+    }
+
+    T[] GetCollisionObjectsFromSelf(Vector2 checkPoint, float checkRadius)
+    {
+        List<T> objs = new List<T>();
+
+        foreach (Leaf leaf in _leafs)
+            if (Vector2.Distance(checkPoint, leaf.position) <= checkRadius + leaf.radius)
+                objs.Add(leaf.obj);
+
+        return objs.ToArray();
+    }
+
+    private T[] GetCollisionObjectsFromChildren(Vector2 checkPoint, float checkRadius)
+    {
+        List<T> objs = new List<T>();
+
+        objs.AddRange(GetCollisionObjectsFromAChild(checkPoint, checkRadius, _upperRightChild));
+        objs.AddRange(GetCollisionObjectsFromAChild(checkPoint, checkRadius, _lowerRightChild));
+        objs.AddRange(GetCollisionObjectsFromAChild(checkPoint, checkRadius, _lowerLeftChild));
+        objs.AddRange(GetCollisionObjectsFromAChild(checkPoint, checkRadius, _upperLeftChild));
+
+        return objs.ToArray();
+    }
+    T[] GetCollisionObjectsFromAChild(Vector2 checkPoint, float checkRadius, QuadtreeWithSingletonData<T> child)
+    {
+        if (child._field.PointToFieldDistance(checkPoint) <= _maxRadius + checkRadius)      //这里不光要考虑到检测半径，还要考虑到节点最大半径
+            return child.CheckCollision(checkPoint, checkRadius);
+        return new T[] { };
     }
 
 
@@ -418,11 +432,17 @@ public class QuadtreeWithSingletonData<T>
     public bool RemoveLeaf(Leaf leaf)
     {
         if (DontHaveChildren())
-            return RemoveLeafSelf(leaf);
+            return RemoveLeafFromSelf(leaf);
         else
-            return CallChildrenRemoveLeaf(leaf);
+            return RemoveLeafFromChildren(leaf);
     }
-    bool RemoveLeafSelf(Leaf leaf)
+    bool RemoveLeafFromSelf(Leaf leaf)
+    {
+        if (DoRemoveLeafFromSelf(leaf))
+            return true;
+        return _root.RemoveLeafInTotalTree(leaf);
+    }
+    private bool DoRemoveLeafFromSelf(Leaf leaf)
     {
         if (_leafs.Remove(leaf))
         {
@@ -430,8 +450,7 @@ public class QuadtreeWithSingletonData<T>
             Debug.Log("<color=#802030>位置在" + _field.top + "," + _field.right + "," + _field.bottom + "," + _field.left + "的树梢节点移除位置在" + leaf.position + "半径是" + leaf.radius + "的叶子，移除后的最大半径是" + _maxRadius + "</color>");
             return true;
         }
-
-        return _root.RemoveLeafInTotalTree(leaf);
+        return false;
     }
     void UpdateMaxRadiusWhenRemoveLeaf()
     {
@@ -457,7 +476,7 @@ public class QuadtreeWithSingletonData<T>
         return newMaxRadius;
     }
 
-    bool CallChildrenRemoveLeaf(Leaf leaf)
+    bool RemoveLeafFromChildren(Leaf leaf)
     {
         Debug.Log("<color=#802030>位置在" + _field.top + "," + _field.right + "," + _field.bottom + "," + _field.left + "的树枝节点从子节点移除位置在" + leaf.position + "半径是" + leaf.radius + "的叶子</color>");
         if (_upperRightChild._field.Contains(leaf.position))
@@ -476,27 +495,22 @@ public class QuadtreeWithSingletonData<T>
     bool RemoveLeafInTotalTree(Leaf leaf)
     {
         if (DontHaveChildren())
-        {
-            if (_leafs.Remove(leaf))        //List的Remove返回有没有成功从List里移除要移除的元素，元素不存在的时候返回是 false，有了这个返回值就可以非常轻松的判断出这个树梢是不是成功移除了叶子
-            {
-                UpdateMaxRadiusWhenRemoveLeaf();
-                Debug.Log("<color=#802030>位置在" + _field.top + "," + _field.right + "," + _field.bottom + "," + _field.left + "的树梢节点移除位置在" + leaf.position + "半径是" + leaf.radius + "的叶子，移除后的最大半径是" + _maxRadius + "</color>");
-                return true;
-            }
-            return false;
-        }
+            return DoRemoveLeafFromSelf(leaf);
         else
-        {
-            if (_upperRightChild.RemoveLeafInTotalTree(leaf))
-                return true;                                    //如果子节点移除成功了，那就说明不需要继续遍历剩下的节点了，直接返回 true
-            if (_lowerRightChild.RemoveLeafInTotalTree(leaf))
-                return true;
-            if (_lowerLeftChild.RemoveLeafInTotalTree(leaf))
-                return true;
-            if (_upperLeftChild.RemoveLeafInTotalTree(leaf))
-                return true;
-            return false;
-        }
+            return RemoveLeafInTotalTreeFromChildren(leaf);
+    }
+
+    bool RemoveLeafInTotalTreeFromChildren(Leaf leaf)
+    {
+        if (_upperRightChild.RemoveLeafInTotalTree(leaf))
+            return true;                                    //如果子节点移除成功了，那就说明不需要继续遍历剩下的节点了，直接返回 true
+        if (_lowerRightChild.RemoveLeafInTotalTree(leaf))
+            return true;
+        if (_lowerLeftChild.RemoveLeafInTotalTree(leaf))
+            return true;
+        if (_upperLeftChild.RemoveLeafInTotalTree(leaf))
+            return true;
+        return false;
     }
 
 

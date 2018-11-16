@@ -331,38 +331,6 @@ public class QuadtreeCanUpwardsData<T>
     //向上生长
     void UpwardGrouth(Vector2 leafPosition)
     {
-        /*
-         *  重构大业：
-         *  
-         *  有关方向：
-         *      四个部分跟四个方向有关，方向可以用正负数表示
-         *      以左下角为原点
-         *  
-         *  完全重复、全部具备的内容：
-         *      1.设置自身父节点为新根节点
-         *      2.新根节点向下更新根节点
-         *      
-         *      这两个先拿出来
-         *      
-         *      3.创建根节点
-         *      
-         *      这个要拿出来就会夹在新坐标计算和存入当前节点之间
-         *      
-         *  完全重复但不完全具备的内容：
-         *      1.三个子节点的创建
-         *      
-         *  完全具备但不完全重复的内容：
-         *      1.自身存入新根节点
-         *      2.新边界计算
-         *      3.Debug.Log
-         *      
-         *      这几个可以根据方向做判断
-         *      
-         *      
-         *  精确到四个子节点，四个子节点的创建在四个情况里是完全一样的，但每个情况都有一个子节点不是创建而是存入
-         *  在每个子节点看来，有三个情况是创建，一个情况是存入
-         *  三个情况由两个关键点控制，只有两个关键点都达到某个标准才会存入
-         */
         /* 
          *  先要明确什么情况下向哪个方向生长
          *  
@@ -373,12 +341,12 @@ public class QuadtreeCanUpwardsData<T>
 
         Vector2 growthDirection = leafPosition - _field.center;     //方向，正数是上和右
         
-        float newTop = growthDirection.y >= 0 ? _field.top + _field.height : _field.top;
-        float newRight = growthDirection.x >= 0 ? _field.right + _field.width : _field.right;
-        float newBottom = growthDirection.y >= 0 ? _field.bottom : _field.bottom - _field.height;
-        float newLeft = growthDirection.x >= 0 ? _field.left : _field.left - _field.width;
-        float newXCenter = growthDirection.x >= 0 ? _field.right : _field.left;
-        float newYCenter = growthDirection.y >= 0 ? _field.top : _field.bottom;
+        float newTop =      growthDirection.y >= 0  ? _field.top + _field.height    : _field.top;
+        float newRight =    growthDirection.x >= 0  ? _field.right + _field.width   : _field.right;
+        float newBottom =   growthDirection.y >= 0  ? _field.bottom                 : _field.bottom - _field.height;
+        float newLeft =     growthDirection.x >= 0  ? _field.left                   : _field.left - _field.width;
+        float newXCenter =  growthDirection.x >= 0  ? _field.right                  : _field.left;
+        float newYCenter =  growthDirection.y >= 0  ? _field.top                    : _field.bottom;
 
         QuadtreeCanUpwardsData<T> newRoot = new QuadtreeCanUpwardsData<T>(newTop, newRight, newBottom, newLeft, _maxLeafsNumber, _minSideLength);      //新根节点
 
@@ -408,8 +376,7 @@ public class QuadtreeCanUpwardsData<T>
 
         _parent = newRoot;
         newRoot.UpdateRoot(newRoot);
-
-
+        
         Debug.Log("<color=#008510>位置在" + leafPosition + "的叶子存入树，树向" + (growthDirection.x >= 0 ? (growthDirection.y >= 0 ? "右上方" : "右下方") : (growthDirection.y >= 0 ? "左上方" : "左下方")) + "生长，生长后的树的范围是 " + newRoot._field.top + "  " + newRoot._field.right + " " + newRoot._field.bottom + "  " + newRoot._field.left + "</color>");
     }
     void UpdateRoot(QuadtreeCanUpwardsData<T> root)
@@ -457,7 +424,7 @@ public class QuadtreeCanUpwardsData<T>
     void ResetLeaf(Leaf leaf)
     {
         Debug.Log("<color=#800080>位置在" + _field.top + "," + _field.right + "," + _field.bottom + "," + _field.left + "的树梢节点移除位置在" + leaf.position + "半径是" + leaf.radius + "的叶子，重新存入树</color>");
-        RemoveLeafSelf(leaf);
+        RemoveLeafFromSelf(leaf);
         _root.SetLeaf(leaf);
     }
     void CallChildrenUpdatePosition()
@@ -515,25 +482,39 @@ public class QuadtreeCanUpwardsData<T>
     }
     T[] DoCheckCollision(Vector2 checkPoint, float checkRadius)
     {
-        List<T> objs = new List<T>();
         if (DontHaveChildren())
-        {
-            foreach (Leaf leaf in _leafs)
-                if (Vector2.Distance(checkPoint, leaf.position) <= checkRadius + leaf.radius)
-                    objs.Add(leaf.obj);
-        }
+            return GetCollisionObjectsFromSelf(checkPoint, checkRadius);
         else
-        {
-            if (_upperRightChild._field.PointToFieldDistance(checkPoint) <= _maxRadius + checkRadius)
-                objs.AddRange(_upperRightChild.DoCheckCollision(checkPoint, checkRadius));
-            if (_lowerRightChild._field.PointToFieldDistance(checkPoint) <= _maxRadius + checkRadius)
-                objs.AddRange(_lowerRightChild.DoCheckCollision(checkPoint, checkRadius));
-            if (_lowerLeftChild._field.PointToFieldDistance(checkPoint) <= _maxRadius + checkRadius)
-                objs.AddRange(_lowerLeftChild.DoCheckCollision(checkPoint, checkRadius));
-            if (_upperLeftChild._field.PointToFieldDistance(checkPoint) <= _maxRadius + checkRadius)
-                objs.AddRange(_upperLeftChild.DoCheckCollision(checkPoint, checkRadius));
-        }
+            return GetCollisionObjectsFromChildren(checkPoint, checkRadius);
+    }
+
+    T[] GetCollisionObjectsFromSelf(Vector2 checkPoint, float checkRadius)
+    {
+        List<T> objs = new List<T>();
+
+        foreach (Leaf leaf in _leafs)
+            if (Vector2.Distance(checkPoint, leaf.position) <= checkRadius + leaf.radius)
+                objs.Add(leaf.obj);
+
         return objs.ToArray();
+    }
+
+    private T[] GetCollisionObjectsFromChildren(Vector2 checkPoint, float checkRadius)
+    {
+        List<T> objs = new List<T>();
+
+        objs.AddRange(GetCollisionObjectsFromAChild(checkPoint, checkRadius, _upperRightChild));
+        objs.AddRange(GetCollisionObjectsFromAChild(checkPoint, checkRadius, _lowerRightChild));
+        objs.AddRange(GetCollisionObjectsFromAChild(checkPoint, checkRadius, _lowerLeftChild));
+        objs.AddRange(GetCollisionObjectsFromAChild(checkPoint, checkRadius, _upperLeftChild));
+
+        return objs.ToArray();
+    }
+    T[] GetCollisionObjectsFromAChild(Vector2 checkPoint, float checkRadius, QuadtreeCanUpwardsData<T> child)
+    {
+        if (child._field.PointToFieldDistance(checkPoint) <= _maxRadius + checkRadius)      //这里不光要考虑到检测半径，还要考虑到节点最大半径
+            return child.DoCheckCollision(checkPoint, checkRadius);
+        return new T[] { };
     }
 
 
@@ -541,12 +522,22 @@ public class QuadtreeCanUpwardsData<T>
     //移除
     public bool RemoveLeaf(Leaf leaf)
     {
-        if (DontHaveChildren())
-            return RemoveLeafSelf(leaf);
-        else
-            return CallChildrenRemoveLeaf(leaf);
+        return _root.DoRemoveLeaf(leaf);
     }
-    bool RemoveLeafSelf(Leaf leaf)
+    bool DoRemoveLeaf(Leaf leaf)
+    {
+        if (DontHaveChildren())
+            return RemoveLeafFromSelf(leaf);
+        else
+            return RemoveLeafFromChildren(leaf);
+    }
+    bool RemoveLeafFromSelf(Leaf leaf)
+    {
+        if (DoRemoveLeafFromSelf(leaf))
+            return true;
+        return _root.RemoveLeafInTotalTree(leaf);
+    }
+    private bool DoRemoveLeafFromSelf(Leaf leaf)
     {
         if (_leafs.Remove(leaf))
         {
@@ -554,8 +545,7 @@ public class QuadtreeCanUpwardsData<T>
             Debug.Log("<color=#802030>位置在" + _field.top + "," + _field.right + "," + _field.bottom + "," + _field.left + "的树梢节点移除位置在" + leaf.position + "半径是" + leaf.radius + "的叶子，移除后的最大半径是" + _maxRadius + "</color>");
             return true;
         }
-
-        return _root.RemoveLeafInTotalTree(leaf);
+        return false;
     }
     void UpdateMaxRadiusWhenRemoveLeaf()
     {
@@ -581,17 +571,17 @@ public class QuadtreeCanUpwardsData<T>
         return newMaxRadius;
     }
 
-    bool CallChildrenRemoveLeaf(Leaf leaf)
+    bool RemoveLeafFromChildren(Leaf leaf)
     {
         Debug.Log("<color=#802030>位置在" + _field.top + "," + _field.right + "," + _field.bottom + "," + _field.left + "的树枝节点从子节点移除位置在" + leaf.position + "半径是" + leaf.radius + "的叶子</color>");
         if (_upperRightChild._field.Contains(leaf.position))
-            return _upperRightChild.RemoveLeaf(leaf);
+            return _upperRightChild.DoRemoveLeaf(leaf);
         if (_lowerRightChild._field.Contains(leaf.position))
-            return _lowerRightChild.RemoveLeaf(leaf);
+            return _lowerRightChild.DoRemoveLeaf(leaf);
         if (_lowerLeftChild._field.Contains(leaf.position))
-            return _lowerLeftChild.RemoveLeaf(leaf);
+            return _lowerLeftChild.DoRemoveLeaf(leaf);
         if (_upperLeftChild._field.Contains(leaf.position))
-            return _upperLeftChild.RemoveLeaf(leaf);
+            return _upperLeftChild.DoRemoveLeaf(leaf);
         return _root.RemoveLeafInTotalTree(leaf);
     }
 
@@ -600,27 +590,22 @@ public class QuadtreeCanUpwardsData<T>
     bool RemoveLeafInTotalTree(Leaf leaf)
     {
         if (DontHaveChildren())
-        {
-            if (_leafs.Remove(leaf))        //List的Remove返回有没有成功从List里移除要移除的元素，元素不存在的时候返回是 false，有了这个返回值就可以非常轻松的判断出这个树梢是不是成功移除了叶子
-            {
-                UpdateMaxRadiusWhenRemoveLeaf();
-                Debug.Log("<color=#802030>位置在" + _field.top + "," + _field.right + "," + _field.bottom + "," + _field.left + "的树梢节点移除位置在" + leaf.position + "半径是" + leaf.radius + "的叶子，移除后的最大半径是" + _maxRadius + "</color>");
-                return true;
-            }
-            return false;
-        }
+            return DoRemoveLeafFromSelf(leaf);
         else
-        {
-            if (_upperRightChild.RemoveLeafInTotalTree(leaf))
-                return true;                                    //如果子节点移除成功了，那就说明不需要继续遍历剩下的节点了，直接返回 true
-            if (_lowerRightChild.RemoveLeafInTotalTree(leaf))
-                return true;
-            if (_lowerLeftChild.RemoveLeafInTotalTree(leaf))
-                return true;
-            if (_upperLeftChild.RemoveLeafInTotalTree(leaf))
-                return true;
-            return false;
-        }
+            return RemoveLeafInTotalTreeFromChildren(leaf);
+    }
+
+    bool RemoveLeafInTotalTreeFromChildren(Leaf leaf)
+    {
+        if (_upperRightChild.RemoveLeafInTotalTree(leaf))
+            return true;                                    //如果子节点移除成功了，那就说明不需要继续遍历剩下的节点了，直接返回 true
+        if (_lowerRightChild.RemoveLeafInTotalTree(leaf))
+            return true;
+        if (_lowerLeftChild.RemoveLeafInTotalTree(leaf))
+            return true;
+        if (_upperLeftChild.RemoveLeafInTotalTree(leaf))
+            return true;
+        return false;
     }
 
 

@@ -149,6 +149,7 @@ public class QuadtreeBasic<T>
     {
         _leafs.Add(leaf);
         CheckAndDoSplit();
+        Debug.Log("位置在(" + _field.top + "," + _field.right + "," + _field.bottom + "," + _field.left + ")的树梢节点存入位置在" + leaf.position + "的叶子");
     }
     void CheckAndDoSplit()
     {
@@ -158,6 +159,7 @@ public class QuadtreeBasic<T>
 
     void SetLeafToChildren(QuadtreeBasicLeaf<T> leaf)
     {
+        Debug.Log("位置在(" + _field.top + "," + _field.right + "," + _field.bottom + "," + _field.left + ")的树枝节点向子节点存入位置在" + leaf.position + "的叶子");
         /*
          *  如果叶子在子节点的范围里，向这个子节点里存入叶子
          *  用 else if 的原因是 Field.Contains 把边缘处的点也算在范围里，这如果一个叶子在两个节点的交界处只用一个 if 就会重复存入
@@ -182,6 +184,8 @@ public class QuadtreeBasic<T>
      */
     void Split()
     {
+        Debug.Log("位置在(" + _field.top + "," + _field.right + "," + _field.bottom + "," + _field.left + ")的树梢节点达到分割条件，进行分割");
+
         //计算出横竖的中心坐标
         float xCenter = (_field.left + _field.right) / 2;
         float yCenter = (_field.bottom + _field.top) / 2;
@@ -259,20 +263,30 @@ public class QuadtreeBasic<T>
     public void RemoveLeaf(QuadtreeBasicLeaf<T> leaf)
     {
         if (DontHaveChildren())
-        {
-            _leafs.Remove(leaf);
-        }
+            RemoveLeafFromSelf(leaf);
         else
-        {
-            if (_upperRightChild._field.Contains(leaf.position))
-                _upperRightChild.RemoveLeaf(leaf);
-            if (_lowerRightChild._field.Contains(leaf.position))
-                _lowerRightChild.RemoveLeaf(leaf);
-            if (_lowerLeftChild._field.Contains(leaf.position))
-                _lowerLeftChild.RemoveLeaf(leaf);
-            if (_upperLeftChild._field.Contains(leaf.position))
-                _upperLeftChild.RemoveLeaf(leaf);
-        }
+            RemoveLeafFromChildren(leaf);
+    }
+
+    void RemoveLeafFromSelf(QuadtreeBasicLeaf<T> leaf)
+    {
+        _leafs.Remove(leaf);
+
+        Debug.Log("位置在(" + _field.top + "," + _field.right + "," + _field.bottom + "," + _field.left + ")的树梢节点移除位置在" + leaf.position + "的叶子");
+    }
+
+    void RemoveLeafFromChildren(QuadtreeBasicLeaf<T> leaf)
+    {
+        Debug.Log("位置在(" + _field.top + "," + _field.right + "," + _field.bottom + "," + _field.left + ")的树枝节点从子节点移除位置在" + leaf.position + "的叶子");
+
+        if (_upperRightChild._field.Contains(leaf.position))
+            _upperRightChild.RemoveLeaf(leaf);
+        if (_lowerRightChild._field.Contains(leaf.position))
+            _lowerRightChild.RemoveLeaf(leaf);
+        if (_lowerLeftChild._field.Contains(leaf.position))
+            _lowerLeftChild.RemoveLeaf(leaf);
+        if (_upperLeftChild._field.Contains(leaf.position))
+            _upperLeftChild.RemoveLeaf(leaf);
     }
 
 

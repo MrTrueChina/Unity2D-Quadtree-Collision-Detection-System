@@ -75,7 +75,7 @@ public class QuadtreeWithUpdate<T>
      *  根节点，前面已经说到更新位置时需要从根节点再次存入叶子。
      *  虽然可以通过向上递归父节点查到根节点但找个字段存下来计算量小。
      */
-
+    
     QuadtreeWithUpdate<T> _parent;
     QuadtreeWithUpdate<T> _upperRightChild;
     QuadtreeWithUpdate<T> _lowerRightChild;
@@ -178,6 +178,7 @@ public class QuadtreeWithUpdate<T>
     bool SetLeafToChildren(QuadtreeWithUpdateLeaf<T> leaf)
     {
         Debug.Log("位置在" + _field.top + "," + _field.right + "," + _field.bottom + "," + _field.left + "的树枝节点向子节点存入位置在" + leaf.position + "半径是" + leaf.radius + "的叶子");
+
         if (_upperRightChild._field.Contains(leaf.position))
             return _upperRightChild.SetLeaf(leaf);
         if (_lowerRightChild._field.Contains(leaf.position))
@@ -256,7 +257,7 @@ public class QuadtreeWithUpdate<T>
     void ResetLeaf(QuadtreeWithUpdateLeaf<T> leaf)
     {
         Debug.Log("位置在" + _field.top + "," + _field.right + "," + _field.bottom + "," + _field.left + "的树梢节点移除位置在" + leaf.position + "半径是" + leaf.radius + "的叶子，重新存入树");
-        RemoveLeafSelf(leaf);
+        RemoveLeafFromSelf(leaf);
         _root.SetLeaf(leaf);
     }
     void CallChildrenUpdatePosition()
@@ -304,29 +305,43 @@ public class QuadtreeWithUpdate<T>
     }
 
 
-    
+
     //检测
     public T[] CheckCollision(Vector2 checkPoint, float checkRadius)
     {
-        List<T> objs = new List<T>();
         if (DontHaveChildren())
-        {
-            foreach (QuadtreeWithUpdateLeaf<T> leaf in _leafs)
-                if (Vector2.Distance(checkPoint, leaf.position) <= checkRadius + leaf.radius)
-                    objs.Add(leaf.obj);
-        }
+            return GetCollisionObjectsFromSelf(checkPoint, checkRadius);
         else
-        {
-            if (_upperRightChild._field.PointToFieldDistance(checkPoint) <= _maxRadius + checkRadius)
-                objs.AddRange(_upperRightChild.CheckCollision(checkPoint, checkRadius));
-            if (_lowerRightChild._field.PointToFieldDistance(checkPoint) <= _maxRadius + checkRadius)
-                objs.AddRange(_lowerRightChild.CheckCollision(checkPoint, checkRadius));
-            if (_lowerLeftChild._field.PointToFieldDistance(checkPoint) <= _maxRadius + checkRadius)
-                objs.AddRange(_lowerLeftChild.CheckCollision(checkPoint, checkRadius));
-            if (_upperLeftChild._field.PointToFieldDistance(checkPoint) <= _maxRadius + checkRadius)
-                objs.AddRange(_upperLeftChild.CheckCollision(checkPoint, checkRadius));
-        }
+            return GetCollisionObjectsFromChildren(checkPoint, checkRadius);
+    }
+
+    T[] GetCollisionObjectsFromSelf(Vector2 checkPoint, float checkRadius)
+    {
+        List<T> objs = new List<T>();
+
+        foreach (QuadtreeWithUpdateLeaf<T> leaf in _leafs)
+            if (Vector2.Distance(checkPoint, leaf.position) <= checkRadius + leaf.radius)
+                objs.Add(leaf.obj);
+
         return objs.ToArray();
+    }
+
+    T[] GetCollisionObjectsFromChildren(Vector2 checkPoint, float checkRadius)
+    {
+        List<T> objs = new List<T>();
+
+        objs.AddRange(GetCollisionObjectsFromAChild(checkPoint, checkRadius, _upperRightChild));
+        objs.AddRange(GetCollisionObjectsFromAChild(checkPoint, checkRadius, _lowerRightChild));
+        objs.AddRange(GetCollisionObjectsFromAChild(checkPoint, checkRadius, _lowerLeftChild));
+        objs.AddRange(GetCollisionObjectsFromAChild(checkPoint, checkRadius, _upperLeftChild));
+
+        return objs.ToArray();
+    }
+    T[] GetCollisionObjectsFromAChild(Vector2 checkPoint, float checkRadius, QuadtreeWithUpdate<T> child)
+    {
+        if (child._field.PointToFieldDistance(checkPoint) <= _maxRadius + checkRadius)      //这里不光要考虑到检测半径，还要考虑到节点最大半径
+            return child.CheckCollision(checkPoint, checkRadius);
+        return new T[] { };
     }
 
 
@@ -335,20 +350,26 @@ public class QuadtreeWithUpdate<T>
     public bool RemoveLeaf(QuadtreeWithUpdateLeaf<T> leaf)
     {
         if (DontHaveChildren())
-            return RemoveLeafSelf(leaf);
+            return RemoveLeafFromSelf(leaf);
         else
-            return CallChildrenRemoveLeaf(leaf);
+            return RemoveLeafFromChildren(leaf);
     }
-    bool RemoveLeafSelf(QuadtreeWithUpdateLeaf<T> leaf)
+
+    bool RemoveLeafFromSelf(QuadtreeWithUpdateLeaf<T> leaf)
     {
-        if (_leafs.Remove(leaf))
+        if (DoRemoveLeafFromSelf(leaf))
+            return true;
+        return _root.RemoveLeafInTotalTree(leaf);
+    }
+    bool DoRemoveLeafFromSelf(QuadtreeWithUpdateLeaf<T> leaf)
+    {
+        if (_leafs.Remove(leaf))        //List的Remove返回有没有成功从List里移除要移除的元素，元素不存在的时候返回是 false，有了这个返回值就可以非常轻松的判断出这个树梢是不是成功移除了叶子
         {
             UpdateMaxRadiusWhenRemoveLeaf();
             Debug.Log("位置在" + _field.top + "," + _field.right + "," + _field.bottom + "," + _field.left + "的树梢节点移除位置在" + leaf.position + "半径是" + leaf.radius + "的叶子，移除后的最大半径是" + _maxRadius);
             return true;
         }
-
-        return _root.RemoveLeafInTotalTree(leaf);
+        return false;
     }
     void UpdateMaxRadiusWhenRemoveLeaf()
     {
@@ -374,9 +395,9 @@ public class QuadtreeWithUpdate<T>
         return newMaxRadius;
     }
 
-    bool CallChildrenRemoveLeaf(QuadtreeWithUpdateLeaf<T> leaf)
+    bool RemoveLeafFromChildren(QuadtreeWithUpdateLeaf<T> leaf)
     {
-        Debug.Log("位置在" + _field.top + "," + _field.right + "," + _field.bottom + "," + _field.left + "的树枝节点从子节点移除位置在" + leaf.position + "半径是" + leaf.radius + "的叶子");
+        Debug.Log("位置在(" + _field.top + "," + _field.right + "," + _field.bottom + "," + _field.left + ")的树枝节点从子节点移除位置在" + leaf.position + "半径是" + leaf.radius + "的叶子");
         if (_upperRightChild._field.Contains(leaf.position))
             return _upperRightChild.RemoveLeaf(leaf);
         if (_lowerRightChild._field.Contains(leaf.position))
@@ -405,27 +426,22 @@ public class QuadtreeWithUpdate<T>
     bool RemoveLeafInTotalTree(QuadtreeWithUpdateLeaf<T> leaf)
     {
         if (DontHaveChildren())
-        {
-            if (_leafs.Remove(leaf))        //List的Remove返回有没有成功从List里移除要移除的元素，元素不存在的时候返回是 false，有了这个返回值就可以非常轻松的判断出这个树梢是不是成功移除了叶子
-            {
-                UpdateMaxRadiusWhenRemoveLeaf();
-                Debug.Log("<color=#802030>位置在" + _field.top + "," + _field.right + "," + _field.bottom + "," + _field.left + "的树梢节点移除位置在" + leaf.position + "半径是" + leaf.radius + "的叶子，移除后的最大半径是" + _maxRadius + "</color>");
-                return true;
-            }
-            return false;
-        }
+            return DoRemoveLeafFromSelf(leaf);
         else
-        {
-            if (_upperRightChild.RemoveLeafInTotalTree(leaf))
-                return true;                                    //如果子节点移除成功了，那就说明不需要继续遍历剩下的节点了，直接返回 true
-            if (_lowerRightChild.RemoveLeafInTotalTree(leaf))
-                return true;
-            if (_lowerLeftChild.RemoveLeafInTotalTree(leaf))
-                return true;
-            if (_upperLeftChild.RemoveLeafInTotalTree(leaf))
-                return true;
-            return false;
-        }
+            return RemoveLeafInTotalTreeFromChildren(leaf);
+    }
+
+    bool RemoveLeafInTotalTreeFromChildren(QuadtreeWithUpdateLeaf<T> leaf)
+    {
+        if (_upperRightChild.RemoveLeafInTotalTree(leaf))
+            return true;                                    //如果子节点移除成功了，那就说明不需要继续遍历剩下的节点了，直接返回 true
+        if (_lowerRightChild.RemoveLeafInTotalTree(leaf))
+            return true;
+        if (_lowerLeftChild.RemoveLeafInTotalTree(leaf))
+            return true;
+        if (_upperLeftChild.RemoveLeafInTotalTree(leaf))
+            return true;
+        return false;
     }
 
 
