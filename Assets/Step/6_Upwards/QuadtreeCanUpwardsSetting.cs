@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-[CreateAssetMenu(menuName = "Tool/QuadtreeCanUpwardsSetting", fileName = "QuadtreeCanUpwardsSetting")]
+//[CreateAssetMenu(menuName = "Tool/QuadtreeCanUpwardsSetting", fileName = "QuadtreeCanUpwardsSetting")]    //创建设置文件之后就没什么用了
 public class QuadtreeCanUpwardsSetting : ScriptableObject
 {
     public float top = 1960;

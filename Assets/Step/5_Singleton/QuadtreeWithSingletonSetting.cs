@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 
-[CreateAssetMenu(menuName = "Tool/QuadtreeWithSingletionSetting", fileName = "QuadtreeWithSingletonSetting")]
 public class QuadtreeWithSingletonSetting : ScriptableObject
 {
     public float top = 1960;
