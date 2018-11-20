@@ -18,5 +18,4 @@
 | Asstes/Step/5_Singleton | 在4的基础上把Quadtree和QuadtreeObject合为一个脚本文件，用单例模式自动创建四叉树物体，用ScriptableObject和EditorWindow进行设置。从这一步开始不需要设置脚本执行顺序，也不需要手动创建四叉树物体 |
 | Assets/Step/6_Upwards | 在5的基础上增加向上生长的功能，如果叶子存入时位置在四叉树范围以外，四叉树会自动向叶子方向生长以接住叶子 |
 | ProjectSettings | Unity的ProjectSettings文件夹，里面是各种设置 |
-| UnityPackageManager | 说实话我不知道这个文件夹有什么用，但 Github for Unity 把他识别出来了，应该是有用的 |
 ## 注意：由于没有物理功能，四叉树的碰撞不会像Unity自带碰撞一样互相弹开，而是像触发器一样互相穿过
