@@ -24,9 +24,6 @@
  *  
  *  这个坑我已经踩过了，要先更新位置，因为叶子可以从一个树梢的范围移动到另一个树梢的范围，但在位置更新之前所有叶子都被视为在原来的树梢上，这样更新半径的时候就会把半径算到错误的树梢上。
  */
-/*
- *  除了增加更新外还增加了一堆 Debug 输出，用来检查各个步骤是不是正确进行。 
- */
 
 using System.Collections.Generic;
 using UnityEngine;
@@ -237,7 +234,7 @@ public class QuadtreeWithUpdate<T>
         if (DontHaveChildren())
             UpdatePositionSelf();
         else
-            CallChildrenUpdatePosition();
+            UpdateChildrensPosition();
     }
     void UpdatePositionSelf()
     {
@@ -260,7 +257,7 @@ public class QuadtreeWithUpdate<T>
         RemoveLeafFromSelf(leaf);
         _root.SetLeaf(leaf);
     }
-    void CallChildrenUpdatePosition()
+    void UpdateChildrensPosition()
     {
         _upperRightChild.UpdatePosition();
         _lowerRightChild.UpdatePosition();
@@ -273,7 +270,7 @@ public class QuadtreeWithUpdate<T>
         if (DontHaveChildren())
             UpdateMaxRadiusSelf();
         else
-            CallChildrenUpdateMaxRadius();
+            UpdateChildrensMaxRadius();
     }
     void UpdateMaxRadiusSelf()
     {
@@ -287,16 +284,18 @@ public class QuadtreeWithUpdate<T>
     float GetLeafsMaxRadiusOnUpdate()
     {
         float newMaxRadius = Mathf.NegativeInfinity;
+
         foreach (QuadtreeWithUpdateLeaf<T> leaf in _leafs)
             if (leaf.radius > newMaxRadius)
                 newMaxRadius = leaf.radius;
+
         return newMaxRadius;
         /*
          *  看起来和移除叶子时候的那个获取最大叶子最大半径的方法很像。
          *  但因为碰撞器的半径可能会增大，所以不能遇到现在的最大半径就返回。
          */
     }
-    void CallChildrenUpdateMaxRadius()
+    void UpdateChildrensMaxRadius()
     {
         _upperRightChild.UpdateMaxRadius();
         _lowerRightChild.UpdateMaxRadius();
@@ -341,7 +340,7 @@ public class QuadtreeWithUpdate<T>
     {
         if (child._field.PointToFieldDistance(checkPoint) <= _maxRadius + checkRadius)      //这里不光要考虑到检测半径，还要考虑到节点最大半径
             return child.CheckCollision(checkPoint, checkRadius);
-        return new T[] { };
+        return new T[0];
     }
 
 

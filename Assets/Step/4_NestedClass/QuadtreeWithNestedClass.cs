@@ -3,7 +3,7 @@
  *  
  *  访问内部类必须先通过外部类，如果内部类是隐藏的则只有外部类自己可以访问到
  *  
- *  这么写意义不是很大，主要是想少在命名空间里加几个名
+ *  尽管这是个非常有用的功能，但在这里这么写意义不是很大，主要是想少在命名空间里加几个名
  */
 
 using System.Collections.Generic;
@@ -165,7 +165,6 @@ public class QuadtreeWithNestedClass<T>
         _leafs.Add(leaf);
         UpdateMaxRadiusWhenSetLeaf(leaf);
         Debug.Log("<color=#0040A0>位置在" + _field.top + "," + _field.right + "," + _field.bottom + "," + _field.left + "的树梢节点存入位置在" + leaf.position + "半径是" + leaf.radius + "的叶子，存入后的最大半径是" + _maxRadius + "</color>");
-        //是的！Log输出同样支持HTML标签，颜色、粗体、斜体等都可以做到
         CheckAndDoSplit();
         return true;
     }
@@ -250,11 +249,11 @@ public class QuadtreeWithNestedClass<T>
     void UpdatePosition()
     {
         if (DontHaveChildren())
-            UpdatePositionSelf();
+            UpdateSelfPosition();
         else
-            CallChildrenUpdatePosition();
+            UpdateChildrensPosition();
     }
-    void UpdatePositionSelf()
+    void UpdateSelfPosition()
     {
         List<Leaf> resetLeafs = new List<Leaf>();
 
@@ -271,7 +270,7 @@ public class QuadtreeWithNestedClass<T>
         RemoveLeafFromSelf(leaf);
         _root.SetLeaf(leaf);
     }
-    void CallChildrenUpdatePosition()
+    void UpdateChildrensPosition()
     {
         _upperRightChild.UpdatePosition();
         _lowerRightChild.UpdatePosition();
@@ -282,11 +281,11 @@ public class QuadtreeWithNestedClass<T>
     void UpdateMaxRadius()
     {
         if (DontHaveChildren())
-            UpdateMaxRadiusSelf();
+            UpdateSelfMaxRadius();
         else
-            CallChildrenUpdateMaxRadius();
+            UpdateChildrensMaxRadius();
     }
-    void UpdateMaxRadiusSelf()
+    void UpdateSelfMaxRadius()
     {
         float newMaxRadius = GetLeafsMaxRadiusOnUpdate();
         if (newMaxRadius != _maxRadius)
@@ -303,7 +302,7 @@ public class QuadtreeWithNestedClass<T>
                 newMaxRadius = leaf.radius;
         return newMaxRadius;
     }
-    void CallChildrenUpdateMaxRadius()
+    void UpdateChildrensMaxRadius()
     {
         _upperRightChild.UpdateMaxRadius();
         _lowerRightChild.UpdateMaxRadius();
@@ -356,7 +355,7 @@ public class QuadtreeWithNestedClass<T>
     {
         if (child._field.PointToFieldDistance(checkPoint) <= _maxRadius + checkRadius)      //这里不光要考虑到检测半径，还要考虑到节点最大半径
             return child.CheckCollision(checkPoint, checkRadius);
-        return new T[] { };
+        return new T[0];
     }
 
 

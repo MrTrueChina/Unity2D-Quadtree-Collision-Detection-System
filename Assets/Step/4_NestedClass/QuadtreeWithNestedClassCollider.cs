@@ -9,7 +9,7 @@ public class QuadtreeWithNestedClassCollider : MonoBehaviour
     bool _checkCollision;
 
     Transform _transform;
-    QuadtreeWithNestedClass<GameObject>.Leaf _leaf;
+    QuadtreeWithNestedClass<GameObject>.Leaf _leaf;     //因为叶子变成了四叉树的内部类，这里就需要通过 四叉树类.叶子类 来表示叶子类
 
 
     private void Awake()
@@ -54,7 +54,7 @@ public class QuadtreeWithNestedClassCollider : MonoBehaviour
         if (_checkCollision)
             DoCheckCollision();
     }
-    public Action<GameObject> collisionEvent;           //在这，用一个GameObject的泛型表示有一个参数是GameObject的委托
+    public Action<GameObject> collisionEvent;
     void DoCheckCollision()
     {
         if (collisionEvent == null) return;

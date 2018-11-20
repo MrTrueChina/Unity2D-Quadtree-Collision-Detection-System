@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using System.Linq;
+using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEngine;
 
@@ -21,7 +22,7 @@ public class QuadtreeCanUpwardsSettingWindow : EditorWindow
 
 
 
-    [MenuItem("Tool/QuadtreeCanUpwardsSettingWindow")]
+    [MenuItem("Tools/QuadtreeCanUpwardsSettingWindow")]
     static void GetWindow()
     {
         QuadtreeCanUpwardsSettingWindow window = (QuadtreeCanUpwardsSettingWindow)GetWindow(typeof(QuadtreeCanUpwardsSettingWindow));
@@ -59,37 +60,33 @@ public class QuadtreeCanUpwardsSettingWindow : EditorWindow
         return CreatSettingObject(settingObjectName);
     }
 
+    static QuadtreeCanUpwardsSetting LoadSetting(string settingObjectName)
+    {
+        return Resources.Load<QuadtreeCanUpwardsSetting>(settingObjectName);
+    }
+
     QuadtreeCanUpwardsSetting CreatSettingObject(string settingObjectName)
     {
         string settingScriptFilePath = GetSettingScriptFilePath();
 
         if (!AssetDatabase.IsValidFolder(settingScriptFilePath + "Resources"))
-            CreatResourcesFolder();
+            CreatResourcesFolder(settingScriptFilePath);
 
         QuadtreeCanUpwardsSetting settingObject = CreateInstance<QuadtreeCanUpwardsSetting>();
         AssetDatabase.CreateAsset(settingObject, settingScriptFilePath + "Resources/" + settingObjectName + ".asset");
 
         return settingObject;
     }
-
     string GetSettingScriptFilePath()
     {
-        QuadtreeCanUpwardsSetting settingInstance = CreateInstance<QuadtreeCanUpwardsSetting>();
-        MonoScript settingScriptFile = MonoScript.FromScriptableObject(settingInstance);
-        string fullPath = AssetDatabase.GetAssetPath(settingScriptFile);
-        string folderPath = fullPath.Substring(0, fullPath.LastIndexOf("/") + 1);
-        return folderPath;
+        string fullPath = AssetDatabase.GetAssetPath(MonoScript.FromScriptableObject(CreateInstance<QuadtreeCanUpwardsSetting>()));
+        return fullPath.Substring(0, fullPath.LastIndexOf("/") + 1);
     }
-
-    static QuadtreeCanUpwardsSetting LoadSetting(string settingObjectName)
+    void CreatResourcesFolder(string parentFolderPath)
     {
-        return Resources.Load<QuadtreeCanUpwardsSetting>(settingObjectName);
-    }
-
-    void CreatResourcesFolder()
-    {
-        string settingScriptFilePath = GetSettingScriptFilePath();
-        AssetDatabase.CreateFolder(settingScriptFilePath.Substring(0, settingScriptFilePath.Length - 1), "Resources");
+        if (parentFolderPath.Last() == '/')
+            parentFolderPath = parentFolderPath.Substring(0, parentFolderPath.Length - 1);
+        AssetDatabase.CreateFolder(parentFolderPath, "Resources");
     }
 
 

@@ -252,7 +252,7 @@ public class QuadtreeWithRadius<T>
     {
         if (child._field.PointToFieldDistance(checkPoint) <= _maxRadius + checkRadius)      //这里不光要考虑到检测半径，还要考虑到节点最大半径
             return child.CheckCollision(checkPoint, checkRadius);
-        return new T[] { };
+        return new T[0];
     }
 
 

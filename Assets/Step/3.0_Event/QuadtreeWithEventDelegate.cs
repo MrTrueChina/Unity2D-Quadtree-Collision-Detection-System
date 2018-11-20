@@ -186,11 +186,11 @@ public class QuadtreeWithEventDelegate<T>
     void UpdatePosition()
     {
         if (DontHaveChildren())
-            UpdatePositionSelf();
+            UpdateSelfPosition();
         else
-            CallChildrenUpdatePosition();
+            UpdateChildrensPosition();
     }
-    void UpdatePositionSelf()
+    void UpdateSelfPosition()
     {
         List<QuadtreeWithEventDelegateLeaf<T>> resetLeafs = new List<QuadtreeWithEventDelegateLeaf<T>>();
 
@@ -207,7 +207,7 @@ public class QuadtreeWithEventDelegate<T>
         RemoveLeafFromSelf(leaf);
         _root.SetLeaf(leaf);
     }
-    void CallChildrenUpdatePosition()
+    void UpdateChildrensPosition()
     {
         _upperRightChild.UpdatePosition();
         _lowerRightChild.UpdatePosition();
@@ -218,11 +218,11 @@ public class QuadtreeWithEventDelegate<T>
     void UpdateMaxRadius()
     {
         if (DontHaveChildren())
-            UpdateMaxRadiusSelf();
+            UpdateSelfMaxRadius();
         else
-            CallChildrenUpdateMaxRadius();
+            UpdateChildrensMaxRadius();
     }
-    void UpdateMaxRadiusSelf()
+    void UpdateSelfMaxRadius()
     {
         float newMaxRadius = GetLeafsMaxRadiusOnUpdate();
         if (newMaxRadius != _maxRadius)
@@ -239,7 +239,7 @@ public class QuadtreeWithEventDelegate<T>
                 newMaxRadius = leaf.radius;
         return newMaxRadius;
     }
-    void CallChildrenUpdateMaxRadius()
+    void UpdateChildrensMaxRadius()
     {
         _upperRightChild.UpdateMaxRadius();
         _lowerRightChild.UpdateMaxRadius();
@@ -293,7 +293,7 @@ public class QuadtreeWithEventDelegate<T>
     {
         if (child._field.PointToFieldDistance(checkPoint) <= _maxRadius + checkRadius)
             return child.CheckCollision(checkPoint, checkRadius);
-        return new T[] { };
+        return new T[0];
     }
 
 

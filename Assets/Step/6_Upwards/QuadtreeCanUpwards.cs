@@ -251,7 +251,6 @@ public class QuadtreeCanUpwardsData<T>
         _leafs.Add(leaf);
         UpdateMaxRadiusWhenSetLeaf(leaf);
         Debug.Log("<color=#0040A0>位置在" + _field.top + "," + _field.right + "," + _field.bottom + "," + _field.left + "的树梢节点存入位置在" + leaf.position + "半径是" + leaf.radius + "的叶子，存入后的最大半径是" + _maxRadius + "</color>");
-        //是的！Log输出同样支持HTML标签，颜色、粗体、斜体等都可以做到
         CheckAndDoSplit();
         return true;
     }
@@ -406,11 +405,11 @@ public class QuadtreeCanUpwardsData<T>
     void UpdatePosition()
     {
         if (DontHaveChildren())
-            UpdatePositionSelf();
+            UpdateSelfPosition();
         else
-            CallChildrenUpdatePosition();
+            UpdateChildrensPosition();
     }
-    void UpdatePositionSelf()
+    void UpdateSelfPosition()
     {
         List<Leaf> resetLeafs = new List<Leaf>();
 
@@ -427,7 +426,7 @@ public class QuadtreeCanUpwardsData<T>
         RemoveLeafFromSelf(leaf);
         _root.SetLeaf(leaf);
     }
-    void CallChildrenUpdatePosition()
+    void UpdateChildrensPosition()
     {
         _upperRightChild.UpdatePosition();
         _lowerRightChild.UpdatePosition();
@@ -438,11 +437,11 @@ public class QuadtreeCanUpwardsData<T>
     void UpdateMaxRadius()
     {
         if (DontHaveChildren())
-            UpdateMaxRadiusSelf();
+            UpdateSelfMaxRadius();
         else
-            CallChildrenUpdateMaxRadius();
+            UpdateChildrensMaxRadius();
     }
-    void UpdateMaxRadiusSelf()
+    void UpdateSelfMaxRadius()
     {
         float newMaxRadius = GetLeafsMaxRadiusOnUpdate();
         if (newMaxRadius != _maxRadius)
@@ -459,7 +458,7 @@ public class QuadtreeCanUpwardsData<T>
                 newMaxRadius = leaf.radius;
         return newMaxRadius;
     }
-    void CallChildrenUpdateMaxRadius()
+    void UpdateChildrensMaxRadius()
     {
         _upperRightChild.UpdateMaxRadius();
         _lowerRightChild.UpdateMaxRadius();

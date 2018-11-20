@@ -1,9 +1,12 @@
 ﻿/*
  *  这一步使用方式有很大的变化，不是先设置执行顺序后在场景里创建四叉树物体！
  *  
- *  新的使用方式：在 Tool -> QuadtreeWithSingletonSettingWindow 里设置四叉树的属性。之后就可以随便用了！
+ *  新的使用方式：在 Tools -> QuadtreeWithSingletonSettingWindow 里设置四叉树的属性。之后就可以随便用了！
  *  
  *  第五步：使用单例自动创建四叉树物体，再也不用手动创建四叉树物体，也不需要手动设置脚本执行顺序
+ */
+/*
+ *  四叉树物体类改名为四叉树类，而原本的四叉树类改名为四叉树数据类
  */
 
 using System.Collections.Generic;
@@ -18,8 +21,10 @@ public class QuadtreeWithSingleton : MonoBehaviour
             if (_quadtreeObject != null)
                 return _quadtreeObject;
             
-            _quadtreeObject = new GameObject("Quadtree").AddComponent<QuadtreeWithSingleton>();
+            _quadtreeObject = new GameObject("Quadtree").AddComponent<QuadtreeWithSingleton>(); //为了通过 Update 每帧调用四叉树的更新，必须要在一个场景中的物体上挂载一个组件，因此创建一个物体之后挂载上四叉树脚本组件。
             return _quadtreeObject;
+            
+            //经典的单例实现方式，如果已经有实例则返回，如果没有实例则创建保存后返回。
         }
     }
     static QuadtreeWithSingleton _quadtreeObject;
@@ -32,6 +37,7 @@ public class QuadtreeWithSingleton : MonoBehaviour
     private void Awake()
     {
         QuadtreeWithSingletonSetting setting = Resources.Load("QuadtreeWithSingletonSetting") as QuadtreeWithSingletonSetting;
+        //根据官方所说，Resources的最佳使用方法就是【别用它】，我个人也不喜欢这种把设置数据和游戏本体分到天涯海角的方法，所以我建议在设置完成后改成硬编码
         _quadtree = new QuadtreeWithSingletonData<GameObject>(setting.top, setting.right, setting.bottom, setting.left, setting.maxLeafsNumber, setting.minSideLength);
     }
 
@@ -40,7 +46,7 @@ public class QuadtreeWithSingleton : MonoBehaviour
     //存入
     public static bool SetLeaf(QuadtreeWithSingletonData<GameObject>.Leaf leaf)
     {
-        return quadtreeObject._quadtree.SetLeaf(leaf);
+        return quadtreeObject._quadtree.SetLeaf(leaf);      //存入时通过接口获取四叉树物体，这样能保证四叉树一直存在，不会发生存入空树
     }
 
 
@@ -48,7 +54,7 @@ public class QuadtreeWithSingleton : MonoBehaviour
     //更新
     private void Update()
     {
-        _quadtree.Update();
+        _quadtree.Update();                                 //Update只由挂载的脚本自动调用，脚本挂载后自动创建数据四叉树，所以这里直接用 _quadtree
     }
 
 
@@ -56,7 +62,7 @@ public class QuadtreeWithSingleton : MonoBehaviour
     //检测
     public static GameObject[] CheckCollision(Vector2 checkPoint, float checkRadius)
     {
-        if (_quadtreeObject != null)
+        if (_quadtreeObject != null)                        //这里先检测四叉树物体是否存在，如果不存在的话肯定检测不到碰撞，直接返回空数组就行
             return quadtreeObject._quadtree.CheckCollision(checkPoint, checkRadius);
         return new GameObject[0];
     }
@@ -72,7 +78,7 @@ public class QuadtreeWithSingleton : MonoBehaviour
     //移除
     public static bool RemoveLeaf(QuadtreeWithSingletonData<GameObject>.Leaf leaf)
     {
-        if (_quadtreeObject != null)
+        if (_quadtreeObject != null)                        //移除也是先检测四叉树物体是否存在，不存在的话肯定移除不了，返回 false
             return _quadtreeObject._quadtree.RemoveLeaf(leaf);
         return false;
     }
@@ -234,7 +240,6 @@ public class QuadtreeWithSingletonData<T>
         _leafs.Add(leaf);
         UpdateMaxRadiusWhenSetLeaf(leaf);
         Debug.Log("<color=#0040A0>位置在" + _field.top + "," + _field.right + "," + _field.bottom + "," + _field.left + "的树梢节点存入位置在" + leaf.position + "半径是" + leaf.radius + "的叶子，存入后的最大半径是" + _maxRadius + "</color>");
-        //是的！Log输出同样支持HTML标签，颜色、粗体、斜体等都可以做到
         CheckAndDoSplit();
         return true;
     }
@@ -319,11 +324,11 @@ public class QuadtreeWithSingletonData<T>
     void UpdatePosition()
     {
         if (DontHaveChildren())
-            UpdatePositionSelf();
+            UpdateSelfPosition();
         else
-            CallChildrenUpdatePosition();
+            UpdateChildrensPosition();
     }
-    void UpdatePositionSelf()
+    void UpdateSelfPosition()
     {
         List<Leaf> resetLeafs = new List<Leaf>();
 
@@ -340,7 +345,7 @@ public class QuadtreeWithSingletonData<T>
         RemoveLeafFromSelf(leaf);
         _root.SetLeaf(leaf);
     }
-    void CallChildrenUpdatePosition()
+    void UpdateChildrensPosition()
     {
         _upperRightChild.UpdatePosition();
         _lowerRightChild.UpdatePosition();
@@ -351,11 +356,11 @@ public class QuadtreeWithSingletonData<T>
     void UpdateMaxRadius()
     {
         if (DontHaveChildren())
-            UpdateMaxRadiusSelf();
+            UpdateSelfMaxRadius();
         else
-            CallChildrenUpdateMaxRadius();
+            UpdateChildrensMaxRadius();
     }
-    void UpdateMaxRadiusSelf()
+    void UpdateSelfMaxRadius()
     {
         float newMaxRadius = GetLeafsMaxRadiusOnUpdate();
         if (newMaxRadius != _maxRadius)
@@ -372,7 +377,7 @@ public class QuadtreeWithSingletonData<T>
                 newMaxRadius = leaf.radius;
         return newMaxRadius;
     }
-    void CallChildrenUpdateMaxRadius()
+    void UpdateChildrensMaxRadius()
     {
         _upperRightChild.UpdateMaxRadius();
         _lowerRightChild.UpdateMaxRadius();
