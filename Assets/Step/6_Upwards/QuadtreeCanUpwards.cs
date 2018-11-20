@@ -1,15 +1,15 @@
 ﻿/*
- *  增加反向生长功能，在存入时如果超出整棵树的范围则向着叶子方向反向生长树，更新也是先移除后存入，一起在存入环节处理
+ *  增加向上生长功能，在存入时如果超出整棵树的范围则向着叶子方向反向生长树，更新也是先移除后存入，一起在存入环节处理
  *  
- *  最大的问题是根节点的转移，反向生长后根节点会向上移动，而四叉树对外操作都必须从根开始
- *      可以在反向生长之后返回新的根节点让外部调用类接收存储，如果这么解决，要么占用返回值，要么需要出参数
- *      或者在每次外部操作时调用根节点来执行，这么解决需要加一个层来完成跳转
+ *  向上生长后根节点发生变化，但四叉树所有外部操作都是从根节点开始，为了解决这个矛盾点大概有三个方法：
+ *      1.每个可能造成根节点变化的操作都返回新的根节点
+ *      2.每个可能造成根节点变化的操作都用出参数返回新的根节点
+ *      3.增加一层，在这一层里将操作转为从根节点开始
  *      
- *  即使解决了外部调用问题，还需要解决内部的根的转移，每次根节点的变化都应该是在当前根节点上增加一个节点，那就每次根节点变化都从新的根节点开始向下重存根节点
+ *  在经过短暂的思想斗争后，我个人不能接受一个方法同时进行本职工作和返回新根节点两个操作，于是我选择增加一层
  */
 
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 
 public class QuadtreeCanUpwards : MonoBehaviour
@@ -34,7 +34,7 @@ public class QuadtreeCanUpwards : MonoBehaviour
     //初始化
     private void Awake()
     {
-        QuadtreeCanUpwardsSetting setting = Resources.Load("QuadtreeCanUpwardsSetting") as QuadtreeCanUpwardsSetting;
+        QuadtreeCanUpwardsSetting setting = Resources.Load<QuadtreeCanUpwardsSetting>("QuadtreeCanUpwardsSetting");
         _quadtree = new QuadtreeCanUpwardsData<GameObject>(setting.top, setting.right, setting.bottom, setting.left, setting.maxLeafsNumber, setting.minSideLength);
     }
 
@@ -147,7 +147,7 @@ public class QuadtreeCanUpwardsData<T>
         }
         float _height;
 
-        public Vector2 center
+        public Vector2 center       //center好像只在向上生长的时候才会使用到一次，考虑之后觉得还是用查询吧，反正都是只用一次，节省一点内存
         {
             get
             {
@@ -373,7 +373,7 @@ public class QuadtreeCanUpwardsData<T>
         else
             newRoot._upperLeftChild = this;
 
-        _parent = newRoot;
+        _parent = newRoot;              //因为每次向上生长都是由现在的根节点调用的，新的根节点生长完成后旧的根节点的父节点就是新的根节点
         newRoot.UpdateRoot(newRoot);
         
         Debug.Log("<color=#008510>位置在" + leafPosition + "的叶子存入树，树向" + (growthDirection.x >= 0 ? (growthDirection.y >= 0 ? "右上方" : "右下方") : (growthDirection.y >= 0 ? "左上方" : "左下方")) + "生长，生长后的树的范围是 " + newRoot._field.top + "  " + newRoot._field.right + " " + newRoot._field.bottom + "  " + newRoot._field.left + "</color>");

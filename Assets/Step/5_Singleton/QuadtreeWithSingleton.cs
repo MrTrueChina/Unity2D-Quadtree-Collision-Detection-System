@@ -36,7 +36,7 @@ public class QuadtreeWithSingleton : MonoBehaviour
     //初始化，在作为组件被挂载时读取设置创建四叉树
     private void Awake()
     {
-        QuadtreeWithSingletonSetting setting = Resources.Load("QuadtreeWithSingletonSetting") as QuadtreeWithSingletonSetting;
+        QuadtreeWithSingletonSetting setting = Resources.Load<QuadtreeWithSingletonSetting>("QuadtreeWithSingletonSetting");
         //根据官方所说，Resources的最佳使用方法就是【别用它】，我个人也不喜欢这种把设置数据和游戏本体分到天涯海角的方法，所以我建议在设置完成后改成硬编码
         _quadtree = new QuadtreeWithSingletonData<GameObject>(setting.top, setting.right, setting.bottom, setting.left, setting.maxLeafsNumber, setting.minSideLength);
     }
