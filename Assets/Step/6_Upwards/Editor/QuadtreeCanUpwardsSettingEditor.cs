@@ -22,7 +22,7 @@ public class QuadtreeCanUpwardsSettingWindow : EditorWindow
 
 
 
-    [MenuItem("Tools/QuadtreeCanUpwardsSettingWindow")]
+    [MenuItem("Tools/Quadtree/Step/6-QuadtreeCanUpwardsSettingWindow", priority = 6)]
     static void GetWindow()
     {
         QuadtreeCanUpwardsSettingWindow window = (QuadtreeCanUpwardsSettingWindow)GetWindow(typeof(QuadtreeCanUpwardsSettingWindow));

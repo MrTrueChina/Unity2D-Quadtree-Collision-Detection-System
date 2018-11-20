@@ -25,7 +25,7 @@ public class QuadtreeWithSingletonSettingWindow : EditorWindow          //Editor
     QuadtreeWithSingletonSetting _setting;
 
 
-    [MenuItem("Tools/QuadtreeWithSingletonSettingWindow")]              //MenuItem(string itemName)：在菜单栏创建一个选项，点击后执行这个方法
+    [MenuItem("Tools/Quadtree/Step/5-QuadtreeWithSingletonSettingWindow", priority = 5)]     //MenuItem：在菜单栏创建一个选项，点击后执行这个方法
     static void GetWindow()
     {
         QuadtreeWithSingletonSettingWindow window = GetWindow<QuadtreeWithSingletonSettingWindow>();
