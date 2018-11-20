@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class QuadtreeWithSingletonSettingWindow : EditorWindow
 {
-    readonly string settingObjectName = "QuadtreeWithSingletonSetting";
+    const string settingObjectName = "QuadtreeWithSingletonSetting";
     QuadtreeWithSingletonSetting setting
     {
         get
@@ -25,6 +25,7 @@ public class QuadtreeWithSingletonSettingWindow : EditorWindow
         QuadtreeWithSingletonSettingWindow window = (QuadtreeWithSingletonSettingWindow)GetWindow(typeof(QuadtreeWithSingletonSettingWindow));
         window.Show();
     }
+
 
 
     private void OnGUI()
@@ -77,7 +78,7 @@ public class QuadtreeWithSingletonSettingWindow : EditorWindow
         return folderPath;
     }
 
-    QuadtreeWithSingletonSetting LoadSetting(string settingObjectName)
+    static QuadtreeWithSingletonSetting LoadSetting(string settingObjectName)
     {
         return Resources.Load<QuadtreeWithSingletonSetting>(settingObjectName);
     }
@@ -121,7 +122,7 @@ public class QuadtreeWithSingletonSettingWindow : EditorWindow
 
     //发布时提示
     [PostProcessBuild(0)]
-    void OnBuild(BuildTarget target, string path)
+    static void OnBuild(BuildTarget target, string path)
     {
         if (LoadSetting(settingObjectName) != null)
             Debug.LogWarning("检测到 Resources 文件夹中有四叉树设置文件，为游戏优化着想，建议改用其他方式（如硬编码）进行设置，之后移除设置文件、设置脚本文件和设置编辑器脚本文件");
