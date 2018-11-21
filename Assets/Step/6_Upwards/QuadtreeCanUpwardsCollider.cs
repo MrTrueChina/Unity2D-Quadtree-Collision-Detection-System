@@ -4,7 +4,7 @@ using UnityEngine;
 public class QuadtreeCanUpwardsCollider : MonoBehaviour
 {
     [SerializeField]
-    float _radius;
+    float _radius = 1;
     [SerializeField]
     bool _checkCollision;
 
@@ -54,7 +54,7 @@ public class QuadtreeCanUpwardsCollider : MonoBehaviour
         if (_checkCollision)
             DoCheckCollision();
     }
-    public Action<GameObject> collisionEvent;           //在这，用一个GameObject的泛型表示有一个参数是GameObject的委托
+    public Action<GameObject> collisionEvent;
     void DoCheckCollision()
     {
         if (collisionEvent == null) return;

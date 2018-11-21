@@ -1,33 +1,21 @@
-﻿/*
- *  碰撞器，执行顺序要在 QuadtreeObject之后
- *  
- *  设置执行循序的方法：
- *      Edit -> ProjectSettings -> Script Excution Order，打开设置窗口
- *      点"+"，找到要设置的那个脚本，点击
- *      上下拖动，向上是更早执行，向下是更晚执行，没设置的都在 Default Time 里面
- */
-
+﻿using System;
 using UnityEngine;
-
-
-public delegate void QuadtreeCollisionEventDelegate(GameObject colliderGameObject);
-
 
 public class QuadtreeCollider : MonoBehaviour
 {
     [SerializeField]
-    float _radius;
+    float _radius = 1;
     [SerializeField]
     bool _checkCollision;
 
     Transform _transform;
-    QuadtreeLeaf<GameObject> _leaf;
+    QuadtreeData<GameObject>.Leaf _leaf;
 
 
     private void Awake()
     {
         _transform = transform;
-        _leaf = new QuadtreeLeaf<GameObject>(gameObject, GetLeafPosition(), _radius);
+        _leaf = new QuadtreeData<GameObject>.Leaf(gameObject, GetLeafPosition(), _radius);
     }
     Vector2 GetLeafPosition()
     {
@@ -38,7 +26,7 @@ public class QuadtreeCollider : MonoBehaviour
     private void OnEnable()
     {
         UpdateLeaf();
-        QuadtreeObject.SetLeaf(_leaf);
+        Quadtree.SetLeaf(_leaf);
     }
 
 
@@ -66,39 +54,28 @@ public class QuadtreeCollider : MonoBehaviour
         if (_checkCollision)
             DoCheckCollision();
     }
-    public event QuadtreeCollisionEventDelegate collisionEvent;
+    public Action<GameObject> collisionEvent;
     void DoCheckCollision()
     {
         if (collisionEvent == null) return;
 
-        GameObject[] colliderGameObjects = QuadtreeObject.CheckCollision(_leaf);
+        GameObject[] colliderGameObjects = Quadtree.CheckCollision(_leaf);
         foreach (GameObject colliderGameObject in colliderGameObjects)
         {
-            if (collisionEvent == null) break;      //这里是一个很难发现的天坑，容我在下面讲解
+            if (collisionEvent == null) break;
             collisionEvent(colliderGameObject);
         }
+        //每次发出事件进行一次判断，原因是这里循环多次发出事件，但有时候有的组件接到事件后各种操作最后取消了订阅，如果正巧所有订阅都取消了，这里继续循环的时候就会出错，所以要每发出一次判断一次
     }
-    /*
-     *  为什么要每发出一次碰撞事件都检测一次事件是不是还有订阅？
-     *  
-     *  因为发出事件后无法保证这个事件会不会被取消订阅。
-     *  
-     *  而且这还是个碰撞检测的事件，还是个有可能用在车万那种弹幕游戏的碰撞检测事件
-     *  
-     *  这种情况下一个中弹就可能导致物体销毁，然后如果订阅事件的那个脚本写的比较漂亮，加了取消订阅的功能
-     *  
-     *  中弹 -> 销毁物体 -> 所有组件在销毁前取消对碰撞器的订阅 -> 碰撞器傻傻的发出下一个事件 -> 已经没有订阅了 -> bug
-     *  
-     *  为了安全就在每次发事件之前都做检测，如果没订阅就跳出，反正继续循环下去也不会有什么用了
-     */
 
 
     private void OnDisable()
     {
-        QuadtreeObject.RemoveLeaf(_leaf);
+        Quadtree.RemoveLeaf(_leaf);
     }
 
-    
+
+
     private void OnDrawGizmos()
     {
         if (!enabled) return;
@@ -108,6 +85,7 @@ public class QuadtreeCollider : MonoBehaviour
         MyGizmos.DrawCircle(transform.position, _radius * Mathf.Max(transform.lossyScale.x, transform.lossyScale.y), 60);
     }
 }
+
 
 
 /*

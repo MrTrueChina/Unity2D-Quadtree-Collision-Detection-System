@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6cef7639bc778f42af49968b61ab905, type: 3}
+  m_Name: QuadtreeSetting
+  m_EditorClassIdentifier: 
+  top: 1960
+  right: 1080
+  bottom: 0
+  left: 0
+  maxLeafsNumber: 5
+  minSideLength: 10

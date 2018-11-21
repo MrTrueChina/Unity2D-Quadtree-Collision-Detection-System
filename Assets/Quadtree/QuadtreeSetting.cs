@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class QuadtreeCanUpwardsSetting : ScriptableObject
+public class QuadtreeSetting : ScriptableObject
 {
     public float top = 1960;
     public float right = 1080;
