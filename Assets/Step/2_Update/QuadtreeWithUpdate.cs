@@ -106,8 +106,6 @@ public class QuadtreeWithUpdate<T>
          */
 
         _parent = parent;
-
-        DrawField();    //绘制节点范围，删除不影响功能
     }
 
 
@@ -227,6 +225,8 @@ public class QuadtreeWithUpdate<T>
     {
         UpdatePosition();
         UpdateMaxRadius();
+
+        DrawField();    //绘制节点范围，删除不影响功能，移到更新是因为之前用无限时长绘制的线在场景切换后还是存在，但场景切换时四叉树已经销毁了
     }
 
     void UpdatePosition()
@@ -450,15 +450,25 @@ public class QuadtreeWithUpdate<T>
     //绘制四叉树节点的范围
     void DrawField()
     {
-        Vector3 upperRight = new Vector3(_field.right, _field.top, 0);
-        Vector3 lowerRight = new Vector3(_field.right, _field.bottom, 0);
-        Vector3 lowerLeft = new Vector3(_field.left, _field.bottom, 0);
-        Vector3 upperLeft = new Vector3(_field.left, _field.top, 0);
+        if (DontHaveChildren())
+        {
+            Vector3 upperRight = new Vector3(_field.right, _field.top, 0);
+            Vector3 lowerRight = new Vector3(_field.right, _field.bottom, 0);
+            Vector3 lowerLeft = new Vector3(_field.left, _field.bottom, 0);
+            Vector3 upperLeft = new Vector3(_field.left, _field.top, 0);
 
-        Debug.DrawLine(upperRight, lowerRight, Color.blue * 0.8f, Mathf.Infinity);
-        Debug.DrawLine(lowerRight, lowerLeft, Color.blue * 0.8f, Mathf.Infinity);
-        Debug.DrawLine(lowerLeft, upperLeft, Color.blue * 0.8f, Mathf.Infinity);
-        Debug.DrawLine(upperLeft, upperRight, Color.blue * 0.8f, Mathf.Infinity);
+            Debug.DrawLine(upperRight, lowerRight, Color.blue * 0.8f, 0);
+            Debug.DrawLine(lowerRight, lowerLeft, Color.blue * 0.8f, 0);
+            Debug.DrawLine(lowerLeft, upperLeft, Color.blue * 0.8f, 0);
+            Debug.DrawLine(upperLeft, upperRight, Color.blue * 0.8f, 0);
+        }
+        else
+        {
+            _upperRightChild.DrawField();
+            _lowerRightChild.DrawField();
+            _lowerLeftChild.DrawField();
+            _upperLeftChild.DrawField();
+        }
     }
 }
 

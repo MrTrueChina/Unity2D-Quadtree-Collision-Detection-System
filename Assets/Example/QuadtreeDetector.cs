@@ -1,10 +1,4 @@
-﻿/*
- * 检测器，纯演示的。
- * 
- * 要使用碰撞检测就订阅碰撞器的碰撞事件，然后不想用的时候就取消订阅，就这么简单。
- */
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 

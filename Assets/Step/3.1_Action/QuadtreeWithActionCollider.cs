@@ -23,11 +23,22 @@ using UnityEngine;
 
 public class QuadtreeWithActionCollider : MonoBehaviour
 {
+    public float radius
+    {
+        get { return _radius; }
+        set { _radius = value; }
+    }
     [SerializeField]
-    float _radius;
+    float _radius = 1;
+
+    public bool checkCollision
+    {
+        get { return _checkCollision; }
+        set { _checkCollision = value; }
+    }
     [SerializeField]
     bool _checkCollision;
-    
+
     Transform _transform;
     QuadtreeWithActionLeaf<GameObject> _leaf;
 

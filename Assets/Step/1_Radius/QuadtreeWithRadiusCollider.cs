@@ -6,8 +6,13 @@ using UnityEngine;
 
 public class QuadtreeWithRadiusCollider : MonoBehaviour
 {
+    public float radius
+    {
+        get { return _radius; }
+        set { _radius = value; }
+    }
     [SerializeField]
-    float _radius;
+    float _radius = 1;
 
     Transform _transform;
     QuadtreeWithRadiusLeaf<GameObject> _leaf;
