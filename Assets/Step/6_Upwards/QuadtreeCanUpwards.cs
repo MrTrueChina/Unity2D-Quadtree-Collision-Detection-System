@@ -35,7 +35,7 @@ public class QuadtreeCanUpwards : MonoBehaviour
     private void Awake()
     {
         QuadtreeCanUpwardsSetting setting = Resources.Load<QuadtreeCanUpwardsSetting>("QuadtreeCanUpwardsSetting");
-        _quadtree = new QuadtreeCanUpwardsData<GameObject>(setting.top, setting.right, setting.bottom, setting.left, setting.maxLeafsNumber, setting.minSideLength);
+        _quadtree = new QuadtreeCanUpwardsData<GameObject>(setting.startTop, setting.startRight, setting.startBottom, setting.startLeft, setting.maxLeafsNumber, setting.minSideLength);
     }
 
 

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using MtC.Tools.Quadtree;
 
 
 [RequireComponent(typeof(QuadtreeCollider))]

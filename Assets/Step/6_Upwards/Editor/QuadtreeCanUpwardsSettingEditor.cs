@@ -106,10 +106,10 @@ public class QuadtreeCanUpwardsSettingWindow : EditorWindow
     {
         Handles.color = Color.red * 0.9f;
 
-        Vector3 upperRight = new Vector3(setting.right, setting.top, 0);
-        Vector3 lowerRight = new Vector3(setting.right, setting.bottom, 0);
-        Vector3 lowerLeft = new Vector3(setting.left, setting.bottom, 0);
-        Vector3 upperLeft = new Vector3(setting.left, setting.top, 0);
+        Vector3 upperRight = new Vector3(setting.startRight, setting.startTop, 0);
+        Vector3 lowerRight = new Vector3(setting.startRight, setting.startBottom, 0);
+        Vector3 lowerLeft = new Vector3(setting.startLeft, setting.startBottom, 0);
+        Vector3 upperLeft = new Vector3(setting.startLeft, setting.startTop, 0);
 
         Handles.DrawLine(upperRight, lowerRight);
         Handles.DrawLine(lowerRight, lowerLeft);

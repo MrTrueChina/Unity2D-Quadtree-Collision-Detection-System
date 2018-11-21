@@ -1,11 +1,14 @@
 ﻿using UnityEngine;
 
-public class QuadtreeSetting : ScriptableObject
+namespace MtC.Tools.Quadtree
 {
-    public float top = 1960;
-    public float right = 1080;
-    public float bottom = 0;
-    public float left = 0;
-    public int maxLeafsNumber = 5;
-    public float minSideLength = 10;
+    public class QuadtreeSetting : ScriptableObject
+    {
+        public float startTop = 1960;
+        public float startRight = 1080;
+        public float startBottom = 0;
+        public float startLeft = 0;
+        public int maxLeafsNumber = 5;
+        public float minSideLength = 10;
+    }
 }
