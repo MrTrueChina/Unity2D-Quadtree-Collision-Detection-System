@@ -2,14 +2,14 @@
 四叉树可以类比二叉树，一般是将二维平面一次次做四等分形成的树，常用于二维空间上的物体的操作。</br>
 四叉树碰撞检测是四叉树的常见应用之一，因为Unity的碰撞系统是基于物理计算的，成本相当高昂，如果制作弹幕类游戏很难保证高帧数（说的就是你，过气车万）。使用没有物理功能的四叉树进行碰撞检测可以解决这个问题。</br>
 </br>
-### 使用方法：
+## 使用方法：
 1.将 QuadtreeCollider 挂载到需要检测碰撞的物体上。</br>
 2.using MtC.Tools.Quadtree;</br>
 3.订阅碰撞器的 public Action&lt;GameObject&gt; collisionEvent 事件。</br>
 </br>
 可以通过 Tools -> Quadtree -> Quadtree Setting 根据需要调整四叉树参数进行优化。</br>
 </br>
-### 文件夹内容：
+## 文件夹内容：
 | 文件夹 | 内容 |
 | ------------- |:-------------| 
 | Assets/Quadtree | 实用版四叉树碰撞检测脚本 |
@@ -25,4 +25,4 @@
 | Asstes/Step/5_Singleton | 在4的基础上把Quadtree和QuadtreeObject合为一个脚本文件，用单例模式自动创建四叉树物体，用ScriptableObject和EditorWindow进行设置。从这一步开始不需要设置脚本执行顺序，也不需要手动创建四叉树物体 |
 | Assets/Step/6_Upwards | 在5的基础上增加向上生长的功能，如果叶子存入时位置在四叉树范围以外，四叉树会自动向叶子方向生长以接住叶子 |
 | ProjectSettings | Unity的ProjectSettings文件夹，里面是各种设置 |
-## 注意：由于没有物理功能，四叉树的碰撞不会像Unity自带碰撞一样互相弹开，而是像触发器一样互相穿过
+### 注意：由于没有物理功能，四叉树的碰撞不会像Unity自带碰撞一样互相弹开，而是像触发器一样互相穿过
