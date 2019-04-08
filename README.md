@@ -1,4 +1,8 @@
 # Unity四叉树碰撞检测</br>
+[![996.icu](https://img.shields.io/badge/link-996.icu-red.svg)](https://996.icu)
+[![LICENSE](https://img.shields.io/badge/license-Anti%20996-blue.svg)](https://github.com/996icu/996.ICU/blob/master/LICENSE)
+
+## 简介：
 四叉树可以类比二叉树，一般是将二维平面一次次做四等分形成的树，常用于二维空间上的物体的操作。</br>
 四叉树碰撞检测是四叉树的常见应用之一，因为Unity的碰撞系统是基于物理计算的，成本相当高昂，如果制作弹幕类游戏很难保证高帧数（说的就是你，过气车万）。使用没有物理功能的四叉树进行碰撞检测可以解决这个问题。</br>
 </br>
