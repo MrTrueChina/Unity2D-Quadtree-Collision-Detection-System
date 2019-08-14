@@ -31,7 +31,7 @@ namespace MtC.Tools.Quadtree.Step.Basic
     /*
      *  这个<T>是“泛型”，有泛型的类和方法可以在调用的时候指定类型，Unity的 GetComponent<> 就应用了泛型
      */
-    public class QuadtreeBasicLeaf<T>
+    public class QuadtreeLeafBasic<T>
     {
         /*
          *  get,set访问器，C#的常用封装方式，看起来是这样的：
@@ -78,7 +78,7 @@ namespace MtC.Tools.Quadtree.Step.Basic
         }
         Vector2 _position;
 
-        public QuadtreeBasicLeaf(T obj, Vector2 position)
+        public QuadtreeLeafBasic(T obj, Vector2 position)
         {
             _obj = obj;
             _position = position;
@@ -96,7 +96,7 @@ namespace MtC.Tools.Quadtree.Step.Basic
         QuadtreeBasic<T> _lowerLeftChild;
         QuadtreeBasic<T> _upperLeftChild;
 
-        List<QuadtreeBasicLeaf<T>> _leafs = new List<QuadtreeBasicLeaf<T>>();   //叶子List，用来存储这个节点里的叶子
+        List<QuadtreeLeafBasic<T>> _leafs = new List<QuadtreeLeafBasic<T>>();   //叶子List，用来存储这个节点里的叶子
 
         int _maxLeafsNumber; //这个节点里最多能容纳多少叶子，如果超过了这个值则要分割节点
         float _minSideLength; //可以分割到的最小边长，如果节点的宽或高已经小于这个值，那么不管有多少叶子都不能分割
@@ -131,7 +131,7 @@ namespace MtC.Tools.Quadtree.Step.Basic
          *          寻找可以存入子节点的叶子的方法很简单：如果叶子的位置到在子节点的区域里，则说明可以存进去。
          *          如此向下递归知道树梢再存进去就可以了。
          */
-        public void SetLeaf(QuadtreeBasicLeaf<T> leaf)
+        public void SetLeaf(QuadtreeLeafBasic<T> leaf)
         {
             if (DontHaveChildren())
                 SetLeafToSelf(leaf);
@@ -143,7 +143,7 @@ namespace MtC.Tools.Quadtree.Step.Basic
             return _upperRightChild == null || _lowerRightChild == null || _lowerLeftChild == null || _upperLeftChild == null; //四个子节点是一起创建的，原理上说一个不存在另外三个也不存在，但假设只有一个不存在插入的叶子又在这个位置就要出事了
         }
 
-        void SetLeafToSelf(QuadtreeBasicLeaf<T> leaf)
+        void SetLeafToSelf(QuadtreeLeafBasic<T> leaf)
         {
             _leafs.Add(leaf);
             CheckAndDoSplit();
@@ -156,7 +156,7 @@ namespace MtC.Tools.Quadtree.Step.Basic
                 Split();
         }
 
-        void SetLeafToChildren(QuadtreeBasicLeaf<T> leaf)
+        void SetLeafToChildren(QuadtreeLeafBasic<T> leaf)
         {
             Debug.Log("位置在(" + _field.top + "," + _field.right + "," + _field.bottom + "," + _field.left + ")的树枝节点向子节点存入位置在" + leaf.position + "的叶子");
             /*
@@ -194,7 +194,7 @@ namespace MtC.Tools.Quadtree.Step.Basic
             _upperLeftChild = new QuadtreeBasic<T>(_field.top, xCenter, yCenter, _field.left, _maxLeafsNumber, _minSideLength);
 
             //生成完子节点后把这个节点里的所有叶子分给子节点
-            foreach (QuadtreeBasicLeaf<T> leaf in _leafs) //假设你不会用 foreach ，请看 QuadtreeBasicDetector
+            foreach (QuadtreeLeafBasic<T> leaf in _leafs) //假设你不会用 foreach ，请看 QuadtreeBasicDetector
                 SetLeafToChildren(leaf);
             _leafs = null; //将叶子分给子节点后这个节点就不需要继续保留叶子了，把叶子List设为null，让C#的清理器来清理掉节省内存
         }
@@ -225,7 +225,7 @@ namespace MtC.Tools.Quadtree.Step.Basic
         {
             List<T> objs = new List<T>();
 
-            foreach (QuadtreeBasicLeaf<T> leaf in _leafs)
+            foreach (QuadtreeLeafBasic<T> leaf in _leafs)
                 if (Vector2.Distance(checkPosition, leaf.position) <= checkRadius) //开头说的没有一丁点技术含量的距离检测， Vector2.Distance可以计算出两个点的距离，之后和检测半径一比较就知道有没有检测到了
                     objs.Add(leaf.obj);
 
@@ -253,7 +253,7 @@ namespace MtC.Tools.Quadtree.Step.Basic
          *  
          *  移除叶子很简单，先是跟插入叶子时一样根据坐标找到叶子所在的树梢，之后直接移除就可以了。
          */
-        public void RemoveLeaf(QuadtreeBasicLeaf<T> leaf)
+        public void RemoveLeaf(QuadtreeLeafBasic<T> leaf)
         {
             if (DontHaveChildren())
                 RemoveLeafFromSelf(leaf);
@@ -261,14 +261,14 @@ namespace MtC.Tools.Quadtree.Step.Basic
                 RemoveLeafFromChildren(leaf);
         }
 
-        void RemoveLeafFromSelf(QuadtreeBasicLeaf<T> leaf)
+        void RemoveLeafFromSelf(QuadtreeLeafBasic<T> leaf)
         {
             _leafs.Remove(leaf);
 
             Debug.Log("位置在(" + _field.top + "," + _field.right + "," + _field.bottom + "," + _field.left + ")的树梢节点移除位置在" + leaf.position + "的叶子");
         }
 
-        void RemoveLeafFromChildren(QuadtreeBasicLeaf<T> leaf)
+        void RemoveLeafFromChildren(QuadtreeLeafBasic<T> leaf)
         {
             Debug.Log("位置在(" + _field.top + "," + _field.right + "," + _field.bottom + "," + _field.left + ")的树枝节点从子节点移除位置在" + leaf.position + "的叶子");
 
