@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace MtC.Tools.Quadtree.Step.Basic
 {
-    public class QuadtreeBasicCollider : MonoBehaviour
+    public class QuadtreeColliderBasic : MonoBehaviour
     {
         QuadtreeBasicLeaf<GameObject> _leaf;
 
@@ -66,12 +66,12 @@ namespace MtC.Tools.Quadtree.Step.Basic
          */
         private void OnEnable()
         {
-            QuadtreeBasicObject.SetLeaf(_leaf);
+            QuadtreeObjectBasic.SetLeaf(_leaf);
         }
 
         private void OnDisable()
         {
-            QuadtreeBasicObject.RemoveLeaf(_leaf);
+            QuadtreeObjectBasic.RemoveLeaf(_leaf);
         }
 
         //关于 OnDrawGizmos 请看 QuadtreeBaiscObject

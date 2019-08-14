@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace MtC.Tools.Quadtree.Step.Basic
 {
-    public class QuadtreeBasicDetector : MonoBehaviour
+    public class QuadtreeDetectorBasic : MonoBehaviour
     {
         [SerializeField] //关于[SerializeField]请看 QuadtreeBasicObject
         float _radius;
@@ -30,7 +30,7 @@ namespace MtC.Tools.Quadtree.Step.Basic
         {
             Gizmos.color = Color.yellow;
 
-            GameObject[] colliders = QuadtreeBasicObject.CheckCollision(transform.position, _radius);
+            GameObject[] colliders = QuadtreeObjectBasic.CheckCollision(transform.position, _radius);
 
             foreach (GameObject collider in colliders)
                 Gizmos.DrawLine(transform.position, collider.transform.position);       //Gizmos.DrawLine：绘制一条线，参数是两个Vector3，就是线的两端
