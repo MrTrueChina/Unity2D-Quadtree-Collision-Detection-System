@@ -8,11 +8,11 @@ namespace MtC.Tools.Quadtree.Step.Basic
 {
     public class QuadtreeColliderBasic : MonoBehaviour
     {
-        QuadtreeBasicLeaf<GameObject> _leaf;
+        QuadtreeLeafBasic<GameObject> _leaf;
 
         private void Awake()
         {
-            _leaf = new QuadtreeBasicLeaf<GameObject>(gameObject, GetLeafPosition());
+            _leaf = new QuadtreeLeafBasic<GameObject>(gameObject, GetLeafPosition());
         }
         Vector2 GetLeafPosition()
         {

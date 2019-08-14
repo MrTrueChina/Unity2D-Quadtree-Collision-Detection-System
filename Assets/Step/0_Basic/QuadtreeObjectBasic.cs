@@ -34,12 +34,12 @@ namespace MtC.Tools.Quadtree.Step.Basic
         /*
          *  存入。移除。检测三个方法都是 static ，因为static方法可以通过类名调用，这样就省去了每个检测器都要 Find 一次四叉树物体的工作
          */
-        public static void SetLeaf(QuadtreeBasicLeaf<GameObject> leaf)
+        public static void SetLeaf(QuadtreeLeafBasic<GameObject> leaf)
         {
             _quadtree.SetLeaf(leaf);
         }
 
-        public static void RemoveLeaf(QuadtreeBasicLeaf<GameObject> leaf)
+        public static void RemoveLeaf(QuadtreeLeafBasic<GameObject> leaf)
         {
             _quadtree.RemoveLeaf(leaf);
         }
