@@ -9,15 +9,15 @@ using UnityEngine;
 public class QuadtreeWithRadiusObject : MonoBehaviour
 {
     [SerializeField]
-    float _top = 0;
+    float _top;
     [SerializeField]
-    float _right = 0;
+    float _right;
     [SerializeField]
-    float _bottom = 50;
+    float _bottom;
     [SerializeField]
-    float _left = 100;
+    float _left;
     [SerializeField]
-    int _maxLeafsNumber = 50;
+    int _maxLeafsNumber;
     [SerializeField]
     float _minSideLength;
 
@@ -29,7 +29,7 @@ public class QuadtreeWithRadiusObject : MonoBehaviour
         _quadtree = new QuadtreeWithRadius<GameObject>(_top, _right, _bottom, _left, _maxLeafsNumber, _minSideLength);
     }
 
-    
+
     public static void SetLeaf(QuadtreeWithRadiusLeaf<GameObject> leaf)
     {
         _quadtree.SetLeaf(leaf);
