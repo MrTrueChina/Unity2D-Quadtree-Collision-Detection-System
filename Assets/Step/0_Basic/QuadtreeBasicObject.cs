@@ -6,89 +6,85 @@
 
 using UnityEngine;
 
-public class QuadtreeBasicObject : MonoBehaviour
+namespace MtC.Tools.Quadtree.Step.Basic
 {
-    [SerializeField] //加了这个的变量可以不写public就在 Inspector 面板展示，如果有变量需要在 Inspector 面板展示但又不需要public则应该用[SerializeField]
-    float _top;
-    [SerializeField]
-    float _right;
-    [SerializeField]
-    float _bottom;
-    [SerializeField]
-    float _left;
-    [SerializeField]
-    int _maxLeafsNumber;
-    [SerializeField]
-    float _minSideLength;
-
-    static QuadtreeBasic<GameObject> _quadtree; //static方法必须要static变量，所以这里设为static
-
-
-
-    private void Awake()
+    public class QuadtreeBasicObject : MonoBehaviour
     {
-        _quadtree = new QuadtreeBasic<GameObject>(_top, _right, _bottom, _left, _maxLeafsNumber, _minSideLength);
-    }
+        [SerializeField] //加了这个的变量可以不写public就在 Inspector 面板展示，如果有变量需要在 Inspector 面板展示但又不需要public则应该用[SerializeField]
+        float _top;
+        [SerializeField]
+        float _right;
+        [SerializeField]
+        float _bottom;
+        [SerializeField]
+        float _left;
+        [SerializeField]
+        int _maxLeafsNumber;
+        [SerializeField]
+        float _minSideLength;
+
+        static QuadtreeBasic<GameObject> _quadtree; //static方法必须要static变量，所以这里设为static
 
 
+        private void Awake()
+        {
+            _quadtree = new QuadtreeBasic<GameObject>(_top, _right, _bottom, _left, _maxLeafsNumber, _minSideLength);
+        }
 
-    /*
-     *  存入。移除。检测三个方法都是 static ，因为static方法可以通过类名调用，这样就省去了每个检测器都要 Find 一次四叉树物体的工作
-     */
-    public static void SetLeaf(QuadtreeBasicLeaf<GameObject> leaf)
-    {
-        _quadtree.SetLeaf(leaf);
-    }
+        /*
+         *  存入。移除。检测三个方法都是 static ，因为static方法可以通过类名调用，这样就省去了每个检测器都要 Find 一次四叉树物体的工作
+         */
+        public static void SetLeaf(QuadtreeBasicLeaf<GameObject> leaf)
+        {
+            _quadtree.SetLeaf(leaf);
+        }
 
-    public static void RemoveLeaf(QuadtreeBasicLeaf<GameObject> leaf)
-    {
-        _quadtree.RemoveLeaf(leaf);
-    }
+        public static void RemoveLeaf(QuadtreeBasicLeaf<GameObject> leaf)
+        {
+            _quadtree.RemoveLeaf(leaf);
+        }
 
-    public static GameObject[] CheckCollision(Vector2 checkPosition, float radius)
-    {
-        return _quadtree.CheckCollision(checkPosition, radius);
-    }
+        public static GameObject[] CheckCollision(Vector2 checkPosition, float radius)
+        {
+            return _quadtree.CheckCollision(checkPosition, radius);
+        }
 
+        /*
+         *  OnDrawGizmos：Unity自带方法之一，在绘制Gizmo的时候调用，一般来说只要在Scene面板上做了操作就会绘制Gizmo
+         *  Gizmo是个很难解释的词汇，它直译叫“小工具”，Unity自带碰撞器的体积的线是Gizmo，移动、缩放。旋转物体的那几个工具同样是Gizmo，就是直译里说的“工具”
+         *  Gizmo在Unity里是一次次的“绘制”出来的，在绘制Unity自带Gizmo的同时也可以通过 OnDrawGizmo 自己设定需要绘制的Gizmo
+         *  一般来说Gizmo只能在 Scene 面板里看到，在 Game 面板里看不到，因为这是为了方便开发才写的工具，在实际游戏过程里是没有用的
+         *  
+         *  虽然不会写Gizmo也不会对功能有什么影响，但会写Gizmo可以让开发过程更舒服
+         */
+        private void OnDrawGizmos()
+        {
+            Vector3 upperRight = new Vector3(_right, _top, transform.position.z);
+            Vector3 lowerRight = new Vector3(_right, _bottom, transform.position.z);
+            Vector3 lowerLeft = new Vector3(_left, _bottom, transform.position.z);
+            Vector3 upperLeft = new Vector3(_left, _top, transform.position.z);
 
+            Gizmos.color = Color.red * 0.8f; //Gizmos.color：绘制Gizmo的颜色
 
-    /*
-     *  OnDrawGizmos：Unity自带方法之一，在绘制Gizmo的时候调用，一般来说只要在Scene面板上做了操作就会绘制Gizmo
-     *  Gizmo是个很难解释的词汇，它直译叫“小工具”，Unity自带碰撞器的体积的线是Gizmo，移动、缩放。旋转物体的那几个工具同样是Gizmo，就是直译里说的“工具”
-     *  Gizmo在Unity里是一次次的“绘制”出来的，在绘制Unity自带Gizmo的同时也可以通过 OnDrawGizmo 自己设定需要绘制的Gizmo
-     *  一般来说Gizmo只能在 Scene 面板里看到，在 Game 面板里看不到，因为这是为了方便开发才写的工具，在实际游戏过程里是没有用的
-     *  
-     *  虽然不会写Gizmo也不会对功能有什么影响，但会写Gizmo可以让开发过程更舒服
-     */
-    private void OnDrawGizmos()
-    {
-        Vector3 upperRight = new Vector3(_right, _top, transform.position.z);
-        Vector3 lowerRight = new Vector3(_right, _bottom, transform.position.z);
-        Vector3 lowerLeft = new Vector3(_left, _bottom, transform.position.z);
-        Vector3 upperLeft = new Vector3(_left, _top, transform.position.z);
+            Gizmos.DrawLine(upperRight, lowerRight);
+            Gizmos.DrawLine(lowerRight, lowerLeft);
+            Gizmos.DrawLine(lowerLeft, upperLeft);
+            Gizmos.DrawLine(upperLeft, upperRight);
+        }
 
-        Gizmos.color = Color.red * 0.8f; //Gizmos.color：绘制Gizmo的颜色
-
-        Gizmos.DrawLine(upperRight, lowerRight);
-        Gizmos.DrawLine(lowerRight, lowerLeft);
-        Gizmos.DrawLine(lowerLeft, upperLeft);
-        Gizmos.DrawLine(upperLeft, upperRight);
-    }
-
-
-
-    /*
-     *  OnValidate：Unity自带方法之一，当 Inspector 面板的数值变化时调用，一般用来限制数据的调整，防止误操作导致的bug
-     */
-    private void OnValidate()
-    {
-        if (_top < _bottom)
-            _top = _bottom;
-        if (_right < _left)
-            _right = _left;
-        if (_maxLeafsNumber < 1)
-            _maxLeafsNumber = 1;
-        if (_minSideLength < 0.001f)
-            _minSideLength = 0.001f;
+        /*
+         *  OnValidate：Unity自带方法之一，当 Inspector 面板的数值变化时调用，一般用来限制数据的调整，防止误操作导致的bug
+         */
+        private void OnValidate()
+        {
+            if (_top < _bottom)
+                _top = _bottom;
+            if (_right < _left)
+                _right = _left;
+            if (_maxLeafsNumber < 1)
+                _maxLeafsNumber = 1;
+            if (_minSideLength < 0.001f)
+                _minSideLength = 0.001f;
+        }
     }
 }

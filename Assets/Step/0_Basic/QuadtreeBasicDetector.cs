@@ -6,43 +6,43 @@
 
 using UnityEngine;
 
-
-public class QuadtreeBasicDetector : MonoBehaviour
+namespace MtC.Tools.Quadtree.Step.Basic
 {
-    [SerializeField]        //关于[SerializeField]请看 QuadtreeBasicObject
-    float _radius;
-
-
-
-    //关于 OnDrawGizmo 请看 QuadtreeBasicObject
-    private void OnDrawGizmos()
+    public class QuadtreeBasicDetector : MonoBehaviour
     {
-        DrawRadius();
-        DrawCollision();
-    }
+        [SerializeField] //关于[SerializeField]请看 QuadtreeBasicObject
+        float _radius;
 
-    void DrawRadius()
-    {
-        Gizmos.color = Color.yellow * 0.8f;
-        MyGizmos.DrawCircle(transform.position, _radius, 60);   //Mygizmos是一个自写的类，位置在 QuadtreeCollider 里，这个方法是画圆圈的
-    }
+        //关于 OnDrawGizmo 请看 QuadtreeBasicObject
+        private void OnDrawGizmos()
+        {
+            DrawRadius();
+            DrawCollision();
+        }
 
-    void DrawCollision()
-    {
-        Gizmos.color = Color.yellow;
+        void DrawRadius()
+        {
+            Gizmos.color = Color.yellow * 0.8f;
+            MyGizmos.DrawCircle(transform.position, _radius, 60); //Mygizmos是一个自写的类，位置在 QuadtreeCollider 里，这个方法是画圆圈的
+        }
 
-        GameObject[] colliders = QuadtreeBasicObject.CheckCollision(transform.position, _radius);
+        void DrawCollision()
+        {
+            Gizmos.color = Color.yellow;
 
-        foreach (GameObject collider in colliders)
-            Gizmos.DrawLine(transform.position, collider.transform.position);       //Gizmos.DrawLine：绘制一条线，参数是两个Vector3，就是线的两端
-        /*
-         *  假设你不会用foreach，它的格式是：
-         *  foreach(类型 变量名A in 同类型的数组或List或其他集合类的变量B)
-         *  {
-         *      这个大括号会遍历那个变量B里的每个元素，每次遍历都会用前面的变量名A，可以理解为一个简写版的for循环
-         *      
-         *      假设你连“遍历”这个词都不知道，遍历的意思是从头到尾把每个元素都过一遍
-         *  }
-         */
+            GameObject[] colliders = QuadtreeBasicObject.CheckCollision(transform.position, _radius);
+
+            foreach (GameObject collider in colliders)
+                Gizmos.DrawLine(transform.position, collider.transform.position);       //Gizmos.DrawLine：绘制一条线，参数是两个Vector3，就是线的两端
+                /*
+                 *  假设你不会用foreach，它的格式是：
+                 *  foreach(类型 变量名A in 同类型的数组或List或其他集合类的变量B)
+                 *  {
+                 *      这个大括号会遍历那个变量B里的每个元素，每次遍历都会用前面的变量名A，可以理解为一个简写版的for循环
+                 *      
+                 *      假设你连“遍历”这个词都不知道，遍历的意思是从头到尾把每个元素都过一遍
+                 *  }
+                 */
+        }
     }
 }
