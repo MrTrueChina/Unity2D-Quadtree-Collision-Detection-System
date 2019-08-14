@@ -8,20 +8,20 @@ using UnityEngine;
 
 public class QuadtreeBasicObject : MonoBehaviour
 {
-    [SerializeField]                //加了这个的变量可以不写public就在 Inspector 面板展示，如果有变量需要在 Inspector 面板展示但又不需要public则应该用[SerializeField]
-    float _top = 0;
+    [SerializeField] //加了这个的变量可以不写public就在 Inspector 面板展示，如果有变量需要在 Inspector 面板展示但又不需要public则应该用[SerializeField]
+    float _top;
     [SerializeField]
-    float _right = 0;
+    float _right;
     [SerializeField]
-    float _bottom = 50;
+    float _bottom;
     [SerializeField]
-    float _left = 100;
+    float _left;
     [SerializeField]
-    int _maxLeafsNumber = 50;
+    int _maxLeafsNumber;
     [SerializeField]
     float _minSideLength;
 
-    static QuadtreeBasic<GameObject> _quadtree;     //static方法必须要static变量，所以这里设为static
+    static QuadtreeBasic<GameObject> _quadtree; //static方法必须要static变量，所以这里设为static
 
 
 
@@ -67,7 +67,7 @@ public class QuadtreeBasicObject : MonoBehaviour
         Vector3 lowerLeft = new Vector3(_left, _bottom, transform.position.z);
         Vector3 upperLeft = new Vector3(_left, _top, transform.position.z);
 
-        Gizmos.color = Color.red * 0.8f;            //Gizmos.color：绘制Gizmo的颜色
+        Gizmos.color = Color.red * 0.8f; //Gizmos.color：绘制Gizmo的颜色
 
         Gizmos.DrawLine(upperRight, lowerRight);
         Gizmos.DrawLine(lowerRight, lowerLeft);
