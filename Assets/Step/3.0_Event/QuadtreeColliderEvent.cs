@@ -48,118 +48,116 @@
 
 using UnityEngine;
 
-public delegate void QuadtreeWithEventDelegateCollisionEventDelegate(GameObject colliderGameObject);
-/*
- *  这是第一部：定义委托类型。
- *  委托类型看起来像是方法，有返回、有参数，只不过多了个 delegate。
- *  要通过这个委托类型订阅事件的方法必须要有和这个委托类型相同的返回和参数。
- */
-
-public class QuadtreeWithEventDelegateCollider : MonoBehaviour
+namespace MtC.Tools.Quadtree.Step.Event
 {
-    public float radius
-    {
-        get { return _radius; }
-        set { _radius = value; }
-    }
-    [SerializeField]
-    float _radius = 1;
-
-    public bool checkCollision
-    {
-        get { return _checkCollision; }
-        set { _checkCollision = value; }
-    }
-    [SerializeField]
-    bool _checkCollision;
-
-    Transform _transform;
-    QuadtreeWithEventDelegateLeaf<GameObject> _leaf;
-
-
-    private void Awake()
-    {
-        _transform = transform;
-        _leaf = new QuadtreeWithEventDelegateLeaf<GameObject>(gameObject, GetLeafPosition(), _radius);
-    }
-    Vector2 GetLeafPosition()
-    {
-        return new Vector2(_transform.position.x, _transform.position.y);
-    }
-
-
-    private void OnEnable()
-    {
-        UpdateLeaf();
-        QuadtreeWithEventDelegateObject.SetLeaf(_leaf);
-    }
-
-
-    private void Update()
-    {
-        UpdateLeaf();
-        CheckCollision();
-    }
-    void UpdateLeaf()
-    {
-        UpdateLeafPosition();
-        UpdateLeafRadius();
-    }
-    void UpdateLeafPosition()
-    {
-        _leaf.position = GetLeafPosition();
-    }
-    void UpdateLeafRadius()
-    {
-        _leaf.radius = Mathf.Max(_transform.lossyScale.x, _transform.lossyScale.y) * _radius;       //注意是 lossyScale 不是localScale，lossyScale 是全局缩放，可以应对父物体缩放后碰撞器一起缩放的情况
-    }
-    
-    void CheckCollision()
-    {
-        if (_checkCollision)
-            DoCheckCollision();
-    }
-    public event QuadtreeWithEventDelegateCollisionEventDelegate collisionEvent;
+    public delegate void QuadtreeCollisionEventDelegateEvent(GameObject colliderGameObject);
     /*
-     *  第二步：根据前面的委托类型定义的事件，结构是：
-     *  event 委托类型 事件名
+     *  这是第一部：定义委托类型。
+     *  委托类型看起来像是方法，有返回、有参数，只不过多了个 delegate。
+     *  要通过这个委托类型订阅事件的方法必须要有和这个委托类型相同的返回和参数。
      */
-    void DoCheckCollision()
-    {
-        if (collisionEvent == null) return;
-        /*
-         *  首先要检测一下这个事件有没有被订阅，没有订阅的事件是null。
-         *  发出没有被订阅的事件卵用没有，谁也不会有行动，实际上你要是真的把没订阅的事件发出了马上就会报错。
-         */
 
-        GameObject[] colliderGameObjects = QuadtreeWithEventDelegateObject.CheckCollision(_leaf);
-        foreach (GameObject colliderGameObject in colliderGameObjects)
+    public class QuadtreeColliderEvent : MonoBehaviour
+    {
+        public float radius
         {
-            if (collisionEvent == null) break;
-            collisionEvent(colliderGameObject);
+            get { return _radius; }
+            set { _radius = value; }
         }
+        [SerializeField]
+        float _radius = 1;
+
+        public bool checkCollision
+        {
+            get { return _checkCollision; }
+            set { _checkCollision = value; }
+        }
+        [SerializeField]
+        bool _checkCollision;
+
+        Transform _transform;
+        QuadtreeLeafEvent<GameObject> _leaf;
+
+        private void Awake()
+        {
+            _transform = transform;
+            _leaf = new QuadtreeLeafEvent<GameObject>(gameObject, GetLeafPosition(), _radius);
+        }
+        Vector2 GetLeafPosition()
+        {
+            return new Vector2(_transform.position.x, _transform.position.y);
+        }
+
+        private void OnEnable()
+        {
+            UpdateLeaf();
+            QuadtreeObjectEvent.SetLeaf(_leaf);
+        }
+
+        private void Update()
+        {
+            UpdateLeaf();
+            CheckCollision();
+        }
+        void UpdateLeaf()
+        {
+            UpdateLeafPosition();
+            UpdateLeafRadius();
+        }
+        void UpdateLeafPosition()
+        {
+            _leaf.position = GetLeafPosition();
+        }
+        void UpdateLeafRadius()
+        {
+            _leaf.radius = Mathf.Max(_transform.lossyScale.x, _transform.lossyScale.y) * _radius;       //注意是 lossyScale 不是localScale，lossyScale 是全局缩放，可以应对父物体缩放后碰撞器一起缩放的情况
+        }
+
+        void CheckCollision()
+        {
+            if (_checkCollision)
+                DoCheckCollision();
+        }
+        public event QuadtreeCollisionEventDelegateEvent collisionEvent;
+
         /*
-         *  发出事件很简单：像方法一样用，名字(参数)
-         *  很明显能看出来这里的使用方式和前面定义委托类型的时候的参数和返回是相同的。
-         *  
-         *  需要注意这里又进行了一次判断，原因是这里循环多次发出事件，但有时候有的组件接到事件后各种操作最后取消了订阅，如果正巧所有订阅都取消了，这里继续循环的时候就会出错，所以要每发出一次判断一次
+         *  第二步：根据前面的委托类型定义的事件，结构是：
+         *  event 委托类型 事件名
          */
-    }
+        void DoCheckCollision()
+        {
+            if (collisionEvent == null) return;
+            /*
+             *  首先要检测一下这个事件有没有被订阅，没有订阅的事件是null。
+             *  发出没有被订阅的事件卵用没有，谁也不会有行动，实际上你要是真的把没订阅的事件发出了马上就会报错。
+             */
 
+            GameObject[] colliderGameObjects = QuadtreeObjectEvent.CheckCollision(_leaf);
+            foreach (GameObject colliderGameObject in colliderGameObjects)
+            {
+                if (collisionEvent == null) break;
+                collisionEvent(colliderGameObject);
+            }
+            /*
+             *  发出事件很简单：像方法一样用，名字(参数)
+             *  很明显能看出来这里的使用方式和前面定义委托类型的时候的参数和返回是相同的。
+             *  
+             *  需要注意这里又进行了一次判断，原因是这里循环多次发出事件，但有时候有的组件接到事件后各种操作最后取消了订阅，如果正巧所有订阅都取消了，这里继续循环的时候就会出错，所以要每发出一次判断一次
+             */
+        }
 
-    private void OnDisable()
-    {
-        QuadtreeWithEventDelegateObject.RemoveLeaf(_leaf);
-    }
-    
+        private void OnDisable()
+        {
+            QuadtreeObjectEvent.RemoveLeaf(_leaf);
+        }
 
+        private void OnDrawGizmos()
+        {
+            if (!enabled) return;
 
-    private void OnDrawGizmos()
-    {
-        if (!enabled) return;
+            Gizmos.color = _checkCollision ? Color.yellow * 0.8f : Color.green * 0.8f;
 
-        Gizmos.color = _checkCollision ? Color.yellow * 0.8f : Color.green * 0.8f;
-
-        MyGizmos.DrawCircle(transform.position, _radius * Mathf.Max(transform.lossyScale.x, transform.lossyScale.y), 60);
+            MyGizmos.DrawCircle(transform.position, _radius * Mathf.Max(transform.lossyScale.x, transform.lossyScale.y), 60);
+        }
     }
 }
