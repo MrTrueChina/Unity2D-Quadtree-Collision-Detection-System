@@ -10,16 +10,22 @@ namespace MtC.Tools.Quadtree.Step.Basic
 {
     public class QuadtreeObjectBasic : MonoBehaviour
     {
+#pragma warning disable 0649
         [SerializeField] //加了这个的变量可以不写public就在 Inspector 面板展示，如果有变量需要在 Inspector 面板展示但又不需要public则应该用[SerializeField]
         float _top;
+#pragma warning disable 0649
         [SerializeField]
         float _right;
+#pragma warning disable 0649
         [SerializeField]
         float _bottom;
+#pragma warning disable 0649
         [SerializeField]
         float _left;
+#pragma warning disable 0649
         [SerializeField]
         int _maxLeafsNumber;
+#pragma warning disable 0649
         [SerializeField]
         float _minSideLength;
 

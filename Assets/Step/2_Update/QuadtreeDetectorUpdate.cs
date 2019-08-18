@@ -5,6 +5,7 @@ namespace MtC.Tools.Quadtree.Step.Update
 {
     public class QuadtreeDetectorUpdate : MonoBehaviour
     {
+#pragma warning disable 0649
         [SerializeField]
         float _radius;
 

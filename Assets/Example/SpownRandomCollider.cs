@@ -3,14 +3,19 @@ using MtC.Tools.Quadtree;
 
 public class SpownRandomCollider : MonoBehaviour
 {
+#pragma warning disable 0649
     [SerializeField]
     Vector4 _spownField;
+#pragma warning disable 0649
     [SerializeField]
     Vector2 _speedRange;
+#pragma warning disable 0649
     [SerializeField]
     Vector2 _destroyTimeRange;
+#pragma warning disable 0649
     [SerializeField]
     Vector2 _spownIntervalRange;
+#pragma warning disable 0649
     [SerializeField]
     Vector2 _colliderRadiusRange;
 

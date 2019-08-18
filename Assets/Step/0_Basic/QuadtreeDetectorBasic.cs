@@ -10,6 +10,7 @@ namespace MtC.Tools.Quadtree.Step.Basic
 {
     public class QuadtreeDetectorBasic : MonoBehaviour
     {
+#pragma warning disable 0649
         [SerializeField] //关于[SerializeField]请看 QuadtreeBasicObject
         float _radius;
 

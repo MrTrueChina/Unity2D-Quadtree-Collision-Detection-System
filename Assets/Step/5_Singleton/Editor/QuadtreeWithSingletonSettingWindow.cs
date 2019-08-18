@@ -114,12 +114,12 @@ namespace MtC.Tools.Quadtree.Step.Singleton
         //绘制范围
         private void OnEnable()
         {
-            SceneView.onSceneGUIDelegate += OnSceneGUI;
+            SceneView.duringSceneGui += OnSceneGUI;
         }
 
         private void OnDisable()
         {
-            SceneView.onSceneGUIDelegate -= OnSceneGUI;
+            SceneView.duringSceneGui -= OnSceneGUI;
         }
 
         void OnSceneGUI(SceneView sceneView)

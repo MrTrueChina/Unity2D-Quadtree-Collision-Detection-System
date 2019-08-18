@@ -10,16 +10,22 @@ namespace MtC.Tools.Quadtree.Step.Radius
 {
     public class QuadtreeObjectRadius : MonoBehaviour
     {
+#pragma warning disable 0649
         [SerializeField]
         float _top;
+#pragma warning disable 0649
         [SerializeField]
         float _right;
+#pragma warning disable 0649
         [SerializeField]
         float _bottom;
+#pragma warning disable 0649
         [SerializeField]
         float _left;
+#pragma warning disable 0649
         [SerializeField]
         int _maxLeafsNumber;
+#pragma warning disable 0649
         [SerializeField]
         float _minSideLength;
 
