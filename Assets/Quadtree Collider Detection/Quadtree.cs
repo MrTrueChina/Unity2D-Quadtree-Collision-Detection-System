@@ -32,7 +32,7 @@ namespace MtC.Tools.QuadtreeCollider
         /// <summary>
         /// 这个节点所拥有的的子节点
         /// </summary>
-        private List<Quadtree> _chindren;
+        private List<Quadtree> _children;
         /// <summary>
         /// 这个节点所拥有的所有碰撞器中，需要检测半径最长的碰撞器的检测半径
         /// </summary>
@@ -80,7 +80,7 @@ namespace MtC.Tools.QuadtreeCollider
 
         private bool HaveChildren()
         {
-            return _chindren != null; // 子节点List只在创建子节点时才会创建，判断是不是null就能判断有没有子节点
+            return _children != null; // 子节点List只在创建子节点时才会创建，判断是不是null就能判断有没有子节点
         }
 
         private bool AddColliderIntoChildren(QuadtreeCollider collider)
@@ -94,6 +94,12 @@ namespace MtC.Tools.QuadtreeCollider
             _colliders.Add(collider);
 
             UpdateMaxRadiusOnSetCollider();
+            //TODO： 有讨论空间，是否需要在存入时更新半径？
+            /*
+             *  由于现阶段Unity的特点，场景中的物体以帧为单位改变，即使是Unity自己的碰撞器也是以帧为单位进行检测的，一帧一次检测，如果可以控制更新和检测的顺序，一帧更新一次就足以满足检测的需要
+             *  碰撞器的存入和移除显然不是一帧一次，在特殊情况下，碰撞器一帧可以发生几十几百次甚至更高，如此高频的操作是否有必要进行半径的更新？
+             */
+            //TODO：如何控制所有检测和所有更新的顺序？
 
             if (NeedSplit())
                 Split();
@@ -101,11 +107,23 @@ namespace MtC.Tools.QuadtreeCollider
 
         private void UpdateMaxRadiusOnSetCollider()
         {
-            _maxRadius = Mathf.NegativeInfinity;
+            float newMaxRadius = Mathf.NegativeInfinity;
 
             foreach (QuadtreeCollider collider in _colliders)
-                if (collider.maxRadius > _maxRadius)
-                    _maxRadius = collider.maxRadius;
+                if (collider.maxRadius > newMaxRadius)
+                    newMaxRadius = collider.maxRadius;
+
+            if (newMaxRadius != _maxRadius)
+            {
+                _maxRadius = newMaxRadius;
+                UpwardUpdateMaxRadius();
+            }
+        }
+
+        private void UpwardUpdateMaxRadius()
+        {
+            //TODO：向上更新最大半径
+            throw new NotImplementedException();
         }
 
         private bool NeedSplit()
@@ -145,17 +163,17 @@ namespace MtC.Tools.QuadtreeCollider
             SetAllColliderIntoChindren();
         }
 
-        private void CreateChildren() // TODO：需要单元测试，使用反射
+        private void CreateChildren()
         {
-            float halfWidth = _field.width / 2;
-            float halfHeight = _field.height / 2;
+            float halfWidth = _field.width / 2; // 为了防止float的乘除运算误差，一次运算求出宽高的一半，子节点的宽高使用加减运算获得
+            float halfHeight = _field.height / 2; // 误差的来源是浮点数的储存方式，除非出现新的储存方式，否则误差将作为标准现象保留下去
 
-            _chindren = new List<Quadtree>();
+            _children = new List<Quadtree>();
 
-            _chindren.Add(new Quadtree(new Rect(_field.x + halfWidth, _field.y + halfHeight, _field.width - halfWidth, _field.height - halfHeight), _root, this)); // 右上子节点
-            _chindren.Add(new Quadtree(new Rect(_field.x + halfWidth, _field.y, _field.width - halfWidth, halfHeight), _root, this)); // 右下子节点
-            _chindren.Add(new Quadtree(new Rect(_field.x, _field.y, halfWidth, halfHeight), _root, this)); // 左下子节点
-            _chindren.Add(new Quadtree(new Rect(_field.x, _field.y + halfHeight, halfWidth, _field.height - halfHeight), _root, this)); // 左上子节点
+            _children.Add(new Quadtree(new Rect(_field.x + halfWidth, _field.y + halfHeight, _field.width - halfWidth, _field.height - halfHeight), _root, this)); // 右上子节点
+            _children.Add(new Quadtree(new Rect(_field.x + halfWidth, _field.y, _field.width - halfWidth, halfHeight), _root, this)); // 右下子节点
+            _children.Add(new Quadtree(new Rect(_field.x, _field.y, halfWidth, halfHeight), _root, this)); // 左下子节点
+            _children.Add(new Quadtree(new Rect(_field.x, _field.y + halfHeight, halfWidth, _field.height - halfHeight), _root, this)); // 左上子节点
         }
 
         private void SetAllColliderIntoChindren()
@@ -168,8 +186,8 @@ namespace MtC.Tools.QuadtreeCollider
 
         private void ResetCollidersIntoQuadtree(List<QuadtreeCollider> outOfFieldColliders)
         {
-            //TODO：将碰撞器重新从树顶存进去
-            throw new NotImplementedException();
+            foreach (QuadtreeCollider collider in outOfFieldColliders)
+                _root.AddCollider(collider);
         }
         //TODO：添加碰撞器
         //TODO：假设两个节点互相在对方区域有碰撞器，一个节点分割时需要先更新节点将超出区域的碰撞器剔除，此时另一个节点被触发分割，之后这个节点的更新又导致前一个节点的更新，如何处理
