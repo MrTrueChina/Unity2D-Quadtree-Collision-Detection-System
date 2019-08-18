@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using MtC.Tools.Quadtree;
+using MtC.Tools.Quadtree.Old;
 
 public class SpownRandomCollider : MonoBehaviour
 {

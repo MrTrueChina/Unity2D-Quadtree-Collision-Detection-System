@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace MtC.Tools.Quadtree
+namespace MtC.Tools.Quadtree.Old
 {
     public class QuadtreeCollider : MonoBehaviour
     {

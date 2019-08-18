@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEngine;
 
-namespace MtC.Tools.Quadtree
+namespace MtC.Tools.Quadtree.Old
 {
     public class QuadtreeSettingWindow : EditorWindow
     {

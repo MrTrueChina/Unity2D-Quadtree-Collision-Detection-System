@@ -7,7 +7,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace MtC.Tools.Quadtree
+namespace MtC.Tools.Quadtree.Old
 {
     public class Quadtree : MonoBehaviour
     {
