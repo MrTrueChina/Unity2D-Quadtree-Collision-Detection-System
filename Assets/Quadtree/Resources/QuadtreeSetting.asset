@@ -4,16 +4,17 @@
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c6cef7639bc778f42af49968b61ab905, type: 3}
+  m_Script: {fileID: 11500000, guid: 640c23ffdecd5f342a884c52e36ea3c2, type: 3}
   m_Name: QuadtreeSetting
   m_EditorClassIdentifier: 
-  top: 1960
-  right: 1080
-  bottom: 0
-  left: 0
+  startTop: 1960
+  startRight: 1080
+  startBottom: 0
+  startLeft: 0
   maxLeafsNumber: 5
   minSideLength: 10
