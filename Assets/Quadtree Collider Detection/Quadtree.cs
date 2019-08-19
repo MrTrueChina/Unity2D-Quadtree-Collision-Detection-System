@@ -10,8 +10,31 @@ namespace MtC.Tools.QuadtreeCollider
     /// </summary>
     public class Quadtree
     {
-        private static int maxLeafsNumber = 10;
-        private static float minSideLendth = 10;
+        /// <summary>
+        /// 右上子节点的索引
+        /// </summary>
+        private const int RIGHT_TOP_CHILD_INDEX = 0;
+        /// <summary>
+        /// 右下子节点的索引
+        /// </summary>
+        private const int RIGHT_BOTTOM_CHILD_INDEX = 1;
+        /// <summary>
+        /// 左下子节点的索引
+        /// </summary>
+        private const int LEFT_BOTTOM_CHILD_INDEX = 2;
+        /// <summary>
+        /// 左上子节点的索引
+        /// </summary>
+        private const int LEFT_TOP_CHILD_INDEX = 3;
+
+        /// <summary>
+        /// 一个节点里的碰撞器数量上限，超过上限后进行分割
+        /// </summary>
+        private static int maxCollidersumber = 10;
+        /// <summary>
+        /// 单个节点的最短边的最小长度，当任意一个边的长度小于这个长度时，无论碰撞器数量，不再进行分割
+        /// </summary>
+        private static float minSideLendth = 10; // 这个值用于应对过度分割导致树深度过大性能反而下降的情况，同时可以避免大量碰撞器位置完全相同导致的无限分割
 
         /// <summary>
         /// 根节点
@@ -24,7 +47,7 @@ namespace MtC.Tools.QuadtreeCollider
         /// <summary>
         /// 四叉树节点所拥有的区域
         /// </summary>
-        private Rect _field;
+        private Rect _area;
         /// <summary>
         /// 这个节点所拥有的碰撞器
         /// </summary>
@@ -44,7 +67,7 @@ namespace MtC.Tools.QuadtreeCollider
         /// <param name="field"></param>
         public Quadtree(Rect field)
         {
-            _field = field;
+            _area = field;
             _root = this;
             _parent = null;
         }
@@ -56,7 +79,7 @@ namespace MtC.Tools.QuadtreeCollider
         /// <param name="parent"></param>
         public Quadtree(Rect field, Quadtree root, Quadtree parent)
         {
-            _field = field;
+            _area = field;
             _root = root;
             _parent = parent;
         }
@@ -68,7 +91,7 @@ namespace MtC.Tools.QuadtreeCollider
         /// <returns> 如果成功存入，返回 true </returns>
         public bool AddCollider(QuadtreeCollider collider)
         {
-            if (!_field.Contains(collider.position))
+            if (!_area.Contains(collider.position))
                 return false;
 
             if (HaveChildren())
@@ -100,6 +123,7 @@ namespace MtC.Tools.QuadtreeCollider
              *  碰撞器的存入和移除显然不是一帧一次，在特殊情况下，碰撞器一帧可以发生几十几百次甚至更高，如此高频的操作是否有必要进行半径的更新？
              */
             //TODO：如何控制所有检测和所有更新的顺序？
+            //TODO：如果顺序可以控制，是否可以将分割修改到更新时统一判断进行？
 
             if (NeedSplit())
                 Split();
@@ -128,7 +152,7 @@ namespace MtC.Tools.QuadtreeCollider
 
         private bool NeedSplit()
         {
-            return _field.height > minSideLendth && _field.width > minSideLendth && _colliders.Count > maxLeafsNumber;
+            return _area.height > minSideLendth && _area.width > minSideLendth && _colliders.Count > maxCollidersumber;
         }
 
         private void Split()
@@ -148,7 +172,7 @@ namespace MtC.Tools.QuadtreeCollider
             List<QuadtreeCollider> outOfFieldCollider = new List<QuadtreeCollider>();
 
             for (int i = _colliders.Count; i >= 0; i--)
-                if (!_field.Contains(_colliders[i].position))
+                if (!_area.Contains(_colliders[i].position))
                 {
                     outOfFieldCollider.Add(_colliders[i]);
                     _colliders.RemoveAt(i);
@@ -165,15 +189,15 @@ namespace MtC.Tools.QuadtreeCollider
 
         private void CreateChildren()
         {
-            float halfWidth = _field.width / 2; // 为了防止float的乘除运算误差，一次运算求出宽高的一半，子节点的宽高使用加减运算获得
-            float halfHeight = _field.height / 2; // 误差的来源是浮点数的储存方式，除非出现新的储存方式，否则误差将作为标准现象保留下去
+            float halfWidth = _area.width / 2; // 为了防止float的乘除运算误差，一次运算求出宽高的一半，子节点的宽高使用加减运算获得
+            float halfHeight = _area.height / 2; // 误差的来源是浮点数的储存方式，除非出现新的储存方式，否则误差将作为标准现象保留下去
 
             _children = new List<Quadtree>();
 
-            _children.Add(new Quadtree(new Rect(_field.x + halfWidth, _field.y + halfHeight, _field.width - halfWidth, _field.height - halfHeight), _root, this)); // 右上子节点
-            _children.Add(new Quadtree(new Rect(_field.x + halfWidth, _field.y, _field.width - halfWidth, halfHeight), _root, this)); // 右下子节点
-            _children.Add(new Quadtree(new Rect(_field.x, _field.y, halfWidth, halfHeight), _root, this)); // 左下子节点
-            _children.Add(new Quadtree(new Rect(_field.x, _field.y + halfHeight, halfWidth, _field.height - halfHeight), _root, this)); // 左上子节点
+            _children.Add(new Quadtree(new Rect(_area.x + halfWidth, _area.y + halfHeight, _area.width - halfWidth, _area.height - halfHeight), _root, this)); // 右上子节点
+            _children.Add(new Quadtree(new Rect(_area.x + halfWidth, _area.y, _area.width - halfWidth, halfHeight), _root, this)); // 右下子节点
+            _children.Add(new Quadtree(new Rect(_area.x, _area.y, halfWidth, halfHeight), _root, this)); // 左下子节点
+            _children.Add(new Quadtree(new Rect(_area.x, _area.y + halfHeight, halfWidth, _area.height - halfHeight), _root, this)); // 左上子节点
         }
 
         private void SetAllColliderIntoChindren()
