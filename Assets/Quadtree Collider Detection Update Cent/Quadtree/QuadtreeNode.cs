@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 namespace MtC.Tools.QuadtreeCollider.UpdateCent
 {
@@ -75,10 +76,97 @@ namespace MtC.Tools.QuadtreeCollider.UpdateCent
 
         public void Update(Dictionary<QuadtreeCollider, bool> isSetColliders)
         {
-            UpdateCollidersAndArea();
+            List<QuadtreeCollider> removeColliders = GetRemoveColliders(isSetColliders);
+            List<QuadtreeCollider> addColliders = GetAddColliders(isSetColliders);
+
+            addColliders.AddRange(RemoveColliders(removeColliders));
+            AddColliders(addColliders);
             UpdateCollidersNumber();
             UpdateSplitAndMerge();
             UpdateMaxRadius();
+        }
+
+        private List<QuadtreeCollider> GetRemoveColliders(Dictionary<QuadtreeCollider, bool> isSetColliders)
+        {
+            List<QuadtreeCollider> removeColliders = new List<QuadtreeCollider>();
+
+            foreach (KeyValuePair<QuadtreeCollider, bool> pair in isSetColliders)
+                if (!pair.Value)
+                    removeColliders.Add(pair.Key);
+
+            return removeColliders;
+        }
+
+        private List<QuadtreeCollider> GetAddColliders(Dictionary<QuadtreeCollider, bool> isSetColliders)
+        {
+            List<QuadtreeCollider> addColliders = new List<QuadtreeCollider>();
+
+            foreach (KeyValuePair<QuadtreeCollider, bool> pair in isSetColliders)
+                if (pair.Value)
+                    addColliders.Add(pair.Key);
+
+            return addColliders;
+        }
+
+        private List<QuadtreeCollider> RemoveColliders(List<QuadtreeCollider> removeColliders)
+        {
+            if (haveChild())
+                return RemoveCollidersFormChildren(removeColliders);
+
+            return RemoveCollidersFromSelf(removeColliders);
+        }
+
+        private List<QuadtreeCollider> RemoveCollidersFormChildren(List<QuadtreeCollider> removeColliders)
+        {
+            List<QuadtreeCollider> ReSetColliders = new List<QuadtreeCollider>();
+
+            foreach (QuadtreeNode child in _children)
+                ReSetColliders.AddRange(child.RemoveColliders(removeColliders));
+
+            return ReSetColliders;
+        }
+
+        private List<QuadtreeCollider> RemoveCollidersFromSelf(List<QuadtreeCollider> removeColliders)
+        {
+            List<QuadtreeCollider> ReSetColliders = new List<QuadtreeCollider>();
+
+            IEnumerator enumerator = removeColliders.GetEnumerator();
+            while (enumerator.MoveNext())
+            {
+                QuadtreeCollider collider = (QuadtreeCollider)enumerator.Current;
+                if (removeColliders.Contains(enumerator.Current))
+                {
+                    removeColliders.Remove(collider);
+                    _colliders.Remove(collider);
+                }
+                else if (!_area.Contains(collider.position)) //TODO: 移除脱离了节点区域的碰撞器，这部分需要重构
+                {
+                    if (_colliders.Remove(collider)) // 如果能移除则说明需要重新存入
+                        removeColliders.Add(collider);
+                }
+            }
+
+            return ReSetColliders;
+        }
+
+        private void AddColliders(List<QuadtreeCollider> addColliders)
+        {
+            if (haveChild())
+                AddCollidersIntoChildren(addColliders);
+            else
+                AddCollidersIntoSelf(addColliders);
+        }
+
+        private void AddCollidersIntoChildren(List<QuadtreeCollider> addColliders)
+        {
+            //TODO:向子节点添加碰撞器
+            throw new NotImplementedException();
+        }
+
+        private void AddCollidersIntoSelf(List<QuadtreeCollider> addColliders)
+        {
+            //TODO:向自己添加碰撞器
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -86,34 +174,58 @@ namespace MtC.Tools.QuadtreeCollider.UpdateCent
         /// </summary>
         /// <param name="collider"> 添加进四叉树中的碰撞器 </param>
         /// <returns> 如果成功添加碰撞器则返回true </returns>
-        public bool AddCollider(QuadtreeCollider collider)
-        {
-            if (haveChild())
-                return AddColliderIntoChildren(collider);
+        //public bool AddCollider(QuadtreeCollider collider)
+        //{
+        //    if (haveChild())
+        //        return AddColliderIntoChildren(collider);
 
-            return AddColliderIntoSelf(collider);
-        }
+        //    return AddColliderIntoSelf(collider);
+        //}
 
         private bool haveChild()
         {
             return _children != null; // TODO：如果有存入池的部分，这个判断可能需要根据入池时子节点清空还是改null做改变
         }
 
-        private bool AddColliderIntoChildren(QuadtreeCollider collider)
-        {
-            //TODO：向子节点添加碰撞器
-            throw new NotImplementedException();
-        }
+        //private bool AddColliderIntoChildren(QuadtreeCollider collider)
+        //{
+        //    foreach (QuadtreeNode child in _children)
+        //        if (child.AddCollider(collider))
+        //            return true;
+        //    return false;
+        //}
 
-        private bool AddColliderIntoSelf(QuadtreeCollider collider)
-        {
-            //TODO：向自己添加碰撞器
-            throw new NotImplementedException();
-        }
+        //private bool AddColliderIntoSelf(QuadtreeCollider collider)
+        //{
+        //    _colliders.Add(collider);
 
-        private void UpdateCollidersAndArea()
+        //    return true;
+        //}
+
+        //private void UpdateCollidersAndArea(Dictionary<QuadtreeCollider, bool> isSetColliders)
+        //{
+        //    if (haveChild())
+        //        UpdateChildrenCollidersAndArea(isSetColliders);
+
+        //    UpdateSelfCollidersAndArea(isSetColliders);
+        //}
+
+        //private void UpdateChildrenCollidersAndArea(Dictionary<QuadtreeCollider, bool> isSetColliders)
+        //{
+        //    foreach (QuadtreeNode child in _children)
+        //        child.UpdateCollidersAndArea(isSetColliders);
+        //}
+
+        //private void UpdateSelfCollidersAndArea(Dictionary<QuadtreeCollider, bool> isSetColliders)
+        //{
+        //    RemoveCollidersFromSelf(isSetColliders);
+        //    UpdateSelfCollidersArea();
+        //    AddCollidersIntoSelf(isSetColliders);
+        //}
+
+        private void UpdateSelfCollidersArea()
         {
-            //TODO：存入/取出碰撞器并更新碰撞器所属节点
+            //TODO:更新自己的碰撞器所属的区域
             throw new NotImplementedException();
         }
 
