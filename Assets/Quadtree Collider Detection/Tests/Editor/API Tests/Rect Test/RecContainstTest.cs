@@ -1,10 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using NUnit.Framework;
 using UnityEngine;
-using NUnit.Framework;
 
+/// <summary>
+/// 测试Rect的Contains的效果测试类
+/// </summary>
 [TestFixture]
-public class RectTest
+public class RectContainsTest
 {
     private const float WIDTH = 10f;
     private const float HEIGHT = 25f;

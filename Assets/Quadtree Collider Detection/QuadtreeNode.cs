@@ -1,14 +1,13 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace MtC.Tools.QuadtreeCollider
 {
     /// <summary>
-    /// 四叉树碰撞检测中的四叉树
+    /// 四叉树节点
     /// </summary>
-    public class Quadtree
+    public class QuadtreeNode
     {
         /// <summary>
         /// 右上子节点的索引
@@ -39,11 +38,11 @@ namespace MtC.Tools.QuadtreeCollider
         /// <summary>
         /// 根节点
         /// </summary>
-        private Quadtree _root;
+        private QuadtreeNode _root;
         /// <summary>
         /// 父节点
         /// </summary>
-        private Quadtree _parent;
+        private QuadtreeNode _parent;
         /// <summary>
         /// 四叉树节点所拥有的区域
         /// </summary>
@@ -55,7 +54,7 @@ namespace MtC.Tools.QuadtreeCollider
         /// <summary>
         /// 这个节点所拥有的的子节点
         /// </summary>
-        private List<Quadtree> _children;
+        private List<QuadtreeNode> _children;
         /// <summary>
         /// 这个节点所拥有的所有碰撞器中，需要检测半径最长的碰撞器的检测半径
         /// </summary>
@@ -65,7 +64,7 @@ namespace MtC.Tools.QuadtreeCollider
         /// 根节点的构造方法，只有区域没有父节点。根节点
         /// </summary>
         /// <param name="field"></param>
-        public Quadtree(Rect field)
+        public QuadtreeNode(Rect field)
         {
             _area = field;
             _root = this;
@@ -77,7 +76,7 @@ namespace MtC.Tools.QuadtreeCollider
         /// <param name="field"></param>
         /// <param name="root"></param>
         /// <param name="parent"></param>
-        public Quadtree(Rect field, Quadtree root, Quadtree parent)
+        public QuadtreeNode(Rect field, QuadtreeNode root, QuadtreeNode parent)
         {
             _area = field;
             _root = root;
@@ -192,12 +191,12 @@ namespace MtC.Tools.QuadtreeCollider
             float halfWidth = _area.width / 2; // 为了防止float的乘除运算误差，一次运算求出宽高的一半，子节点的宽高使用加减运算获得
             float halfHeight = _area.height / 2; // 误差的来源是浮点数的储存方式，除非出现新的储存方式，否则误差将作为标准现象保留下去
 
-            _children = new List<Quadtree>();
+            _children = new List<QuadtreeNode>();
 
-            _children.Add(new Quadtree(new Rect(_area.x + halfWidth, _area.y + halfHeight, _area.width - halfWidth, _area.height - halfHeight), _root, this)); // 右上子节点
-            _children.Add(new Quadtree(new Rect(_area.x + halfWidth, _area.y, _area.width - halfWidth, halfHeight), _root, this)); // 右下子节点
-            _children.Add(new Quadtree(new Rect(_area.x, _area.y, halfWidth, halfHeight), _root, this)); // 左下子节点
-            _children.Add(new Quadtree(new Rect(_area.x, _area.y + halfHeight, halfWidth, _area.height - halfHeight), _root, this)); // 左上子节点
+            _children.Add(new QuadtreeNode(new Rect(_area.x + halfWidth, _area.y + halfHeight, _area.width - halfWidth, _area.height - halfHeight), _root, this)); // 右上子节点
+            _children.Add(new QuadtreeNode(new Rect(_area.x + halfWidth, _area.y, _area.width - halfWidth, halfHeight), _root, this)); // 右下子节点
+            _children.Add(new QuadtreeNode(new Rect(_area.x, _area.y, halfWidth, halfHeight), _root, this)); // 左下子节点
+            _children.Add(new QuadtreeNode(new Rect(_area.x, _area.y + halfHeight, halfWidth, _area.height - halfHeight), _root, this)); // 左上子节点
         }
 
         private void SetAllColliderIntoChindren()
