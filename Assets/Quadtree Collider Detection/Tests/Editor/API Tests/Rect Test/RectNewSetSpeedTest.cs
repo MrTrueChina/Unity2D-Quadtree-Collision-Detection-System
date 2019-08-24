@@ -1,9 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using NUnit.Framework;
 using UnityEngine;
-using NUnit.Framework;
-using System.Dynamic;
-using System.Deployment;
 
 /// <summary>
 /// 测试Rect的new和set两个方法的速度
@@ -13,7 +9,7 @@ public class RectNewSetSpeedTest
     [Test]
     public void NewSetSpeed()
     {
-        const int LOOP_TIME = 1000000;
+        const int LOOP_TIME = 10000000;
 
         long newTime;
         long setTime;

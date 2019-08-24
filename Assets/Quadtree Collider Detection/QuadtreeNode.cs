@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace MtC.Tools.QuadtreeCollider
+namespace MtC.Tools.QuadtreeCollider.One
 {
     /// <summary>
     /// 四叉树节点
