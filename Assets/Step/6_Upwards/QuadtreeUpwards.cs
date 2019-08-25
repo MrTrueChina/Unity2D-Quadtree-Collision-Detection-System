@@ -534,7 +534,7 @@ namespace MtC.Tools.Quadtree.Step.Upwards
             if (_leafs.Remove(leaf))
             {
                 UpdateMaxRadiusWhenRemoveLeaf();
-                Debug.Log("<color=#802030>位置在" + _field.top + "," + _field.right + "," + _field.bottom + "," + _field.left + "的树梢节点移除位置在" + leaf.position + "半径是" + leaf.radius + "的叶子，移除后的最大半径是" + _maxRadius + "</color>");
+                //Debug.Log("<color=#802030>位置在" + _field.top + "," + _field.right + "," + _field.bottom + "," + _field.left + "的树梢节点移除位置在" + leaf.position + "半径是" + leaf.radius + "的叶子，移除后的最大半径是" + _maxRadius + "</color>");
                 return true;
             }
             return false;
@@ -545,7 +545,7 @@ namespace MtC.Tools.Quadtree.Step.Upwards
             if (_maxRadius != newMaxRadius)
             {
                 _maxRadius = newMaxRadius;
-                Debug.Log("<color=#108010>位置在" + _field.top + "," + _field.right + "," + _field.bottom + "," + _field.left + "的树梢节点半径发生变化，新半径是" + _maxRadius + "</color>");
+                //Debug.Log("<color=#108010>位置在" + _field.top + "," + _field.right + "," + _field.bottom + "," + _field.left + "的树梢节点半径发生变化，新半径是" + _maxRadius + "</color>");
                 CallParentUpdateMaxRadius();
             }
         }
@@ -565,7 +565,7 @@ namespace MtC.Tools.Quadtree.Step.Upwards
 
         bool RemoveLeafFromChildren(Leaf leaf)
         {
-            Debug.Log("<color=#802030>位置在" + _field.top + "," + _field.right + "," + _field.bottom + "," + _field.left + "的树枝节点从子节点移除位置在" + leaf.position + "半径是" + leaf.radius + "的叶子</color>");
+            //Debug.Log("<color=#802030>位置在" + _field.top + "," + _field.right + "," + _field.bottom + "," + _field.left + "的树枝节点从子节点移除位置在" + leaf.position + "半径是" + leaf.radius + "的叶子</color>");
             if (_upperRightChild._field.Contains(leaf.position))
                 return _upperRightChild.DoRemoveLeaf(leaf);
             if (_lowerRightChild._field.Contains(leaf.position))
