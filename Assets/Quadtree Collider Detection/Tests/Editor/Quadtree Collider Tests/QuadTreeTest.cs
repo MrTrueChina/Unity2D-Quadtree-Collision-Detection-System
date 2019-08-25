@@ -4,7 +4,7 @@ using UnityEngine;
 using NUnit.Framework;
 using System.Reflection;
 using System;
-using MtC.Tools.QuadtreeCollider;
+using MtC.Tools.QuadtreeCollider.One;
 
 [TestFixture]
 public class QuadTreeTest
