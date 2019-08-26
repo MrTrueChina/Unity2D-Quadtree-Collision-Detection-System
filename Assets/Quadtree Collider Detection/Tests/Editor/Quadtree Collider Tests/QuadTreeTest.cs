@@ -4,7 +4,8 @@ using UnityEngine;
 using NUnit.Framework;
 using System.Reflection;
 using System;
-using MtC.Tools.QuadtreeCollider.One;
+using MtC.Tools.QuadtreeCollider;
+using MtC.Tools.QuadtreeCollider.UpdateCent;
 
 [TestFixture]
 public class QuadTreeTest
@@ -24,8 +25,8 @@ public class QuadTreeTest
 
         List<QuadtreeNode> children = GetChildren(quadtree);
 
-        Assert.AreEqual(GetField(children[3]).xMax, GetField(children[0]).xMin);
-        Assert.AreEqual(GetField(children[1]).yMax, GetField(children[0]).yMin);
+        Assert.AreEqual(GetArea(children[3]).xMax, GetArea(children[0]).xMin);
+        Assert.AreEqual(GetArea(children[1]).yMax, GetArea(children[0]).yMin);
     }
 
     private void InvokeCreateChildren(QuadtreeNode quadtree)
@@ -46,9 +47,9 @@ public class QuadTreeTest
         return (List<QuadtreeNode>)childrenField.GetValue(quadtree);
     }
 
-    private Rect GetField(QuadtreeNode quadtree)
+    private Rect GetArea(QuadtreeNode quadtree)
     {
-        string fieldName = "_field";
+        string fieldName = "_area";
 
         FieldInfo childrenField = quadtree.GetType().GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Instance);
 
@@ -70,9 +71,9 @@ public class QuadTreeTest
 
         List<QuadtreeNode> children = GetChildren(quadtree);
 
-        Assert.AreEqual(x + width, GetField(children[0]).xMax);
-        Assert.AreEqual(y + height, GetField(children[0]).yMax);
-        Assert.AreEqual(x, GetField(children[2]).xMin);
-        Assert.AreEqual(y, GetField(children[2]).yMin);
+        Assert.AreEqual(x + width, GetArea(children[0]).xMax);
+        Assert.AreEqual(y + height, GetArea(children[0]).yMax);
+        Assert.AreEqual(x, GetArea(children[2]).xMin);
+        Assert.AreEqual(y, GetArea(children[2]).yMin);
     }
 }

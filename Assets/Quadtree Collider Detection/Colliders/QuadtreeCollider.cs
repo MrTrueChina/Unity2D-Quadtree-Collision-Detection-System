@@ -21,14 +21,36 @@ namespace MtC.Tools.QuadtreeCollider
             get;
         }
 
+        public bool isDetector
+        {
+            get
+            {
+                return _isDetector;
+            }
+            set
+            {
+                if(_isDetector != value) // 只有有变化时才处理，更新碰撞器成本可以省下来
+                {
+                    _isDetector = value;
+
+                    if (_isDetector)
+                        Quadtree.AddDetector(this);
+                    else
+                        Quadtree.RemoveDetector(this);
+                }
+            }
+        }
+        [SerializeField]
+        private bool _isDetector;
+
         private void OnEnable()
         {
-            //TODO：加入树
+            Quadtree.AddCollider(this);
         }
 
         private void OnDisable()
         {
-            //TODO：从树中移除
+            Quadtree.RemoveCollider(this);
         }
 
         //TODO：或许可以在订阅列表中通过获取gameObject判断是否被销毁之后清除
