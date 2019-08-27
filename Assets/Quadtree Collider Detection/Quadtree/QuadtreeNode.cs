@@ -96,7 +96,7 @@ namespace MtC.Tools.QuadtreeCollider
         /// </summary>
         /// <param name="area"></param>
         /// <param name="children"></param>
-        internal QuadtreeNode(Rect area,List<QuadtreeNode> children,int mainNodeIndex)
+        internal QuadtreeNode(Rect area, List<QuadtreeNode> children, int mainNodeIndex)
         {
             Setup(area, children, mainNodeIndex);
         }
@@ -247,21 +247,27 @@ namespace MtC.Tools.QuadtreeCollider
         /// <summary>
         /// 清理节点中难复用的值，用于入池
         /// </summary>
-        internal void Clear()
+        internal void PutIntoPool()
         {
             if (HaveChildren())
-                ClearChildren();
-            else
-                ClearSelf();
+                PutChildrenIntoPool();
+
+            PutSelfIntPool();
         }
 
-        private void ClearChildren()
+        private void PutChildrenIntoPool()
         {
             foreach (QuadtreeNode child in _children)
-                QuadtreeNodePool.Put(child); // 清理是为了入池，子节点的清理也入池
+                child.PutIntoPool();
         }
 
-        private void ClearSelf()
+        private void PutSelfIntPool()
+        {
+            Clear();
+            QuadtreeNodePool.Put(this);
+        }
+
+        private void Clear()
         {
             _parent = null;
             _area = default;

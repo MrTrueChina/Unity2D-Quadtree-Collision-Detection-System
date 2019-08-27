@@ -17,8 +17,6 @@ namespace MtC.Tools.QuadtreeCollider
 
         internal static void Put(QuadtreeNode node)
         {
-            node.Clear();
-
             if (_pool.Count < _maxNodesNumber)
                 _pool.Push(node);
         }
