@@ -85,5 +85,9 @@ namespace MtC.Tools.QuadtreeCollider
         {
             return (Rect)typeof(QuadtreeNode).GetField("_area", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(quadtreeNode);
         }
+
+        //TODO：绘制区域碰撞器数量和最大检测半径
+
+        //TODO：如果可能增加渐变色并在碰撞器外围加对应颜色的标志
     }
 }

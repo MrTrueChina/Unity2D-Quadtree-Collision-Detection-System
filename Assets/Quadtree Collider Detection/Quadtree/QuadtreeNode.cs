@@ -25,6 +25,10 @@ namespace MtC.Tools.QuadtreeCollider
         /// 左上子节点的索引
         /// </summary>
         private const int LEFT_TOP_CHILD_INDEX = 3;
+        /// <summary>
+        /// 默认最大检测半径
+        /// </summary>
+        private const float DEFAULT_MAX_RADIUS = Mathf.NegativeInfinity; // 默认最大检测半径为负无穷，这样无论检测器半径多大都不会判断为可能发生碰撞，减少无意义的向子节点递归
 
         /// <summary>
         /// 一个节点里的碰撞器数量上限，超过上限后进行分割
@@ -54,7 +58,7 @@ namespace MtC.Tools.QuadtreeCollider
         /// <summary>
         /// 这个节点所拥有的所有碰撞器中，需要检测半径最长的碰撞器的检测半径
         /// </summary>
-        private float _maxRadius = Mathf.NegativeInfinity;
+        private float _maxRadius = DEFAULT_MAX_RADIUS;
         /// <summary>
         /// 这个节点范围内所有的碰撞器的数量
         /// </summary>
@@ -115,7 +119,7 @@ namespace MtC.Tools.QuadtreeCollider
         /// </summary>
         /// <param name="collider">存入的碰撞器</param>
         /// <returns> 如果成功存入，返回 true </returns>
-        internal bool AddCollider(QuadtreeCollider collider) // TODO：缺少节点范围内碰撞器数量维护，缺少分割
+        internal bool AddCollider(QuadtreeCollider collider)
         {
             if (!_area.Contains(collider.position))
                 return false;
@@ -134,8 +138,10 @@ namespace MtC.Tools.QuadtreeCollider
 
         private bool AddColliderIntoChildren(QuadtreeCollider collider)
         {
-            //TODO：向子节点添加碰撞器
-            throw new NotImplementedException();
+            foreach (QuadtreeNode child in _children)
+                if (child.AddCollider(collider))
+                    return true;
+            return false;
         }
 
         private void AddColliderIntoSelf(QuadtreeCollider collider)
@@ -143,6 +149,8 @@ namespace MtC.Tools.QuadtreeCollider
             _colliders.Add(collider);
 
             UpdateMaxRadiusOnSetCollider(collider);
+
+            AddCollidersNumber();
 
             if (NeedSplit())
                 Split();
@@ -159,8 +167,41 @@ namespace MtC.Tools.QuadtreeCollider
 
         private void UpwardUpdateMaxRadius()
         {
-            //TODO：向上更新最大半径
-            throw new NotImplementedException();
+            if (_parent != null)
+                _parent.UpdateMaxRadiusFromChildren();
+        }
+
+        private void UpdateMaxRadiusFromChildren()
+        {
+            float newMaxRadius = GetMaxRdiusFromChildren();
+            if(newMaxRadius > _maxRadius)
+            {
+                _maxRadius = newMaxRadius;
+                UpwardUpdateMaxRadius();
+            }
+        }
+
+        private float GetMaxRdiusFromChildren()
+        {
+            float maxRdius = DEFAULT_MAX_RADIUS;
+
+            foreach (QuadtreeNode child in _children)
+                if (child._maxRadius > maxRdius)
+                    maxRdius = child._maxRadius;
+
+            return maxRdius;
+        }
+
+        private void AddCollidersNumber()
+        {
+            _collidersNumber++;
+            UpwardAddCollidersNumber();
+        }
+
+        private void UpwardAddCollidersNumber()
+        {
+            if (_parent != null)
+                _parent.AddCollidersNumber();
         }
 
         private bool NeedSplit()
@@ -239,6 +280,7 @@ namespace MtC.Tools.QuadtreeCollider
         internal void Update()
         {
             //TODO：更新
+            //更新的原理应该就是碰撞器的取出和存入？半径的更新？如果每一帧都要遍历更新半径，那么是否可以存入和移除时不更新半径，在更新时统一更新？
             throw new NotImplementedException();
         }
 
@@ -277,7 +319,7 @@ namespace MtC.Tools.QuadtreeCollider
             _children.Clear();
             _children = null;
 
-            _maxRadius = Mathf.NegativeInfinity;
+            _maxRadius = DEFAULT_MAX_RADIUS;
             _collidersNumber = 0;
         }
     }
