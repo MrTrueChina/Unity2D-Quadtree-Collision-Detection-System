@@ -33,11 +33,12 @@ namespace MtC.Tools.QuadtreeCollider
         /// <summary>
         /// 一个节点里的碰撞器数量上限，超过上限后进行分割
         /// </summary>
-        private static int maxCollidersumber = 10;
+        private static int maxCollidersumber = 10; //TODO：分割数量需要引入配置
         /// <summary>
         /// 单个节点的最短边的最小长度，当任意一个边的长度小于这个长度时，无论碰撞器数量，不再进行分割
         /// </summary>
         private static float minSideLendth = 10; // 这个值用于应对过度分割导致树深度过大性能反而下降的情况，同时可以避免大量碰撞器位置完全相同导致的无限分割
+        //TODO：最短变长需要引入配置
 
         /// <summary>
         /// 父节点
@@ -59,10 +60,6 @@ namespace MtC.Tools.QuadtreeCollider
         /// 这个节点所拥有的所有碰撞器中，需要检测半径最长的碰撞器的检测半径
         /// </summary>
         private float _maxRadius = DEFAULT_MAX_RADIUS;
-        /// <summary>
-        /// 这个节点范围内所有的碰撞器的数量
-        /// </summary>
-        private int _collidersNumber = 0;
 
         /// <summary>
         /// 根节点的构造方法，只有区域没有父节点。根节点
@@ -70,13 +67,7 @@ namespace MtC.Tools.QuadtreeCollider
         /// <param name="area"></param>
         internal QuadtreeNode(Rect area)
         {
-            Setup(area);
-        }
-
-        internal void Setup(Rect area)
-        {
             _area = area;
-            _parent = null;
         }
 
         /// <summary>
@@ -84,14 +75,8 @@ namespace MtC.Tools.QuadtreeCollider
         /// </summary>
         /// <param name="area"></param>
         /// <param name="parent"></param>
-        internal QuadtreeNode(Rect area, QuadtreeNode parent)
+        internal QuadtreeNode(Rect area, QuadtreeNode parent) : this(area)
         {
-            Setup(area, parent);
-        }
-
-        internal void Setup(Rect area, QuadtreeNode parent)
-        {
-            _area = area;
             _parent = parent;
         }
 
@@ -100,17 +85,10 @@ namespace MtC.Tools.QuadtreeCollider
         /// </summary>
         /// <param name="area"></param>
         /// <param name="children"></param>
-        internal QuadtreeNode(Rect area, List<QuadtreeNode> children, int mainNodeIndex)
+        internal QuadtreeNode(Rect area, List<QuadtreeNode> children, int mainNodeIndex) : this(area)
         {
-            Setup(area, children, mainNodeIndex);
-        }
-
-        internal void Setup(Rect area, List<QuadtreeNode> children, int mainNodeIndex)
-        {
-            _area = area;
             _children = children;
 
-            _collidersNumber = children[mainNodeIndex]._collidersNumber;
             _maxRadius = children[mainNodeIndex]._maxRadius;
         }
 
@@ -148,65 +126,13 @@ namespace MtC.Tools.QuadtreeCollider
         {
             _colliders.Add(collider);
 
-            UpdateMaxRadiusOnSetCollider(collider);
-
-            AddCollidersNumber();
-
             if (NeedSplit())
                 Split();
         }
 
-        private void UpdateMaxRadiusOnSetCollider(QuadtreeCollider collider)
-        {
-            if (collider.maxRadius > _maxRadius)
-            {
-                _maxRadius = collider.maxRadius;
-                UpwardUpdateMaxRadius();
-            }
-        }
-
-        private void UpwardUpdateMaxRadius()
-        {
-            if (_parent != null)
-                _parent.UpdateMaxRadiusFromChildren();
-        }
-
-        private void UpdateMaxRadiusFromChildren()
-        {
-            float newMaxRadius = GetMaxRdiusFromChildren();
-            if(newMaxRadius > _maxRadius)
-            {
-                _maxRadius = newMaxRadius;
-                UpwardUpdateMaxRadius();
-            }
-        }
-
-        private float GetMaxRdiusFromChildren()
-        {
-            float maxRdius = DEFAULT_MAX_RADIUS;
-
-            foreach (QuadtreeNode child in _children)
-                if (child._maxRadius > maxRdius)
-                    maxRdius = child._maxRadius;
-
-            return maxRdius;
-        }
-
-        private void AddCollidersNumber()
-        {
-            _collidersNumber++;
-            UpwardAddCollidersNumber();
-        }
-
-        private void UpwardAddCollidersNumber()
-        {
-            if (_parent != null)
-                _parent.AddCollidersNumber();
-        }
-
         private bool NeedSplit()
         {
-            return _area.height > minSideLendth && _area.width > minSideLendth && _colliders.Count > maxCollidersumber;
+            return _colliders.Count > maxCollidersumber && _area.height > minSideLendth && _area.width > minSideLendth;
         }
 
         private void Split()
@@ -216,23 +142,28 @@ namespace MtC.Tools.QuadtreeCollider
              *  分割处子节点并下发碰撞器
              *  把清除掉的那些碰撞器重新存入四叉树
              */
-            List<QuadtreeCollider> outOfFieldColliders = GetAndRemoveCollidersOutOfField();
+            List<QuadtreeCollider> outOfAreaColliders = GetAndRemoveCollidersOutOfField();
             DoSplite();
-            ResetCollidersIntoQuadtree(outOfFieldColliders);
+            ResetCollidersIntoQuadtree(outOfAreaColliders);
         }
 
         private List<QuadtreeCollider> GetAndRemoveCollidersOutOfField()
         {
             List<QuadtreeCollider> outOfFieldCollider = new List<QuadtreeCollider>();
 
-            for (int i = _colliders.Count; i >= 0; i--)
+            for (int i = _colliders.Count - 1; i >= 0; i--)
                 if (!_area.Contains(_colliders[i].position))
                 {
                     outOfFieldCollider.Add(_colliders[i]);
-                    _colliders.RemoveAt(i);
+                    RemoveSelfColliderOnSplit(i);
                 }
 
             return outOfFieldCollider;
+        }
+
+        private void RemoveSelfColliderOnSplit(int index)
+        {
+            _colliders.RemoveAt(index);
         }
 
         private void DoSplite()
@@ -246,12 +177,13 @@ namespace MtC.Tools.QuadtreeCollider
             float halfWidth = _area.width / 2; // 为了防止float的乘除运算误差，一次运算求出宽高的一半，子节点的宽高使用加减运算获得
             float halfHeight = _area.height / 2; // 误差的来源是浮点数的储存方式，除非出现新的储存方式，否则误差将作为标准现象保留下去
 
-            _children = new List<QuadtreeNode>();
-
-            _children.Add(QuadtreeNodePool.Get(new Rect(_area.x + halfWidth, _area.y + halfHeight, _area.width - halfWidth, _area.height - halfHeight), this)); // 右上子节点
-            _children.Add(QuadtreeNodePool.Get(new Rect(_area.x + halfWidth, _area.y, _area.width - halfWidth, halfHeight), this)); // 右下子节点
-            _children.Add(QuadtreeNodePool.Get(new Rect(_area.x, _area.y, halfWidth, halfHeight), this)); // 左下子节点
-            _children.Add(QuadtreeNodePool.Get(new Rect(_area.x, _area.y + halfHeight, halfWidth, _area.height - halfHeight), this)); // 左上子节点
+            _children = new List<QuadtreeNode>
+            {
+                new QuadtreeNode(new Rect(_area.x + halfWidth, _area.y + halfHeight, _area.width - halfWidth, _area.height - halfHeight), this), // 右上子节点
+                new QuadtreeNode(new Rect(_area.x + halfWidth, _area.y, _area.width - halfWidth, halfHeight), this), // 右下子节点
+                new QuadtreeNode(new Rect(_area.x, _area.y, halfWidth, halfHeight), this), // 左下子节点
+                new QuadtreeNode(new Rect(_area.x, _area.y + halfHeight, halfWidth, _area.height - halfHeight), this) // 左上子节点
+            };
         }
 
         private void SetAllColliderIntoChindren()
@@ -270,57 +202,171 @@ namespace MtC.Tools.QuadtreeCollider
 
         internal void RemoveCollider(QuadtreeCollider collider)
         {
-            //TODO：移除碰撞器
-            //TODO：分为按区域移除和全遍历移除，有时候要删除的碰撞器已经不在原来的节点的区域里了
-            //TODO：向上递归更新碰撞器数量
-            //TODO：对节点合并的检测和进行
-            throw new NotImplementedException();
+            if (!RemoveColliderByPosition(collider)) // 首先根据位置移除碰撞器，但有时候碰撞器移出了所在节点的范围，就会发生找不到节点无法移除的情况
+                RemoveColliderFromAllNodes(collider); // 此时使用全节点遍历移除
+        }
+
+        private bool RemoveColliderByPosition(QuadtreeCollider collider)
+        {
+            if (HaveChildren())
+                return RemoveColliderFromChildrenByPosition(collider);
+
+            return RemoveColliderFromSelfByPosition(collider);
+        }
+
+        private bool RemoveColliderFromChildrenByPosition(QuadtreeCollider collider)
+        {
+            foreach (QuadtreeNode child in _children)
+                if (child.RemoveColliderByPosition(collider))
+                    return true;
+
+            return false;
+        }
+
+        private bool RemoveColliderFromSelfByPosition(QuadtreeCollider collider)
+        {
+            if (_area.Contains(collider.position))
+                return RemoveColliderFromSelf(collider);
+
+            return false;
+        }
+
+        private bool RemoveColliderFromSelf(QuadtreeCollider collider)
+        {
+            return _colliders.Remove(collider);
+        }
+
+        private bool RemoveColliderFromAllNodes(QuadtreeCollider collider)
+        {
+            if (HaveChildren())
+                return RemoveColliderFromChildrenAndAllNodes(collider);
+
+            return RemoveColliderFromSelf(collider);
+        }
+
+        private bool RemoveColliderFromChildrenAndAllNodes(QuadtreeCollider collider)
+        {
+            foreach (QuadtreeNode child in _children)
+                if (child.RemoveColliderFromAllNodes(collider))
+                    return true;
+
+            return false;
         }
 
         internal void Update()
         {
-            //TODO：更新
-            //更新的原理应该就是碰撞器的取出和存入？半径的更新？如果每一帧都要遍历更新半径，那么是否可以存入和移除时不更新半径，在更新时统一更新？
-            throw new NotImplementedException();
+            UpdatePosition();
+            UpdateMaxRadius();
         }
 
-        //TODO：检测
-
-        /// <summary>
-        /// 清理节点中难复用的值，用于入池
-        /// </summary>
-        internal void PutIntoPool()
+        private void UpdatePosition()
         {
             if (HaveChildren())
-                PutChildrenIntoPool();
-
-            PutSelfIntPool();
+                UpdateChildrenPosition();
+            else
+                UpdateSelfPosition();
         }
 
-        private void PutChildrenIntoPool()
+        private void UpdateChildrenPosition()
         {
             foreach (QuadtreeNode child in _children)
-                child.PutIntoPool();
+                child.UpdatePosition();
         }
 
-        private void PutSelfIntPool()
+        private void UpdateSelfPosition()
         {
-            Clear();
-            QuadtreeNodePool.Put(this);
+            List<QuadtreeCollider> outOfAreaColliders = GetAndRemoveCollidersOutOfField();
+            ResetCollidersIntoQuadtree(outOfAreaColliders);
         }
 
-        private void Clear()
+        private float UpdateMaxRadius()
         {
-            _parent = null;
-            _area = default;
+            if (HaveChildren())
+                return _maxRadius = UpdateChildrenMaxRadius();
+            else
+                return _maxRadius = UpdateSelfMaxRadius();
+        }
 
-            _colliders.Clear();
-
-            _children.Clear();
-            _children = null;
-
+        private float UpdateChildrenMaxRadius()
+        {
             _maxRadius = DEFAULT_MAX_RADIUS;
-            _collidersNumber = 0;
+
+            foreach (QuadtreeNode child in _children)
+                _maxRadius = Mathf.Max(_maxRadius, child.UpdateMaxRadius());
+
+            return _maxRadius;
+        }
+
+        private float UpdateSelfMaxRadius()
+        {
+            _maxRadius = DEFAULT_MAX_RADIUS;
+
+            foreach (QuadtreeCollider collider in _colliders)
+                if (collider.maxRadius > _maxRadius)
+                    _maxRadius = collider.maxRadius;
+
+            return _maxRadius;
+        }
+
+        /// <summary>
+        /// 获取与指定碰撞器发生碰撞的碰撞器
+        /// </summary>
+        /// <param name="collider">用于检测碰撞的碰撞器</param>
+        /// <returns></returns>
+        internal List<QuadtreeCollider> GetCollidersInCollision(QuadtreeCollider collider)
+        {
+            if (!PossibleCollisions(collider))
+                return new List<QuadtreeCollider>();
+
+            if (HaveChildren())
+                return GetCollidersInCollisionFromChildren(collider);
+
+            return GetCollidersInCollisionFromSelf(collider);
+        }
+
+        private bool PossibleCollisions(QuadtreeCollider collider)
+        {
+            return _area.DistanceToPoint(collider.position) < _maxRadius + collider.maxRadius; // 如果节点区域到碰撞器的距离小于节点最大检测半径和碰撞器最大检测半径之和，则说明节点中可能有碰撞器能够与传入的碰撞器发生碰撞
+        }
+
+        private List<QuadtreeCollider> GetCollidersInCollisionFromChildren(QuadtreeCollider collider)
+        {
+            List<QuadtreeCollider> colliders = new List<QuadtreeCollider>();
+
+            foreach (QuadtreeNode child in _children)
+                colliders.AddRange(child.GetCollidersInCollision(collider));
+
+            return colliders;
+        }
+
+        private List<QuadtreeCollider> GetCollidersInCollisionFromSelf(QuadtreeCollider collider)
+        {
+            List<QuadtreeCollider> colliders = new List<QuadtreeCollider>();
+
+            foreach (QuadtreeCollider currentCollider in _colliders)
+                if (currentCollider.IsCollitionToCollider(collider))
+                    colliders.Add(currentCollider);
+
+            return colliders;
+        }
+    }
+
+    /// <summary>
+    /// Rect扩展方法类
+    /// </summary>
+    static partial class RectExtension
+    {
+        /// <summary>
+        /// 计算与指定Vector2的距离，如果指定Vector2在Rect范围内则返回0
+        /// </summary>
+        /// <param name="rect"></param>
+        /// <param name="point"></param>
+        /// <returns></returns>
+        public static float DistanceToPoint(this Rect rect, Vector2 point)
+        {
+            float xDistance = Mathf.Max(0, point.x - rect.xMax, rect.xMin - point.x);
+            float yDistance = Mathf.Max(0, point.y - rect.yMax, rect.yMin - point.y);
+            return Mathf.Sqrt(xDistance * xDistance + yDistance * yDistance);
         }
     }
 }

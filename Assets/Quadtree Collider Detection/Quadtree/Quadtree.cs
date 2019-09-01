@@ -11,7 +11,7 @@ namespace MtC.Tools.QuadtreeCollider
         /// <summary>
         /// 初始根节点范围
         /// </summary>
-        private static Rect _startArea = new Rect(-1, -1, 1922, 1082);
+        public static Rect _startArea = new Rect(-1, -1, 1922, 1082); // TODO：需要引入配置
 
         /// <summary>
         /// 实例
