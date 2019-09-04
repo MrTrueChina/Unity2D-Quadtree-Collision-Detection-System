@@ -131,6 +131,7 @@ GameObject:
   - component: {fileID: 71954735}
   - component: {fileID: 71954734}
   - component: {fileID: 71954736}
+  - component: {fileID: 71954737}
   m_Layer: 0
   m_Name: Collider
   m_TagString: Untagged
@@ -150,8 +151,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1a77ce0fac99f747a42c2542e247d4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _isDetector: 0
-  _radius: 10
+  _autoSubscribe: 1
+  _isDetector: 1
+  _radius: 150
 --- !u!4 &71954735
 Transform:
   m_ObjectHideFlags: 0
@@ -160,7 +162,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 71954733}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 395, y: 289, z: 0}
+  m_LocalPosition: {x: 416, y: 302, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -215,6 +217,18 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &71954737
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 71954733}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 219583b892b3c574e9bf3a5c554c05ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &114666802
 GameObject:
   m_ObjectHideFlags: 0
@@ -226,6 +240,7 @@ GameObject:
   - component: {fileID: 114666804}
   - component: {fileID: 114666803}
   - component: {fileID: 114666805}
+  - component: {fileID: 114666806}
   m_Layer: 0
   m_Name: Collider (9)
   m_TagString: Untagged
@@ -245,8 +260,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1a77ce0fac99f747a42c2542e247d4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _isDetector: 0
-  _radius: 10
+  _autoSubscribe: 1
+  _isDetector: 1
+  _radius: 150
 --- !u!4 &114666804
 Transform:
   m_ObjectHideFlags: 0
@@ -310,6 +326,18 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &114666806
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 114666802}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 219583b892b3c574e9bf3a5c554c05ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &128279172
 GameObject:
   m_ObjectHideFlags: 0
@@ -321,6 +349,7 @@ GameObject:
   - component: {fileID: 128279174}
   - component: {fileID: 128279173}
   - component: {fileID: 128279175}
+  - component: {fileID: 128279176}
   m_Layer: 0
   m_Name: Collider (5)
   m_TagString: Untagged
@@ -340,8 +369,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1a77ce0fac99f747a42c2542e247d4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _isDetector: 0
-  _radius: 10
+  _autoSubscribe: 1
+  _isDetector: 1
+  _radius: 150
 --- !u!4 &128279174
 Transform:
   m_ObjectHideFlags: 0
@@ -405,6 +435,18 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &128279176
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 128279172}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 219583b892b3c574e9bf3a5c554c05ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &163203729
 GameObject:
   m_ObjectHideFlags: 0
@@ -416,6 +458,7 @@ GameObject:
   - component: {fileID: 163203731}
   - component: {fileID: 163203730}
   - component: {fileID: 163203732}
+  - component: {fileID: 163203733}
   m_Layer: 0
   m_Name: Collider (2)
   m_TagString: Untagged
@@ -435,8 +478,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1a77ce0fac99f747a42c2542e247d4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _isDetector: 0
-  _radius: 10
+  _autoSubscribe: 1
+  _isDetector: 1
+  _radius: 150
 --- !u!4 &163203731
 Transform:
   m_ObjectHideFlags: 0
@@ -500,6 +544,18 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &163203733
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 163203729}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 219583b892b3c574e9bf3a5c554c05ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &280989818
 GameObject:
   m_ObjectHideFlags: 0
@@ -511,6 +567,7 @@ GameObject:
   - component: {fileID: 280989820}
   - component: {fileID: 280989819}
   - component: {fileID: 280989821}
+  - component: {fileID: 280989822}
   m_Layer: 0
   m_Name: Collider (6)
   m_TagString: Untagged
@@ -530,8 +587,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1a77ce0fac99f747a42c2542e247d4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _isDetector: 0
-  _radius: 10
+  _autoSubscribe: 1
+  _isDetector: 1
+  _radius: 150
 --- !u!4 &280989820
 Transform:
   m_ObjectHideFlags: 0
@@ -595,6 +653,18 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &280989822
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 280989818}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 219583b892b3c574e9bf3a5c554c05ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &347891790
 GameObject:
   m_ObjectHideFlags: 0
@@ -689,6 +759,7 @@ GameObject:
   - component: {fileID: 350286809}
   - component: {fileID: 350286808}
   - component: {fileID: 350286810}
+  - component: {fileID: 350286811}
   m_Layer: 0
   m_Name: Collider (20)
   m_TagString: Untagged
@@ -708,8 +779,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1a77ce0fac99f747a42c2542e247d4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _isDetector: 0
-  _radius: 10
+  _autoSubscribe: 1
+  _isDetector: 1
+  _radius: 150
 --- !u!4 &350286809
 Transform:
   m_ObjectHideFlags: 0
@@ -773,6 +845,18 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &350286811
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 350286807}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 219583b892b3c574e9bf3a5c554c05ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &400926775
 GameObject:
   m_ObjectHideFlags: 0
@@ -784,6 +868,7 @@ GameObject:
   - component: {fileID: 400926777}
   - component: {fileID: 400926776}
   - component: {fileID: 400926778}
+  - component: {fileID: 400926779}
   m_Layer: 0
   m_Name: Collider (16)
   m_TagString: Untagged
@@ -803,8 +888,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1a77ce0fac99f747a42c2542e247d4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _isDetector: 0
-  _radius: 10
+  _autoSubscribe: 1
+  _isDetector: 1
+  _radius: 150
 --- !u!4 &400926777
 Transform:
   m_ObjectHideFlags: 0
@@ -868,6 +954,18 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &400926779
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 400926775}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 219583b892b3c574e9bf3a5c554c05ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &428338082
 GameObject:
   m_ObjectHideFlags: 0
@@ -879,6 +977,7 @@ GameObject:
   - component: {fileID: 428338084}
   - component: {fileID: 428338083}
   - component: {fileID: 428338085}
+  - component: {fileID: 428338086}
   m_Layer: 0
   m_Name: Collider (18)
   m_TagString: Untagged
@@ -898,8 +997,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1a77ce0fac99f747a42c2542e247d4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _isDetector: 0
-  _radius: 10
+  _autoSubscribe: 1
+  _isDetector: 1
+  _radius: 150
 --- !u!4 &428338084
 Transform:
   m_ObjectHideFlags: 0
@@ -963,6 +1063,18 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &428338086
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 428338082}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 219583b892b3c574e9bf3a5c554c05ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &434935521
 GameObject:
   m_ObjectHideFlags: 0
@@ -974,6 +1086,7 @@ GameObject:
   - component: {fileID: 434935523}
   - component: {fileID: 434935522}
   - component: {fileID: 434935524}
+  - component: {fileID: 434935525}
   m_Layer: 0
   m_Name: Collider (13)
   m_TagString: Untagged
@@ -993,8 +1106,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1a77ce0fac99f747a42c2542e247d4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _isDetector: 0
-  _radius: 10
+  _autoSubscribe: 1
+  _isDetector: 1
+  _radius: 150
 --- !u!4 &434935523
 Transform:
   m_ObjectHideFlags: 0
@@ -1058,6 +1172,18 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &434935525
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 434935521}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 219583b892b3c574e9bf3a5c554c05ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &488872677
 GameObject:
   m_ObjectHideFlags: 0
@@ -1069,6 +1195,7 @@ GameObject:
   - component: {fileID: 488872679}
   - component: {fileID: 488872678}
   - component: {fileID: 488872680}
+  - component: {fileID: 488872681}
   m_Layer: 0
   m_Name: Collider (8)
   m_TagString: Untagged
@@ -1088,8 +1215,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1a77ce0fac99f747a42c2542e247d4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _isDetector: 0
-  _radius: 10
+  _autoSubscribe: 1
+  _isDetector: 1
+  _radius: 150
 --- !u!4 &488872679
 Transform:
   m_ObjectHideFlags: 0
@@ -1153,6 +1281,18 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &488872681
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 488872677}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 219583b892b3c574e9bf3a5c554c05ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &539310189
 GameObject:
   m_ObjectHideFlags: 0
@@ -1164,6 +1304,7 @@ GameObject:
   - component: {fileID: 539310191}
   - component: {fileID: 539310190}
   - component: {fileID: 539310192}
+  - component: {fileID: 539310193}
   m_Layer: 0
   m_Name: Collider (21)
   m_TagString: Untagged
@@ -1183,8 +1324,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1a77ce0fac99f747a42c2542e247d4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _isDetector: 0
-  _radius: 10
+  _autoSubscribe: 1
+  _isDetector: 1
+  _radius: 150
 --- !u!4 &539310191
 Transform:
   m_ObjectHideFlags: 0
@@ -1248,6 +1390,18 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &539310193
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 539310189}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 219583b892b3c574e9bf3a5c554c05ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &752355515
 GameObject:
   m_ObjectHideFlags: 0
@@ -1259,6 +1413,7 @@ GameObject:
   - component: {fileID: 752355517}
   - component: {fileID: 752355516}
   - component: {fileID: 752355518}
+  - component: {fileID: 752355519}
   m_Layer: 0
   m_Name: Collider (4)
   m_TagString: Untagged
@@ -1278,8 +1433,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1a77ce0fac99f747a42c2542e247d4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _isDetector: 0
-  _radius: 10
+  _autoSubscribe: 1
+  _isDetector: 1
+  _radius: 150
 --- !u!4 &752355517
 Transform:
   m_ObjectHideFlags: 0
@@ -1343,6 +1499,18 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &752355519
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 752355515}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 219583b892b3c574e9bf3a5c554c05ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &812252821
 GameObject:
   m_ObjectHideFlags: 0
@@ -1354,6 +1522,7 @@ GameObject:
   - component: {fileID: 812252823}
   - component: {fileID: 812252822}
   - component: {fileID: 812252824}
+  - component: {fileID: 812252825}
   m_Layer: 0
   m_Name: Collider (22)
   m_TagString: Untagged
@@ -1373,8 +1542,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1a77ce0fac99f747a42c2542e247d4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _isDetector: 0
-  _radius: 10
+  _autoSubscribe: 1
+  _isDetector: 1
+  _radius: 150
 --- !u!4 &812252823
 Transform:
   m_ObjectHideFlags: 0
@@ -1438,6 +1608,18 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &812252825
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 812252821}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 219583b892b3c574e9bf3a5c554c05ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &956370403
 GameObject:
   m_ObjectHideFlags: 0
@@ -1449,6 +1631,7 @@ GameObject:
   - component: {fileID: 956370405}
   - component: {fileID: 956370404}
   - component: {fileID: 956370406}
+  - component: {fileID: 956370407}
   m_Layer: 0
   m_Name: Collider (7)
   m_TagString: Untagged
@@ -1468,8 +1651,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1a77ce0fac99f747a42c2542e247d4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _isDetector: 0
-  _radius: 10
+  _autoSubscribe: 1
+  _isDetector: 1
+  _radius: 150
 --- !u!4 &956370405
 Transform:
   m_ObjectHideFlags: 0
@@ -1533,6 +1717,18 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &956370407
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 956370403}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 219583b892b3c574e9bf3a5c554c05ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &999567265
 GameObject:
   m_ObjectHideFlags: 0
@@ -1544,6 +1740,7 @@ GameObject:
   - component: {fileID: 999567267}
   - component: {fileID: 999567266}
   - component: {fileID: 999567268}
+  - component: {fileID: 999567269}
   m_Layer: 0
   m_Name: Collider (14)
   m_TagString: Untagged
@@ -1563,8 +1760,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1a77ce0fac99f747a42c2542e247d4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _isDetector: 0
-  _radius: 10
+  _autoSubscribe: 1
+  _isDetector: 1
+  _radius: 150
 --- !u!4 &999567267
 Transform:
   m_ObjectHideFlags: 0
@@ -1628,6 +1826,18 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &999567269
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 999567265}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 219583b892b3c574e9bf3a5c554c05ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1231568038
 GameObject:
   m_ObjectHideFlags: 0
@@ -1639,6 +1849,7 @@ GameObject:
   - component: {fileID: 1231568040}
   - component: {fileID: 1231568039}
   - component: {fileID: 1231568041}
+  - component: {fileID: 1231568042}
   m_Layer: 0
   m_Name: Collider (11)
   m_TagString: Untagged
@@ -1658,8 +1869,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1a77ce0fac99f747a42c2542e247d4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _isDetector: 0
-  _radius: 10
+  _autoSubscribe: 1
+  _isDetector: 1
+  _radius: 150
 --- !u!4 &1231568040
 Transform:
   m_ObjectHideFlags: 0
@@ -1723,6 +1935,18 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1231568042
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1231568038}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 219583b892b3c574e9bf3a5c554c05ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1244684632
 GameObject:
   m_ObjectHideFlags: 0
@@ -1734,6 +1958,7 @@ GameObject:
   - component: {fileID: 1244684634}
   - component: {fileID: 1244684633}
   - component: {fileID: 1244684635}
+  - component: {fileID: 1244684636}
   m_Layer: 0
   m_Name: Collider (1)
   m_TagString: Untagged
@@ -1753,8 +1978,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1a77ce0fac99f747a42c2542e247d4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _isDetector: 0
-  _radius: 10
+  _autoSubscribe: 1
+  _isDetector: 1
+  _radius: 150
 --- !u!4 &1244684634
 Transform:
   m_ObjectHideFlags: 0
@@ -1763,7 +1989,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1244684632}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 638, y: 489, z: 0}
+  m_LocalPosition: {x: 550, y: 414, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -1818,6 +2044,18 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1244684636
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1244684632}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 219583b892b3c574e9bf3a5c554c05ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1294430041
 GameObject:
   m_ObjectHideFlags: 0
@@ -1829,6 +2067,7 @@ GameObject:
   - component: {fileID: 1294430043}
   - component: {fileID: 1294430042}
   - component: {fileID: 1294430044}
+  - component: {fileID: 1294430045}
   m_Layer: 0
   m_Name: Collider (10)
   m_TagString: Untagged
@@ -1848,8 +2087,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1a77ce0fac99f747a42c2542e247d4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _isDetector: 0
-  _radius: 10
+  _autoSubscribe: 1
+  _isDetector: 1
+  _radius: 150
 --- !u!4 &1294430043
 Transform:
   m_ObjectHideFlags: 0
@@ -1913,6 +2153,18 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1294430045
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1294430041}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 219583b892b3c574e9bf3a5c554c05ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1453172291
 GameObject:
   m_ObjectHideFlags: 0
@@ -1924,6 +2176,7 @@ GameObject:
   - component: {fileID: 1453172293}
   - component: {fileID: 1453172292}
   - component: {fileID: 1453172294}
+  - component: {fileID: 1453172295}
   m_Layer: 0
   m_Name: Collider (12)
   m_TagString: Untagged
@@ -1943,8 +2196,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1a77ce0fac99f747a42c2542e247d4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _isDetector: 0
-  _radius: 10
+  _autoSubscribe: 1
+  _isDetector: 1
+  _radius: 150
 --- !u!4 &1453172293
 Transform:
   m_ObjectHideFlags: 0
@@ -2008,6 +2262,18 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1453172295
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1453172291}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 219583b892b3c574e9bf3a5c554c05ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1713641323
 GameObject:
   m_ObjectHideFlags: 0
@@ -2019,6 +2285,7 @@ GameObject:
   - component: {fileID: 1713641325}
   - component: {fileID: 1713641324}
   - component: {fileID: 1713641326}
+  - component: {fileID: 1713641327}
   m_Layer: 0
   m_Name: Collider (3)
   m_TagString: Untagged
@@ -2038,8 +2305,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1a77ce0fac99f747a42c2542e247d4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _isDetector: 0
-  _radius: 10
+  _autoSubscribe: 1
+  _isDetector: 1
+  _radius: 150
 --- !u!4 &1713641325
 Transform:
   m_ObjectHideFlags: 0
@@ -2103,6 +2371,18 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1713641327
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1713641323}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 219583b892b3c574e9bf3a5c554c05ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1842664531
 GameObject:
   m_ObjectHideFlags: 0
@@ -2114,6 +2394,7 @@ GameObject:
   - component: {fileID: 1842664533}
   - component: {fileID: 1842664532}
   - component: {fileID: 1842664534}
+  - component: {fileID: 1842664535}
   m_Layer: 0
   m_Name: Collider (17)
   m_TagString: Untagged
@@ -2133,8 +2414,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1a77ce0fac99f747a42c2542e247d4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _isDetector: 0
-  _radius: 10
+  _autoSubscribe: 1
+  _isDetector: 1
+  _radius: 150
 --- !u!4 &1842664533
 Transform:
   m_ObjectHideFlags: 0
@@ -2198,6 +2480,18 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1842664535
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1842664531}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 219583b892b3c574e9bf3a5c554c05ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1880702611
 GameObject:
   m_ObjectHideFlags: 0
@@ -2252,6 +2546,7 @@ GameObject:
   - component: {fileID: 1891200279}
   - component: {fileID: 1891200278}
   - component: {fileID: 1891200280}
+  - component: {fileID: 1891200281}
   m_Layer: 0
   m_Name: Collider (19)
   m_TagString: Untagged
@@ -2271,8 +2566,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1a77ce0fac99f747a42c2542e247d4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _isDetector: 0
-  _radius: 10
+  _autoSubscribe: 1
+  _isDetector: 1
+  _radius: 150
 --- !u!4 &1891200279
 Transform:
   m_ObjectHideFlags: 0
@@ -2336,6 +2632,18 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1891200281
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1891200277}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 219583b892b3c574e9bf3a5c554c05ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2090074143
 GameObject:
   m_ObjectHideFlags: 0
@@ -2347,6 +2655,7 @@ GameObject:
   - component: {fileID: 2090074145}
   - component: {fileID: 2090074144}
   - component: {fileID: 2090074146}
+  - component: {fileID: 2090074147}
   m_Layer: 0
   m_Name: Collider (15)
   m_TagString: Untagged
@@ -2366,8 +2675,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1a77ce0fac99f747a42c2542e247d4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _isDetector: 0
-  _radius: 10
+  _autoSubscribe: 1
+  _isDetector: 1
+  _radius: 150
 --- !u!4 &2090074145
 Transform:
   m_ObjectHideFlags: 0
@@ -2431,3 +2741,15 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &2090074147
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2090074143}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 219583b892b3c574e9bf3a5c554c05ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

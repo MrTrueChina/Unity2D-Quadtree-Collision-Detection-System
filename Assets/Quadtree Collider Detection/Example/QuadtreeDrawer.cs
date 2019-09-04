@@ -109,7 +109,20 @@ namespace MtC.Tools.QuadtreeCollider
 
         private void DrawCollider(QuadtreeCollider collider)
         {
-            Gizmos.DrawSphere(collider.position, collider.maxRadius + 20);
+            Vector3 beginPoint = collider.transform.position + Vector3.right * collider.maxRadius * Mathf.Max(Mathf.Abs(collider.transform.lossyScale.x), Mathf.Abs(collider.transform.lossyScale.y));       //三角函数角度是从正右方开始的，画圆起始点是最右边的点raw
+            Gizmos.DrawLine(collider.transform.position, beginPoint);
+            for (int i = 1; i <= 144; i++)
+            {
+                float angle = 2 * Mathf.PI / 144 * i;
+
+                float x = collider.maxRadius * Mathf.Max(Mathf.Abs(collider.transform.lossyScale.x), Mathf.Abs(collider.transform.lossyScale.y)) * Mathf.Cos(angle) + collider.transform.position.x;
+                float y = collider.maxRadius * Mathf.Max(Mathf.Abs(collider.transform.lossyScale.x), Mathf.Abs(collider.transform.lossyScale.y)) * Mathf.Sin(angle) + collider.transform.position.y;
+                Vector3 endPoint = new Vector3(x, y, collider.transform.position.z);
+
+                Gizmos.DrawLine(beginPoint, endPoint);
+
+                beginPoint = endPoint;
+            }
         }
 
         private List<QuadtreeCollider> GetColliders(QuadtreeNode quadtreeNode)

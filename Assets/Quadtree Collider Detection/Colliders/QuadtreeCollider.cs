@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace MtC.Tools.QuadtreeCollider
@@ -12,12 +13,13 @@ namespace MtC.Tools.QuadtreeCollider
 
         private List<QuadtreeCollider> _lastCollisionColliders = new List<QuadtreeCollider>();
 
-        //TODO：考虑加一个开关控制是否使用自动配置，使用则发出警告
+        private Action<QuadtreeCollider> _collisionEnterEventHandler;
+        private Action<QuadtreeCollider> _collisionStayEventHandler;
+        private Action<QuadtreeCollider> _collisionExitEventHandler;
 
-        private void Awake()
-        {
-            _transform = transform;
-        }
+        public bool autoSubscribe { get { return _autoSubscribe; } }
+        [SerializeField]
+        private bool _autoSubscribe = true; // 这个属性只在对象实例化时起一次效，加对外接口一点用没有
 
         /// <summary>
         /// 碰撞器的位置
@@ -46,7 +48,7 @@ namespace MtC.Tools.QuadtreeCollider
             }
             set
             {
-                if(_isDetector != value) // 只有有变化时才处理，更新碰撞器成本可以省下来
+                if (_isDetector != value) // 只有有变化时才处理，更新碰撞器成本可以省下来
                 {
                     _isDetector = value;
 
@@ -60,6 +62,22 @@ namespace MtC.Tools.QuadtreeCollider
         [SerializeField]
         private bool _isDetector;
 
+        private void Awake()
+        {
+            _transform = transform;
+
+            if (_autoSubscribe)
+                foreach (Component component in GetComponents<Component>())
+                {
+                    if (component is IOnQuadtreeCollisionEnter)
+                        _collisionEnterEventHandler += (component as IOnQuadtreeCollisionEnter).OnQuadtreeCollisionEnter;
+                    if (component is IOnQuadtreeCollisionStay)
+                        _collisionStayEventHandler += (component as IOnQuadtreeCollisionStay).OnQuadtreeCollisionStay;
+                    if (component is IOnQuadtreeCollisionExit)
+                        _collisionExitEventHandler += (component as IOnQuadtreeCollisionExit).OnQuadtreeCollisionExit;
+                }
+        }
+
         private void OnEnable()
         {
             Quadtree.AddCollider(this);
@@ -68,6 +86,23 @@ namespace MtC.Tools.QuadtreeCollider
         private void OnDisable()
         {
             Quadtree.RemoveCollider(this);
+        }
+
+        internal void SendCollision(List<QuadtreeCollider> collisionColliders)
+        {
+            foreach (QuadtreeCollider collider in collisionColliders)
+            {
+                if (!_lastCollisionColliders.Contains(collider) && _collisionEnterEventHandler != null)
+                    _collisionEnterEventHandler(collider);
+                if (_collisionStayEventHandler != null)
+                    _collisionStayEventHandler(collider);
+            }
+
+            foreach (QuadtreeCollider collider in _lastCollisionColliders)
+                if (!collisionColliders.Contains(collider) && _collisionExitEventHandler != null)
+                    _collisionExitEventHandler(collider);
+
+            _lastCollisionColliders = collisionColliders;
         }
 
         public bool IsCollitionToCollider(QuadtreeCollider collider)
@@ -84,8 +119,5 @@ namespace MtC.Tools.QuadtreeCollider
         /// 在选中时绘制碰撞器
         /// </summary>
         protected abstract void DrawColliderGizomoSelected();
-
-        //TODO：或许可以在订阅列表中通过获取gameObject判断是否被销毁之后清除
-        //TODO：通过 OnCollisionExit 获取被销毁的碰撞器从原理上不可能，因为已经销毁的碰撞器返回值是null
     }
 }

@@ -23,9 +23,13 @@ public class InterfaceOnMonoDestroyTest
         yield return null;
 
         if (interfaceMono != null)
-            Debug.Log("实现接口的组件被销毁后，接口引用不为null");
+            Debug.Log("实现接口的组件被销毁后，接口引用能够通过 if( != null)");
+        else
+            Debug.Log("实现接口的组件被销毁后，接口引用不能通过 if( != null)");
 
         if (mono != null)
-            Debug.Log("实现接口的组件被销毁后，组件引用不为null");
+            Debug.Log("实现接口的组件被销毁后，组件引用能够通过 if( != null)");
+        else
+            Debug.Log("实现接口的组件被销毁后，组件引用不能通过 if( != null)");
     }
 }

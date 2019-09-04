@@ -1,0 +1,23 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEditor;
+
+namespace MtC.Tools.QuadtreeCollider
+{
+    /// <summary>
+    /// 四叉树碰撞器的Inspector面板GUI绘制Editor
+    /// </summary>
+    [CustomEditor(typeof(QuadtreeCollider), true)]
+    [CanEditMultipleObjects]
+    public class QuadtreeColliderEditor : Editor
+    {
+        public override void OnInspectorGUI()
+        {
+            DrawDefaultInspector();
+
+            if (((QuadtreeCollider)target).autoSubscribe)
+                EditorGUILayout.HelpBox("自动订阅功能只能用于从对象实例化到销毁一直挂载的实现了四叉树碰撞事件接口的组件，这是因为自动订阅的碰撞器在Awake遍历所有组件并进行唯一一次订阅，并且不会自动取消订阅。在对象实例化后挂载的组件不会自动订阅，在对象生命周期中中途销毁的自动订阅组件会导致内存泄漏", MessageType.Warning);
+        }
+    }
+}
