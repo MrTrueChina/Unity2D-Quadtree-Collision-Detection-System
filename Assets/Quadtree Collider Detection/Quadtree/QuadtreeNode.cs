@@ -38,7 +38,7 @@ namespace MtC.Tools.QuadtreeCollider
         /// 单个节点的最短边的最小长度，当任意一个边的长度小于这个长度时，无论碰撞器数量，不再进行分割
         /// </summary>
         private static float minSideLendth = 10; // 这个值用于应对过度分割导致树深度过大性能反而下降的情况，同时可以避免大量碰撞器位置完全相同导致的无限分割
-        //TODO：最短变长需要引入配置
+        //TODO：最短边长需要引入配置
 
         /// <summary>
         /// 父节点

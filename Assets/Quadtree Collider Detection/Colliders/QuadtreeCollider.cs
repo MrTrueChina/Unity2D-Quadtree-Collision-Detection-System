@@ -19,7 +19,7 @@ namespace MtC.Tools.QuadtreeCollider
 
         public bool autoSubscribe { get { return _autoSubscribe; } }
         [SerializeField]
-        private bool _autoSubscribe = true; // 这个属性只在对象实例化时起一次效，加对外接口一点用没有
+        private bool _autoSubscribe = true;
 
         /// <summary>
         /// 碰撞器的位置

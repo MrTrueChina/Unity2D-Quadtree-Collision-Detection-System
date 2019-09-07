@@ -3,35 +3,28 @@ using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEngine;
 
-namespace MtC.Tools.Quadtree.Old
+namespace MtC.Tools.QuadtreeCollider
 {
-    public class QuadtreeSettingWindow : EditorWindow
+    public class QuadtreeConfigEditorWindow : EditorWindow
     {
-        const string settingObjectName = "QuadtreeSetting";
-
-        QuadtreeSetting setting
+        private QuadtreeConfig config
         {
             get
             {
-                if (_setting != null)
-                    return _setting;
+                if (_config != null)
+                    return _config;
 
-                _setting = GetSettingObject(settingObjectName);
-                return _setting;
+                _config = GetSettingObject();
+                return _config;
             }
         }
-        QuadtreeSetting _setting;
+        private QuadtreeConfig _config;
 
-
-        [MenuItem("Tools/Quadtree/Quadtree Setting")]
-        static void GetWindow()
+        [MenuItem("Tools/Quadtree/Quadtree Config")]
+        private static void GetWindow()
         {
-            QuadtreeSettingWindow window = (QuadtreeSettingWindow)GetWindow(typeof(QuadtreeSettingWindow));
-            window.minSize = new Vector2(Screen.width / 3.7f, Screen.width / 12);
-            window.Show();
+            ((QuadtreeConfigEditorWindow)GetWindow(typeof(QuadtreeConfigEditorWindow))).Show();
         }
-
-
 
         private void OnGUI()
         {
@@ -40,49 +33,48 @@ namespace MtC.Tools.Quadtree.Old
             DrawSettingEditor();
         }
 
-        void DrawProposal()
+        private void DrawProposal()
         {
             EditorGUILayout.LabelField("本设置使用了Resources文件夹，对优化有影响，建议在发布前改用其他方式设置（如硬编码或数据类）");
         }
 
-        void DrawSettingEditor()
+        private void DrawSettingEditor()
         {
-            Editor.CreateEditor(setting).DrawDefaultInspector();
+            Editor.CreateEditor(config).DrawDefaultInspector();
         }
 
-
-
-        //获取设置文件
-        QuadtreeSetting GetSettingObject(string settingObjectName)
+        QuadtreeConfig GetSettingObject()
         {
-            QuadtreeSetting settingObject = LoadSetting(settingObjectName);
+            QuadtreeConfig settingObject = LoadSetting();
             if (settingObject != null)
                 return settingObject;
-            return CreatSettingObject(settingObjectName);
+            return CreatSettingObject();
         }
 
-        static QuadtreeSetting LoadSetting(string settingObjectName)
+        static QuadtreeConfig LoadSetting()
         {
-            return Resources.Load<QuadtreeSetting>(settingObjectName);
+            return Resources.Load<QuadtreeConfig>(QuadtreeConfig.CONFIG_OBJECT_NAME);
         }
 
-        QuadtreeSetting CreatSettingObject(string settingObjectName)
+        QuadtreeConfig CreatSettingObject()
         {
             string settingScriptFilePath = GetSettingScriptFilePath();
 
             if (!AssetDatabase.IsValidFolder(settingScriptFilePath + "Resources"))
                 CreatResourcesFolder(settingScriptFilePath);
 
-            QuadtreeSetting settingObject = CreateInstance<QuadtreeSetting>();
-            AssetDatabase.CreateAsset(settingObject, settingScriptFilePath + "Resources/" + settingObjectName + ".asset");
+            QuadtreeConfig settingObject = CreateInstance<QuadtreeConfig>();
+            AssetDatabase.CreateAsset(settingObject, settingScriptFilePath + "Resources/" + QuadtreeConfig.CONFIG_OBJECT_NAME + ".asset");
 
             return settingObject;
         }
+
         string GetSettingScriptFilePath()
         {
-            string fullPath = AssetDatabase.GetAssetPath(MonoScript.FromScriptableObject(CreateInstance<QuadtreeSetting>()));
+            string fullPath = AssetDatabase.GetAssetPath(MonoScript.FromScriptableObject(CreateInstance<QuadtreeConfig>()));
             return fullPath.Substring(0, fullPath.LastIndexOf("/") + 1);
         }
+
         void CreatResourcesFolder(string parentFolderPath)
         {
             if (parentFolderPath.Last() == '/')
@@ -90,9 +82,6 @@ namespace MtC.Tools.Quadtree.Old
             AssetDatabase.CreateFolder(parentFolderPath, "Resources");
         }
 
-
-
-        //绘制范围
         private void OnEnable()
         {
             SceneView.duringSceneGui += OnSceneGUI;
@@ -107,10 +96,10 @@ namespace MtC.Tools.Quadtree.Old
         {
             Handles.color = Color.red * 0.9f;
 
-            Vector3 upperRight = new Vector3(setting.startRight, setting.startTop, 0);
-            Vector3 lowerRight = new Vector3(setting.startRight, setting.startBottom, 0);
-            Vector3 lowerLeft = new Vector3(setting.startLeft, setting.startBottom, 0);
-            Vector3 upperLeft = new Vector3(setting.startLeft, setting.startTop, 0);
+            Vector3 upperRight = new Vector3(QuadtreeConfig.startArea.xMax, QuadtreeConfig.startArea.yMax, 0);
+            Vector3 lowerRight = new Vector3(QuadtreeConfig.startArea.xMax, QuadtreeConfig.startArea.yMin, 0);
+            Vector3 lowerLeft = new Vector3(QuadtreeConfig.startArea.xMin, QuadtreeConfig.startArea.yMin, 0);
+            Vector3 upperLeft = new Vector3(QuadtreeConfig.startArea.xMin, QuadtreeConfig.startArea.yMax, 0);
 
             Handles.DrawLine(upperRight, lowerRight);
             Handles.DrawLine(lowerRight, lowerLeft);
@@ -118,13 +107,10 @@ namespace MtC.Tools.Quadtree.Old
             Handles.DrawLine(upperLeft, upperRight);
         }
 
-
-
-        //发布时提示
         [PostProcessBuild(0)]
         static void OnBuild(BuildTarget target, string path)
         {
-            if (LoadSetting(settingObjectName) != null)
+            if (LoadSetting() != null)
                 Debug.LogWarning("检测到 Resources 文件夹中有四叉树设置文件，为游戏优化着想，建议改用其他方式（如硬编码）进行设置，之后移除设置文件、设置脚本文件和设置编辑器脚本文件");
         }
     }

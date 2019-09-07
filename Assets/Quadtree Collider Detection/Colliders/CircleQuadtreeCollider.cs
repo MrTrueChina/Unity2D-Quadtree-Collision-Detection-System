@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace MtC.Tools.QuadtreeCollider
 {
+    /// <summary>
+    /// 圆形四叉树碰撞器
+    /// </summary>
     public class CircleQuadtreeCollider : QuadtreeCollider
     {
         /// <summary>
