@@ -9,11 +9,6 @@ namespace MtC.Tools.QuadtreeCollider
     internal class Quadtree : MonoBehaviour
     {
         /// <summary>
-        /// 初始根节点范围
-        /// </summary>
-        public static Rect _startArea = new Rect(-1, -1, 1922, 1082); // TODO：需要引入配置
-
-        /// <summary>
         /// 实例
         /// </summary>
         private static Quadtree instance
@@ -43,7 +38,12 @@ namespace MtC.Tools.QuadtreeCollider
         /// <summary>
         /// 四叉树根节点
         /// </summary>
-        private QuadtreeNode _root = new QuadtreeNode(_startArea);
+        private QuadtreeNode _root = null;
+
+        private void Awake()
+        {
+            _root = new QuadtreeNode(QuadtreeConfig.startArea); // 节点创建过程中使用了Resources.Load，这个方法不能通过类的字段声明时赋值来调用
+        }
 
         /// <summary>
         /// 向四叉树中添加碰撞器

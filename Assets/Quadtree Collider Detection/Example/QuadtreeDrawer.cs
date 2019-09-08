@@ -73,8 +73,8 @@ namespace MtC.Tools.QuadtreeCollider
         {
             Rect area = GetArea(quadtreeNode);
 
-            float xLerp = Mathf.InverseLerp(Quadtree._startArea.xMin, Quadtree._startArea.xMax, area.x);
-            float yLerp = Mathf.InverseLerp(Quadtree._startArea.yMin, Quadtree._startArea.yMax, area.y);
+            float xLerp = Mathf.InverseLerp(QuadtreeConfig.startArea.xMin, QuadtreeConfig.startArea.xMax, area.x);
+            float yLerp = Mathf.InverseLerp(QuadtreeConfig.startArea.yMin, QuadtreeConfig.startArea.yMax, area.y);
 
             return new Color(xLerp, yLerp, 0.5f);
         }

@@ -31,16 +31,6 @@ namespace MtC.Tools.QuadtreeCollider
         private const float DEFAULT_MAX_RADIUS = Mathf.NegativeInfinity; // 默认最大检测半径为负无穷，这样无论检测器半径多大都不会判断为可能发生碰撞，减少无意义的向子节点递归
 
         /// <summary>
-        /// 一个节点里的碰撞器数量上限，超过上限后进行分割
-        /// </summary>
-        private static int maxCollidersumber = 10; //TODO：分割数量需要引入配置
-        /// <summary>
-        /// 单个节点的最短边的最小长度，当任意一个边的长度小于这个长度时，无论碰撞器数量，不再进行分割
-        /// </summary>
-        private static float minSideLendth = 10; // 这个值用于应对过度分割导致树深度过大性能反而下降的情况，同时可以避免大量碰撞器位置完全相同导致的无限分割
-        //TODO：最短边长需要引入配置
-
-        /// <summary>
         /// 父节点
         /// </summary>
         private QuadtreeNode _parent = null;
@@ -132,7 +122,7 @@ namespace MtC.Tools.QuadtreeCollider
 
         private bool NeedSplit()
         {
-            return _colliders.Count > maxCollidersumber && _area.height > minSideLendth && _area.width > minSideLendth;
+            return _colliders.Count > QuadtreeConfig. maxCollidersNumber && _area.height > QuadtreeConfig. minSideLength&& _area.width >QuadtreeConfig. minSideLength;
         }
 
         private void Split()

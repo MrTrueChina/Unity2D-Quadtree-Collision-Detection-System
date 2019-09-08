@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c2e632ee1d4e0094c805794c82ea76a6, type: 3}
-  m_Name: QuadtreeSetting
+  m_Name: Quadtree Config
   m_EditorClassIdentifier: 
-  maxCollidersumber: 10
-  minSideLendth: 10
+  _maxCollidersNumber: 5
+  _minSideLength: 100
   _startArea:
     serializedVersion: 2
     x: -1
