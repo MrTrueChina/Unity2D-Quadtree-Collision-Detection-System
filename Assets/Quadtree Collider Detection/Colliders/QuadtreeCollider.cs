@@ -92,15 +92,15 @@ namespace MtC.Tools.QuadtreeCollider
         {
             foreach (QuadtreeCollider collider in collisionColliders)
             {
-                if (!_lastCollisionColliders.Contains(collider) && _collisionEnterEventHandler != null)
-                    _collisionEnterEventHandler(collider);
-                if (_collisionStayEventHandler != null)
-                    _collisionStayEventHandler(collider);
+                if (!_lastCollisionColliders.Contains(collider))
+                    _collisionEnterEventHandler?.Invoke(collider);
+
+                _collisionStayEventHandler?.Invoke(collider);
             }
 
             foreach (QuadtreeCollider collider in _lastCollisionColliders)
-                if (!collisionColliders.Contains(collider) && _collisionExitEventHandler != null)
-                    _collisionExitEventHandler(collider);
+                if (!collisionColliders.Contains(collider))
+                    _collisionExitEventHandler?.Invoke(collider);
 
             _lastCollisionColliders = collisionColliders;
         }
