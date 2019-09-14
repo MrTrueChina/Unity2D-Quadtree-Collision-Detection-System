@@ -73,7 +73,6 @@ namespace MtC.Tools.QuadtreeCollider
         /// <param name="collider"></param>
         public static void RemoveCollider(QuadtreeCollider collider)
         {
-            //Debug.Log("移除碰撞器：" + collider);
             if (_instance == null)
                 return;
 
@@ -104,28 +103,18 @@ namespace MtC.Tools.QuadtreeCollider
 
         private void UpdateQuadtree()
         {
-            //Debug.Log("更新四叉树");
-
             _root.Update();
         }
 
         private void Detect()
         {
-            List<QuadtreeCollider> detectors = new List<QuadtreeCollider>(_detectors);
-            Debug.Log("发起碰撞检测，检测器数量 = " + detectors.Count);
+            List<QuadtreeCollider> detectors = new List<QuadtreeCollider>(_detectors); // 防止在进行检测时发生检测器列表的变化，直接用碰撞器列表内容创建新列表
             foreach (QuadtreeCollider detector in detectors)
             {
                 List<QuadtreeCollider> collisionColliders = instance._root.GetCollidersInCollision(detector);
-                collisionColliders.Remove(detector); // TODO：结果有误，只有两个碰撞器的时候应该只有一个碰撞到的碰撞器，实际结果是两个，这一步的移除可能没有成功
-
-                string str = "";
-                foreach (QuadtreeCollider collider in collisionColliders)
-                    str += collider;
-                Debug.Log(str + " , " + detector);
-
+                collisionColliders.Remove(detector);
                 detector.SendCollision(collisionColliders); //TODO：如果在检测时报出空异常等异常，可能是这里没有进行空异常的判断导致的
             }
-            Debug.Log("第一个碰撞器检测到的碰撞数量有 " + instance._root.GetCollidersInCollision(_detectors[0]).Count + " 个");
         }
     }
 }
