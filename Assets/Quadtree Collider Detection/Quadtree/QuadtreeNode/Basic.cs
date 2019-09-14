@@ -87,23 +87,4 @@ namespace MtC.Tools.QuadtreeCollider
             return _children != null; // 子节点List只在创建子节点时才会创建，判断是不是null就能判断有没有子节点
         }
     }
-
-    /// <summary>
-    /// Rect扩展方法类
-    /// </summary>
-    static partial class RectExtension
-    {
-        /// <summary>
-        /// 计算与指定Vector2的距离，如果指定Vector2在Rect范围内则返回0
-        /// </summary>
-        /// <param name="rect"></param>
-        /// <param name="point"></param>
-        /// <returns></returns>
-        public static float DistanceToPoint(this Rect rect, Vector2 point)
-        {
-            float xDistance = Mathf.Max(0, point.x - rect.xMax, rect.xMin - point.x);
-            float yDistance = Mathf.Max(0, point.y - rect.yMax, rect.yMin - point.y);
-            return Mathf.Sqrt(xDistance * xDistance + yDistance * yDistance);
-        }
-    }
 }
