@@ -10,7 +10,7 @@ namespace MtC.Tools.QuadtreeCollider
         /// <summary>
         /// 弥补 switch 不能使用 type 准备的表驱动字典
         /// </summary>
-        private static Dictionary<Type, Dictionary<Type, Func<QuadtreeCollider, QuadtreeCollider, bool>>> colliderDictionary = new Dictionary<Type, Dictionary<Type, Func<QuadtreeCollider, QuadtreeCollider, bool>>>
+        private static readonly Dictionary<Type, Dictionary<Type, Func<QuadtreeCollider, QuadtreeCollider, bool>>> colliderDictionary = new Dictionary<Type, Dictionary<Type, Func<QuadtreeCollider, QuadtreeCollider, bool>>>
         {
             {
                 //第一个参数是圆形碰撞器的表驱动字典

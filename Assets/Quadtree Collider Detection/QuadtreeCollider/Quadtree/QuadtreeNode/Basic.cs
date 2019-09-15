@@ -12,19 +12,19 @@ namespace MtC.Tools.QuadtreeCollider
         /// <summary>
         /// 右上子节点的索引
         /// </summary>
-        private const int RIGHT_TOP_CHILD_INDEX = 0;
+        internal const int RIGHT_TOP_CHILD_INDEX = 0;
         /// <summary>
         /// 右下子节点的索引
         /// </summary>
-        private const int RIGHT_BOTTOM_CHILD_INDEX = 1;
+        internal const int RIGHT_BOTTOM_CHILD_INDEX = 1;
         /// <summary>
         /// 左下子节点的索引
         /// </summary>
-        private const int LEFT_BOTTOM_CHILD_INDEX = 2;
+        internal const int LEFT_BOTTOM_CHILD_INDEX = 2;
         /// <summary>
         /// 左上子节点的索引
         /// </summary>
-        private const int LEFT_TOP_CHILD_INDEX = 3;
+        internal const int LEFT_TOP_CHILD_INDEX = 3;
         /// <summary>
         /// 默认最大检测半径
         /// </summary>
@@ -37,6 +37,10 @@ namespace MtC.Tools.QuadtreeCollider
         /// <summary>
         /// 四叉树节点所拥有的区域
         /// </summary>
+        internal Rect area
+        {
+            get { return _area; }     
+        }
         private Rect _area = default;
         /// <summary>
         /// 这个节点所拥有的碰撞器
@@ -80,6 +84,9 @@ namespace MtC.Tools.QuadtreeCollider
             _children = children;
 
             _maxRadius = children[mainNodeIndex]._maxRadius;
+
+            foreach (QuadtreeNode child in _children)
+                child._parent = this;
         }
 
         private bool HaveChildren()

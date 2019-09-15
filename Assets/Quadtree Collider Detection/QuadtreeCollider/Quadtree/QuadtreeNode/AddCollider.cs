@@ -31,8 +31,7 @@ namespace MtC.Tools.QuadtreeCollider
                 if (child.AddCollider(collider))
                     return true;
 
-            throw new ArgumentOutOfRangeException("向范围是 " + _area + " 的节点的子节点存入碰撞器 " + collider + " 时发生错误：碰撞器没有存入任何子节点");
-            //return false;
+            throw new ArgumentOutOfRangeException("向范围是 " + _area + " 的节点的子节点存入碰撞器 " + collider + " 时发生错误：碰撞器没有存入任何子节点"); // 正常流程中不会运行到这
         }
 
         private void AddColliderIntoSelf(QuadtreeCollider collider)
@@ -76,7 +75,12 @@ namespace MtC.Tools.QuadtreeCollider
 
         private void RemoveSelfColliderOnSplit(int index)
         {
+            if (_colliders[index].isDetector)
+                Quadtree.RemoveDetector(_colliders[index]);
+
             _colliders.RemoveAt(index);
+
+            // TODO：移除不是完全从包装类进行，出现bug优先排查此处
         }
 
         private void DoSplite()
@@ -105,12 +109,6 @@ namespace MtC.Tools.QuadtreeCollider
                 AddColliderIntoChildren(collider);
 
             _colliders.Clear();
-        }
-
-        private void ResetCollidersIntoQuadtree(List<QuadtreeCollider> outOfFieldColliders)
-        {
-            foreach (QuadtreeCollider collider in outOfFieldColliders)
-                Quadtree.AddCollider(collider); // 直接通过包装类从根节点存入
         }
     }
 }

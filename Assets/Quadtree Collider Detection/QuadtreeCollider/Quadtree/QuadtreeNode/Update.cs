@@ -63,5 +63,11 @@ namespace MtC.Tools.QuadtreeCollider
 
             return _maxRadius;
         }
+
+        private void ResetCollidersIntoQuadtree(List<QuadtreeCollider> outOfFieldColliders)
+        {
+            foreach (QuadtreeCollider collider in outOfFieldColliders)
+                Quadtree.AddCollider(collider); // 直接通过包装类从根节点存入
+        }
     }
 }
