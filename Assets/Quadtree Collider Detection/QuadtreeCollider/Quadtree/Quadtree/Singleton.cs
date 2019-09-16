@@ -43,6 +43,17 @@ namespace MtC.Tools.QuadtreeCollider
         }
 
         /// <summary>
+        /// 在重新存入碰撞器时使用的存入方法，不会改变检测器列表
+        /// </summary>
+        /// <param name="collider"></param>
+        internal static void AddColliderOnReset(QuadtreeCollider collider)
+        {
+            instance.DoAddCollider(collider);
+
+            // 重新存入碰撞器是将四叉树中存在的碰撞器取出来重新存入，前后的碰撞器列表并没有变化，检测器列表更不会变化，省一步快一步
+        }
+
+        /// <summary>
         /// 添加检测器，只会添加进检测列表，不会添加碰撞器
         /// </summary>
         /// <param name="detector"></param>

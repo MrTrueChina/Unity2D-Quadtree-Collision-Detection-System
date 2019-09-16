@@ -53,34 +53,12 @@ namespace MtC.Tools.QuadtreeCollider
              *  清除掉不在自己区域内的碰撞器，防止下发碰撞器失败
              *  分割处子节点并下发碰撞器
              *  把清除掉的那些碰撞器重新存入四叉树
+             *  
+             *  实际是进行了一次位置更新，但为了防止节点碰撞器互相越界导致的多重更新将分割写在存入和取出中间
              */
             List<QuadtreeCollider> outOfAreaColliders = GetAndRemoveCollidersOutOfField();
             DoSplite();
             ResetCollidersIntoQuadtree(outOfAreaColliders);
-        }
-
-        private List<QuadtreeCollider> GetAndRemoveCollidersOutOfField()
-        {
-            List<QuadtreeCollider> outOfFieldCollider = new List<QuadtreeCollider>();
-
-            for (int i = _colliders.Count - 1; i >= 0; i--)
-                if (!_area.Contains(_colliders[i].position))
-                {
-                    outOfFieldCollider.Add(_colliders[i]);
-                    RemoveSelfColliderOnSplit(i);
-                }
-
-            return outOfFieldCollider;
-        }
-
-        private void RemoveSelfColliderOnSplit(int index)
-        {
-            if (_colliders[index].isDetector)
-                Quadtree.RemoveDetector(_colliders[index]);
-
-            _colliders.RemoveAt(index);
-
-            // TODO：移除不是完全从包装类进行，出现bug优先排查此处
         }
 
         private void DoSplite()
