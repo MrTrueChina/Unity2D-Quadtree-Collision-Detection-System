@@ -17,14 +17,14 @@ namespace MtC.Tools.QuadtreeCollider
         private Action<QuadtreeCollider> _collisionStayEventHandler;
         private Action<QuadtreeCollider> _collisionExitEventHandler;
 
-        public bool autoSubscribe { get { return _autoSubscribe; } }
+        internal bool autoSubscribe { get { return _autoSubscribe; } }
         [SerializeField]
         private bool _autoSubscribe = true;
 
         /// <summary>
         /// 碰撞器的位置
         /// </summary>
-        public Vector2 position
+        internal Vector2 position
         {
             get { return _transform.position; }
         }
@@ -32,7 +32,7 @@ namespace MtC.Tools.QuadtreeCollider
         /// <summary>
         /// 碰撞器需要检测的最大半径，超过这个半径则认为不会发生碰撞
         /// </summary>
-        public abstract float maxRadius
+        internal abstract float maxRadius
         {
             get;
         }
@@ -88,6 +88,10 @@ namespace MtC.Tools.QuadtreeCollider
             Quadtree.RemoveCollider(this);
         }
 
+        /// <summary>
+        /// 发出碰撞事件
+        /// </summary>
+        /// <param name="collisionColliders"></param>
         internal void SendCollision(List<QuadtreeCollider> collisionColliders)
         {
             foreach (QuadtreeCollider collider in collisionColliders)
@@ -105,9 +109,95 @@ namespace MtC.Tools.QuadtreeCollider
             _lastCollisionColliders = collisionColliders;
         }
 
+        /// <summary>
+        /// 如果这个碰撞器与指定碰撞器发生碰撞，返回true
+        /// </summary>
+        /// <param name="collider"></param>
+        /// <returns></returns>
         public bool IsCollitionToCollider(QuadtreeCollider collider)
         {
             return QuadtreeCollisionDetector.IsCollition(this, collider);
+        }
+
+        /// <summary>
+        /// 订阅碰撞进入事件
+        /// </summary>
+        /// <param name=""></param>
+        public void SubscribeCollisionEnter(Action<QuadtreeCollider> action)
+        {
+            foreach (Action<QuadtreeCollider> subscribedAction in _collisionEnterEventHandler.GetInvocationList())
+                if (subscribedAction == action)
+                    return;
+
+            _collisionEnterEventHandler += action;
+        }
+
+        /// <summary>
+        /// 取消订阅碰撞进入事件
+        /// </summary>
+        /// <param name=""></param>
+        public void CancelSubscribeCollisionEnter(Action<QuadtreeCollider> action)
+        {
+            foreach (Action<QuadtreeCollider> subscribedAction in _collisionEnterEventHandler.GetInvocationList())
+                if (subscribedAction == action)
+                {
+                    _collisionEnterEventHandler -= action;
+                    return;
+                }
+        }
+
+        /// <summary>
+        /// 订阅碰撞停留事件
+        /// </summary>
+        /// <param name=""></param>
+        public void SubscribeCollisionStay(Action<QuadtreeCollider> action)
+        {
+            foreach (Action<QuadtreeCollider> subscribedAction in _collisionStayEventHandler.GetInvocationList())
+                if (subscribedAction == action)
+                    return;
+
+            _collisionStayEventHandler += action;
+        }
+
+        /// <summary>
+        /// 取消订阅碰撞停留事件
+        /// </summary>
+        /// <param name=""></param>
+        public void CancelSubscribeCollisionStay(Action<QuadtreeCollider> action)
+        {
+            foreach (Action<QuadtreeCollider> subscribedAction in _collisionStayEventHandler.GetInvocationList())
+                if (subscribedAction == action)
+                {
+                    _collisionStayEventHandler -= action;
+                    return;
+                }
+        }
+
+        /// <summary>
+        /// 订阅碰撞离开事件
+        /// </summary>
+        /// <param name=""></param>
+        public void SubscribeCollisionExit(Action<QuadtreeCollider> action)
+        {
+            foreach (Action<QuadtreeCollider> subscribedAction in _collisionExitEventHandler.GetInvocationList())
+                if (subscribedAction == action)
+                    return;
+
+            _collisionExitEventHandler += action;
+        }
+
+        /// <summary>
+        /// 取消订阅碰撞离开事件
+        /// </summary>
+        /// <param name=""></param>
+        public void CancelSubscribeCollisionExit(Action<QuadtreeCollider> action)
+        {
+            foreach (Action<QuadtreeCollider> subscribedAction in _collisionExitEventHandler.GetInvocationList())
+                if (subscribedAction == action)
+                {
+                    _collisionExitEventHandler -= action;
+                    return;
+                }
         }
 
         private void OnDrawGizmosSelected()

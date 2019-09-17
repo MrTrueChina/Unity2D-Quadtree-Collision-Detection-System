@@ -23,7 +23,7 @@ namespace MtC.Tools.QuadtreeCollider
         [SerializeField]
         private float _radius;
 
-        public override float maxRadius => radius;
+        internal override float maxRadius => radius;
 
         protected override void DrawColliderGizomoSelected()
         {
