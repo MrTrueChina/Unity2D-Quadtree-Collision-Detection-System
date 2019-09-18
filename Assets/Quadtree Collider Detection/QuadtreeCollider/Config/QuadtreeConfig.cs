@@ -33,6 +33,7 @@ namespace MtC.Tools.QuadtreeCollider
             get { return config._maxCollidersNumber; }
         }
         [SerializeField]
+        [Header("单个节点的直属碰撞器数量上限，超过这个数量则判断为需要分割")]
         private int _maxCollidersNumber = 10;
 
         /// <summary>
@@ -43,6 +44,7 @@ namespace MtC.Tools.QuadtreeCollider
             get { return config._minSideLength; }
         }
         [SerializeField]
+        [Header("单个节点的最短边长，节点任意一条边边长小于这个值则不能再进行分割")]
         private float _minSideLength = 10; // 这个值用于应对过度分割导致树深度过大性能反而下降的情况，同时可以避免大量碰撞器位置完全相同导致的无限分割
 
         /// <summary>
@@ -53,6 +55,7 @@ namespace MtC.Tools.QuadtreeCollider
             get { return config._startArea; }
         }
         [SerializeField]
+        [Header("四叉树创建时的范围")]
         private Rect _startArea = new Rect(-1, -1, 1922, 1082);
     }
 }

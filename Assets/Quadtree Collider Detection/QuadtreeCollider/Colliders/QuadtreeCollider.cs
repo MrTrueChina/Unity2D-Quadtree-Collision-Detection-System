@@ -17,7 +17,7 @@ namespace MtC.Tools.QuadtreeCollider
         private Action<QuadtreeCollider> _collisionStayEventHandler;
         private Action<QuadtreeCollider> _collisionExitEventHandler;
 
-        internal bool autoSubscribe { get { return _autoSubscribe; } }
+        public bool autoSubscribe { get { return _autoSubscribe; } }
         [SerializeField]
         private bool _autoSubscribe = true;
 
