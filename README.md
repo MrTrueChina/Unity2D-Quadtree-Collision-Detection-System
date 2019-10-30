@@ -1,3 +1,4 @@
+# TODO：README中关于命名空间、文件夹内容是临时写的，需要修改为与实际代码一致
 # U2D四叉树碰撞检测系统
 [![996.icu](https://img.shields.io/badge/link-996.icu-red.svg)](https://996.icu)
 [![LICENSE](https://img.shields.io/badge/license-Anti%20996-blue.svg)](https://github.com/996icu/996.ICU/blob/master/LICENSE)
@@ -26,6 +27,16 @@ Unity引擎自带一套基于物理引擎的2D碰撞检测系统，这套系统�
 ****
 ## 配置：
 通过 Tools -> Quadtree -> Quadtree Config 的配置窗口可以根据需要调整四叉树参数进行优化。
+****
+## 完整使用手册：
+### namespace： MtC.Tools.Quadtree
+### 组件：
+### 窗口：
+#### Tools -> Quadtree -> Quadtree Config
+配置窗口，在这个窗口中进行配置修改
+### 事件：
+#### ent
+当检测器检测到碰撞器进入时发出此事件
 ****
 ## 文件夹内容：
 | 文件夹 | 内容 |
