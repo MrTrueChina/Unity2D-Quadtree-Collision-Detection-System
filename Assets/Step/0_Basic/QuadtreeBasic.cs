@@ -26,7 +26,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace MtC.Tools.Quadtree.Step.Basic
+namespace MtC.Tools.Quadtree.Example.Step0Basic
 {
     /*
      *  这个<T>是“泛型”，有泛型的类和方法可以在调用的时候指定类型，Unity的 GetComponent<> 就应用了泛型

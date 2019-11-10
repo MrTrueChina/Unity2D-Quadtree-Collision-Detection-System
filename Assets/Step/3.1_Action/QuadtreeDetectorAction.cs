@@ -5,7 +5,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace MtC.Tools.Quadtree.Step.Action
+namespace MtC.Tools.Quadtree.Example.Step3_1Action
 {
     [RequireComponent(typeof(QuadtreeColliderAction))]
     public class QuadtreeDetectorAction : MonoBehaviour

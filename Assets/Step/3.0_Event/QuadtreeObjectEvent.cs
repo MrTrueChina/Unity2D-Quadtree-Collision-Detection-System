@@ -4,7 +4,7 @@
 
 using UnityEngine;
 
-namespace MtC.Tools.Quadtree.Step.Event
+namespace MtC.Tools.Quadtree.Example.Step3Event
 {
     public class QuadtreeObjectEvent : MonoBehaviour
     {

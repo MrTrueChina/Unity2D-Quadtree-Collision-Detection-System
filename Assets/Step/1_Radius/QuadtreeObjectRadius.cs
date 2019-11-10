@@ -6,7 +6,7 @@
 
 using UnityEngine;
 
-namespace MtC.Tools.Quadtree.Step.Radius
+namespace MtC.Tools.Quadtree.Example.Step1Radius
 {
     public class QuadtreeObjectRadius : MonoBehaviour
     {

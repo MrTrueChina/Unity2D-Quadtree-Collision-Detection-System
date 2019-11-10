@@ -7,7 +7,7 @@ using UnityEditor.Callbacks;
 using UnityEngine;
 using System.Linq;
 
-namespace MtC.Tools.Quadtree.Step.Singleton
+namespace MtC.Tools.Quadtree.Example.Step5Singleton
 {
     public class QuadtreeWithSingletonSettingWindow : EditorWindow //EditorWindow：继承这个类的类可以创建窗口，就像 Inspector、Project 那样
     {

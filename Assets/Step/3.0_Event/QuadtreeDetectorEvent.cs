@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace MtC.Tools.Quadtree.Step.Event
+namespace MtC.Tools.Quadtree.Example.Step3Event
 {
     [RequireComponent(typeof(QuadtreeColliderEvent))]
     public class QuadtreeDetectorEvent : MonoBehaviour

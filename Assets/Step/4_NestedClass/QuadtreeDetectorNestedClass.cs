@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace MtC.Tools.Quadtree.Step.NestedClass
+namespace MtC.Tools.Quadtree.Example.Step4NestedClass
 {
     [RequireComponent(typeof(QuadtreeColliderNestedClass))]
     public class QuadtreeDetectorNestedClass : MonoBehaviour

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace MtC.Tools.Quadtree.Step.Update
+namespace MtC.Tools.Quadtree.Example.Step2Update
 {
     public class QuadtreeDetectorUpdate : MonoBehaviour
     {

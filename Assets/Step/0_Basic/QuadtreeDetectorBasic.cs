@@ -6,7 +6,7 @@
 
 using UnityEngine;
 
-namespace MtC.Tools.Quadtree.Step.Basic
+namespace MtC.Tools.Quadtree.Example.Step0Basic
 {
     public class QuadtreeDetectorBasic : MonoBehaviour
     {

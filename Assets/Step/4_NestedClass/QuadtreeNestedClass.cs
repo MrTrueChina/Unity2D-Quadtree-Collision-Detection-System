@@ -9,7 +9,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace MtC.Tools.Quadtree.Step.NestedClass
+namespace MtC.Tools.Quadtree.Example.Step4NestedClass
 {
     public class QuadtreeNestedClass<T>
     {

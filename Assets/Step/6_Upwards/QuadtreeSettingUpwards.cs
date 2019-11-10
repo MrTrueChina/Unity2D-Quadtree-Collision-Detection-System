@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace MtC.Tools.Quadtree.Step.Upwards
+namespace MtC.Tools.Quadtree.Example.Step6Upwards
 {
     public class QuadtreeSettingUpwards : ScriptableObject
     {

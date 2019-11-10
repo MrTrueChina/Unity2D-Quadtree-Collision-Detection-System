@@ -11,7 +11,7 @@
 
 using UnityEngine;
 
-namespace MtC.Tools.Quadtree.Step.Singleton
+namespace MtC.Tools.Quadtree.Example.Step5Singleton
 {
     public class QuadtreeSettingSingleton : ScriptableObject
     {
