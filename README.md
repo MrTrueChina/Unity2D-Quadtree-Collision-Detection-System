@@ -37,35 +37,53 @@ Unity引擎自带一套基于物理引擎的2D碰撞检测系统，这套系统�
 配置窗口，在这个窗口中进行配置修改
 <br><br>
 ### 接口：
-#### IOnQuadtreeCollisionEnter
+```C#
+public interface IOnQuadtreeCollisionEnter
+```
 实现接口中的 OnQuadtreeCollisionEnter(QuadtreeCollider collider) 方法，当有碰撞器进入该碰撞器碰撞范围时该方法将被调用
 <br><br>
-#### IOnQuadtreeCollisionStay
+```C#
+public interface IOnQuadtreeCollisionStay
+```
 实现接口中的 OnQuadtreeCollisionStay(QuadtreeCollider collider) 方法，当有碰撞器停留在该碰撞器碰撞范围内时该方法将被调用
 <br><br>
-#### IOnQuadtreeCollisionExit
+```C#
+public interface IOnQuadtreeCollisionExit
+```
 实现接口中的 OnQuadtreeCollisionExit(QuadtreeCollider collider) 方法，当有碰撞器离开该碰撞器碰撞范围时该方法将被调用
 ### 类：
 #### QuadtreeCollider：
 ```C#
 public bool IsCollitionToCollider(QuadtreeCollider collider);
-如果这个碰撞器与指定碰撞器发生碰撞，返回true，否则返回false
-
-public void SubscribeCollisionEnter(Action<QuadtreeCollider> action);
-订阅这个碰撞器的碰撞器进入事件
-
-public void CancelSubscribeCollisionEnter(Action<QuadtreeCollider> action);
-取消订阅这个碰撞器的碰撞器进入事件
-
-public void SubscribeCollisionStay(Action<QuadtreeCollider> action);
-订阅这个碰撞器的碰撞器停留事件
-
-public void CancelSubscribeCollisionStay(Action<QuadtreeCollider> action);
-取消订阅这个碰撞器的碰撞器停留事件
-
-public void SubscribeCollisionExit(Action<QuadtreeCollider> action);
-订阅这个碰撞器的碰撞器离开事件
-
-public void CancelSubscribeCollisionExit(Action<QuadtreeCollider> action);
-取消订阅这个碰撞器的碰撞器离开事件
 ```
+如果这个碰撞器与指定碰撞器发生碰撞，返回true，否则返回false
+<br><br>
+```C#
+public void SubscribeCollisionEnter(Action<QuadtreeCollider> action);
+```
+订阅这个碰撞器的碰撞器进入事件
+<br><br>
+```C#
+public void CancelSubscribeCollisionEnter(Action<QuadtreeCollider> action);
+```
+取消订阅这个碰撞器的碰撞器进入事件
+<br><br>
+```C#
+public void SubscribeCollisionStay(Action<QuadtreeCollider> action);
+```
+订阅这个碰撞器的碰撞器停留事件
+<br><br>
+```C#
+public void CancelSubscribeCollisionStay(Action<QuadtreeCollider> action);
+```
+取消订阅这个碰撞器的碰撞器停留事件
+<br><br>
+```C#
+public void SubscribeCollisionExit(Action<QuadtreeCollider> action);
+```
+订阅这个碰撞器的碰撞器离开事件
+<br><br>
+```C#
+public void CancelSubscribeCollisionExit(Action<QuadtreeCollider> action);
+```
+取消订阅这个碰撞器的碰撞器离开事件
