@@ -55,35 +55,23 @@ public interface IOnQuadtreeCollisionExit
 #### QuadtreeCollider：
 ```C#
 public bool IsCollitionToCollider(QuadtreeCollider collider);
-```
 如果这个碰撞器与指定碰撞器发生碰撞，返回true，否则返回false
-<br><br>
-```C#
+
 public void SubscribeCollisionEnter(Action<QuadtreeCollider> action);
-```
 订阅这个碰撞器的碰撞器进入事件
-<br><br>
-```C#
+
 public void CancelSubscribeCollisionEnter(Action<QuadtreeCollider> action);
-```
 取消订阅这个碰撞器的碰撞器进入事件
-<br><br>
-```C#
+
 public void SubscribeCollisionStay(Action<QuadtreeCollider> action);
-```
 订阅这个碰撞器的碰撞器停留事件
-<br><br>
-```C#
+
 public void CancelSubscribeCollisionStay(Action<QuadtreeCollider> action);
-```
 取消订阅这个碰撞器的碰撞器停留事件
-<br><br>
-```C#
+
 public void SubscribeCollisionExit(Action<QuadtreeCollider> action);
-```
 订阅这个碰撞器的碰撞器离开事件
-<br><br>
-```C#
+
 public void CancelSubscribeCollisionExit(Action<QuadtreeCollider> action);
-```
 取消订阅这个碰撞器的碰撞器离开事件
+```
