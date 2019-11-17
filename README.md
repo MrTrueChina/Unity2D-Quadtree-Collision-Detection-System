@@ -8,6 +8,7 @@ Unity引擎自带一套基于物理引擎的2D碰撞检测系统，这套系统�
 #### 注意：由于没有物理功能，四叉树的碰撞不会像Unity自带碰撞一样互相弹开，而是像触发器一样互相穿过
 ****
 ## 快速开始：
+由于没申请下来官方资源商店的位子，要使用这个碰撞检测系统首先当然要<a href="https://github.com/MrTrueChina/Unity2D-Quadtree-Collision-Detection-System/raw/Rewrite/Assets%20Package/Unity2D-Quadtree-Collision-Detection-System.unitypackage">下载资源包</a>并导入你的项目  
 由于U3D没有提供组件挂载和移除事件，本系统基于事件委托进行使用，为简化使用提供了自动订阅功能，因此有两种使用方法：  
 ### 使用自动订阅：
 1.将碰撞器挂载到需要检测碰撞的物体上  
