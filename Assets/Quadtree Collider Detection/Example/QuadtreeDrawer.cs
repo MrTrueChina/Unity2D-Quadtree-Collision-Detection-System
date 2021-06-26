@@ -131,7 +131,7 @@ namespace MtC.Tools.QuadtreeCollider
             float xLerp = Mathf.InverseLerp(rootArea.xMin, rootArea.xMax, area.x);
             float yLerp = Mathf.InverseLerp(rootArea.yMin, rootArea.yMax, area.y);
 
-            // 通过位置比例返回颜色，越靠右越红，越靠上越蓝
+            // 通过位置比例返回颜色，越靠右越红，越靠上越绿
             return new Color(xLerp, yLerp, 0.5f);
         }
 

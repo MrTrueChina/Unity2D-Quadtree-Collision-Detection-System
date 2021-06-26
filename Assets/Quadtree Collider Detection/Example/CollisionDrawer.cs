@@ -4,12 +4,16 @@ using UnityEngine;
 
 namespace MtC.Tools.QuadtreeCollider
 {
+    /// <summary>
+    /// 绘制碰撞器的组件
+    /// </summary>
     public class CollisionDrawer : MonoBehaviour, IOnQuadtreeCollisionStay
     {
         private List<QuadtreeCollider> _colliders = new List<QuadtreeCollider>();
 
         public void OnQuadtreeCollisionStay(QuadtreeCollider collider)
         {
+            Debug.Log("碰撞持续");
             _colliders.Add(collider);
         }
 
@@ -18,8 +22,12 @@ namespace MtC.Tools.QuadtreeCollider
             Gizmos.color = Color.yellow * 0.8f;
 
             foreach (QuadtreeCollider collider in _colliders)
-                if (collider)
+            {
+                if (collider != null)
+                {
                     Gizmos.DrawLine(transform.position, collider.transform.position);
+                }
+            }
 
             _colliders.Clear();
         }

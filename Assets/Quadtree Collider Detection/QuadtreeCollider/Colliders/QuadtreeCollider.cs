@@ -64,17 +64,28 @@ namespace MtC.Tools.QuadtreeCollider
 
         private void Awake()
         {
+            Debug.Log("碰撞器 Awake");
+
             _transform = transform;
 
             if (_autoSubscribe)
                 foreach (Component component in GetComponents<Component>())
                 {
                     if (component is IOnQuadtreeCollisionEnter)
+                    {
+                        Debug.Log("发现实现了碰撞进入接口的组件");
                         _collisionEnterEventHandler += (component as IOnQuadtreeCollisionEnter).OnQuadtreeCollisionEnter;
+                    }
                     if (component is IOnQuadtreeCollisionStay)
+                    {
+                        Debug.Log("发现实现了碰撞停留接口的组件");
                         _collisionStayEventHandler += (component as IOnQuadtreeCollisionStay).OnQuadtreeCollisionStay;
+                    }
                     if (component is IOnQuadtreeCollisionExit)
+                    {
+                        Debug.Log("发现实现了碰撞离开接口的组件");
                         _collisionExitEventHandler += (component as IOnQuadtreeCollisionExit).OnQuadtreeCollisionExit;
+                    }
                 }
         }
 
@@ -94,6 +105,8 @@ namespace MtC.Tools.QuadtreeCollider
         /// <param name="collisionColliders"></param>
         internal void SendCollision(List<QuadtreeCollider> collisionColliders)
         {
+            Debug.Log("发出碰撞事件");
+
             foreach (QuadtreeCollider collider in collisionColliders)
             {
                 if (!_lastCollisionColliders.Contains(collider))
