@@ -83,15 +83,24 @@ namespace MtC.Tools.QuadtreeCollider
         {
             _children = children;
 
+            // 逆向生长出的节点没有碰撞器，之前根节点的最大半径就是新的根节点的最大半径
             _maxRadius = children[mainNodeIndex]._maxRadius;
 
+            // 给所有子节点设置父节点
             foreach (QuadtreeNode child in _children)
+            {
                 child._parent = this;
+            }
         }
 
+        /// <summary>
+        /// 检测当前节点是否有子节点
+        /// </summary>
+        /// <returns></returns>
         private bool HaveChildren()
         {
-            return _children != null; // 子节点List只在创建子节点时才会创建，判断是不是null就能判断有没有子节点
+            // 子节点List只在创建子节点时才会创建，判断是不是null就能判断有没有子节点
+            return _children != null;
         }
     }
 }
