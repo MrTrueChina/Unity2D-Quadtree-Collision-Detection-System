@@ -15,38 +15,78 @@ namespace MtC.Tools.QuadtreeCollider
         /// <returns> 如果成功存入，返回 true </returns>
         internal bool AddCollider(QuadtreeCollider collider)
         {
+            // 碰撞器不在节点范围内，返回存入失败
             if (!_area.Contains(collider.position))
+            {
                 return false;
+            }
 
+            // 有子节点，发给子节点保存
             if (HaveChildren())
+            {
                 return AddColliderIntoChildren(collider);
+            }
 
+            // 保存节点并返回保存成功
             AddColliderIntoSelf(collider);
             return true;
         }
 
+        /// <summary>
+        /// 向子节点存入碰撞器
+        /// </summary>
+        /// <param name="collider"></param>
+        /// <returns></returns>
         private bool AddColliderIntoChildren(QuadtreeCollider collider)
         {
+            // 遍历子节点存入碰撞器
             foreach (QuadtreeNode child in _children)
+            {
+                // 如果有一个子节点存入成功则返回存入成功
                 if (child.AddCollider(collider))
+                {
                     return true;
+                }
+            }
 
-            throw new ArgumentOutOfRangeException("向范围是 " + _area + " 的节点的子节点存入碰撞器 " + collider + " 时发生错误：碰撞器没有存入任何子节点"); // 正常流程中不会运行到这
+            // 正常流程中不会运行到的所有子节点都保存失败的情况
+            throw new ArgumentOutOfRangeException("向范围是 " + _area + " 的节点的子节点存入碰撞器 " + collider + " 时发生错误：碰撞器没有存入任何子节点");
         }
 
+        /// <summary>
+        /// 向当前节点添加碰撞器
+        /// </summary>
+        /// <param name="collider"></param>
         private void AddColliderIntoSelf(QuadtreeCollider collider)
         {
+            // 添加进碰撞器列表
             _colliders.Add(collider);
 
+            // 如果需要分割节点则进行分割
             if (NeedSplit())
+            {
                 Split();
+            }
         }
 
+        /// <summary>
+        /// 检测是否需要分割节点
+        /// </summary>
+        /// <returns></returns>
         private bool NeedSplit()
         {
-            return _colliders.Count > QuadtreeConfig.maxCollidersNumber && _area.height > QuadtreeConfig.minSideLength && _area.width > QuadtreeConfig.minSideLength;
+            return 
+                // 碰撞器数量超过节点内最大碰撞器数量
+                _colliders.Count > QuadtreeConfig.maxCollidersNumber
+                // 节点高度超过节点最小高度
+                && _area.height > QuadtreeConfig.minSideLength
+                // 节点宽度超过节点最小宽度
+                && _area.width > QuadtreeConfig.minSideLength;
         }
 
+        /// <summary>
+        /// 分割节点
+        /// </summary>
         private void Split()
         {
             /*
@@ -56,22 +96,38 @@ namespace MtC.Tools.QuadtreeCollider
              *  
              *  实际是进行了一次位置更新，但为了防止节点碰撞器互相越界导致的多重更新将分割写在存入和取出中间
              */
+            // 将节点保存的但是已经离开了节点范围的碰撞器从四叉树中移除并保存
             List<QuadtreeCollider> outOfAreaColliders = GetAndRemoveCollidersOutOfField();
+
+            // 进行分割
             DoSplite();
+
+            // 将之前移除的节点重新存入四叉树
             ResetCollidersIntoQuadtree(outOfAreaColliders);
         }
 
+        /// <summary>
+        /// 进行分割节点
+        /// </summary>
         private void DoSplite()
         {
+            // 创建子节点
             CreateChildren();
+
+            // 把碰撞器分发给子节点
             SetAllColliderIntoChindren();
         }
 
+        /// <summary>
+        /// 创建子节点
+        /// </summary>
         private void CreateChildren()
         {
-            float halfWidth = _area.width / 2; // 为了防止float的乘除运算误差，一次运算求出宽高的一半，子节点的宽高使用加减运算获得
-            float halfHeight = _area.height / 2; // 误差的来源是浮点数的储存方式，除非出现新的储存方式，否则误差将作为标准现象保留下去
+            // 计算出宽高的一半用于创建子节点，先算出一半是为了防止可能出现的计算误差
+            float halfWidth = _area.width / 2;
+            float halfHeight = _area.height / 2;
 
+            // 创建子节点
             _children = new List<QuadtreeNode>
             {
                 new QuadtreeNode(new Rect(_area.x + halfWidth, _area.y + halfHeight, _area.width - halfWidth, _area.height - halfHeight), this), // 右上子节点
@@ -81,11 +137,18 @@ namespace MtC.Tools.QuadtreeCollider
             };
         }
 
+        /// <summary>
+        /// 把碰撞器分发给子节点
+        /// </summary>
         private void SetAllColliderIntoChindren()
         {
+            // 把当前节点的碰撞器全部存入到子节点
             foreach (QuadtreeCollider collider in _colliders)
+            {
                 AddColliderIntoChildren(collider);
+            }
 
+            // 清空当前节点存储的碰撞器
             _colliders.Clear();
         }
     }
