@@ -5,6 +5,9 @@ using UnityEngine;
 
 namespace MtC.Tools.QuadtreeCollider
 {
+    /// <summary>
+    /// 四叉树碰撞检测器
+    /// </summary>
     internal static class QuadtreeCollisionDetector
     {
         /// <summary>
