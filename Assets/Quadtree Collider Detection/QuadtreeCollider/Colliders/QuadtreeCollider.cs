@@ -11,14 +11,21 @@ namespace MtC.Tools.QuadtreeCollider
     {
         protected Transform _transform;
 
+        /// <summary>
+        /// 上一次碰撞检测时碰撞到的碰撞器
+        /// </summary>
         private List<QuadtreeCollider> _lastCollisionColliders = new List<QuadtreeCollider>();
 
         private Action<QuadtreeCollider> _collisionEnterEventHandler;
         private Action<QuadtreeCollider> _collisionStayEventHandler;
         private Action<QuadtreeCollider> _collisionExitEventHandler;
 
+        /// <summary>
+        /// 是否自动订阅
+        /// </summary>
         public bool autoSubscribe { get { return _autoSubscribe; } }
         [SerializeField]
+        [Header("自动订阅")]
         private bool _autoSubscribe = true;
 
         /// <summary>
@@ -64,26 +71,23 @@ namespace MtC.Tools.QuadtreeCollider
 
         private void Awake()
         {
-            Debug.Log("碰撞器 Awake");
-
+            // 获取组件
             _transform = transform;
 
+            // 如果是自动订阅的则将物体上实现了碰撞接口的组件进行订阅
             if (_autoSubscribe)
                 foreach (Component component in GetComponents<Component>())
                 {
                     if (component is IOnQuadtreeCollisionEnter)
                     {
-                        Debug.Log("发现实现了碰撞进入接口的组件");
                         _collisionEnterEventHandler += (component as IOnQuadtreeCollisionEnter).OnQuadtreeCollisionEnter;
                     }
                     if (component is IOnQuadtreeCollisionStay)
                     {
-                        Debug.Log("发现实现了碰撞停留接口的组件");
                         _collisionStayEventHandler += (component as IOnQuadtreeCollisionStay).OnQuadtreeCollisionStay;
                     }
                     if (component is IOnQuadtreeCollisionExit)
                     {
-                        Debug.Log("发现实现了碰撞离开接口的组件");
                         _collisionExitEventHandler += (component as IOnQuadtreeCollisionExit).OnQuadtreeCollisionExit;
                     }
                 }
@@ -105,20 +109,29 @@ namespace MtC.Tools.QuadtreeCollider
         /// <param name="collisionColliders"></param>
         internal void SendCollision(List<QuadtreeCollider> collisionColliders)
         {
-            Debug.Log("发出碰撞事件");
-
+            // 对所有发生碰撞的物体进行处理
             foreach (QuadtreeCollider collider in collisionColliders)
             {
+                // 上一次碰撞检测时没有和这个碰撞器发生碰撞，发出碰撞进入事件
                 if (!_lastCollisionColliders.Contains(collider))
+                {
                     _collisionEnterEventHandler?.Invoke(collider);
+                }
 
+                // 发出碰撞持续事件
                 _collisionStayEventHandler?.Invoke(collider);
             }
 
+            // 对上一次碰撞检测的时候发生碰撞，这一检测没有碰撞的碰撞器，发出碰撞离开事件
             foreach (QuadtreeCollider collider in _lastCollisionColliders)
+            {
                 if (!collisionColliders.Contains(collider))
+                {
                     _collisionExitEventHandler?.Invoke(collider);
+                }
+            }
 
+            // 记录这一次碰撞检测碰撞到的碰撞器
             _lastCollisionColliders = collisionColliders;
         }
 
