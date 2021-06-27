@@ -13,7 +13,6 @@ namespace MtC.Tools.QuadtreeCollider
 
         public void OnQuadtreeCollisionStay(QuadtreeCollider collider)
         {
-            Debug.Log("碰撞持续");
             _colliders.Add(collider);
         }
 
