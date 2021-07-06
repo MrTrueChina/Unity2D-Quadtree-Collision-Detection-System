@@ -18,7 +18,7 @@ namespace MtC.Tools.QuadtreeCollider
         {
             DrawDefaultInspector();
 
-            if (((QuadtreeCollider)target).autoSubscribe)
+            if (((QuadtreeCollider)target).AutoSubscribe)
                 EditorGUILayout.HelpBox(AUTO_SUBSCRIBE_WARNING_TEXT, MessageType.Warning);
         }
     }

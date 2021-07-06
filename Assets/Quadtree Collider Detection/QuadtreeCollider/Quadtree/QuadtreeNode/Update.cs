@@ -70,7 +70,7 @@ namespace MtC.Tools.QuadtreeCollider
             // 遍历所有碰撞器，超出节点范围的保存到列表里
             foreach (QuadtreeCollider collider in _colliders)
             {
-                if (!_area.Contains(collider.position))
+                if (!_area.Contains(collider.Position))
                 {
                     outOfFieldColliders.Add(collider);
                 }
@@ -159,9 +159,9 @@ namespace MtC.Tools.QuadtreeCollider
             // 遍历所有碰撞器，找出最大半径
             foreach (QuadtreeCollider collider in _colliders)
             {
-                if (collider.maxRadius > _maxRadius)
+                if (collider.MaxRadius > _maxRadius)
                 {
-                    _maxRadius = collider.maxRadius;
+                    _maxRadius = collider.MaxRadius;
                 }
             }
 

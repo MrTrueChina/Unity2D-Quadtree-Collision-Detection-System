@@ -67,13 +67,13 @@ namespace MtC.Tools.QuadtreeCollider
             byte indexByte = 0b00;
 
             // 碰撞器位于现有区域原点的左边 => 四叉树向左生长 => 根节点是新根节点右边的节点 => 判断左右的右侧位设为1
-            if (collider.position.x < _root.area.x)
+            if (collider.Position.x < _root.area.x)
             {
                 indexByte |= 0b01;
             }
 
             // 碰撞器位于现有区域原点的下边 => 四叉树向下生长 => 根节点是新根节点上边的节点 => 判断上下的上方向位设为1
-            if (collider.position.y < _root.area.y)
+            if (collider.Position.y < _root.area.y)
             {
                 indexByte |= 0b10;
             }

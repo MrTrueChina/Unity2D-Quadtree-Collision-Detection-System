@@ -10,37 +10,35 @@ namespace MtC.Tools.QuadtreeCollider
     /// </summary>
     public abstract class QuadtreeCollider : MonoBehaviour
     {
-        protected Transform _transform;
-
         /// <summary>
         /// 上一次碰撞检测时碰撞到的碰撞器
         /// </summary>
-        private List<QuadtreeCollider> _lastCollisionColliders = new List<QuadtreeCollider>();
+        private List<QuadtreeCollider> lastCollisionColliders = new List<QuadtreeCollider>();
 
-        private UnityEvent<QuadtreeCollider> _collisionEnterEventHandler = new UnityEvent<QuadtreeCollider>();
-        private UnityEvent<QuadtreeCollider> _collisionStayEventHandler = new UnityEvent<QuadtreeCollider>();
-        private UnityEvent<QuadtreeCollider> _collisionExitEventHandler = new UnityEvent<QuadtreeCollider>();
+        private UnityEvent<QuadtreeCollider> collisionEnterEventHandler = new UnityEvent<QuadtreeCollider>();
+        private UnityEvent<QuadtreeCollider> collisionStayEventHandler = new UnityEvent<QuadtreeCollider>();
+        private UnityEvent<QuadtreeCollider> collisionExitEventHandler = new UnityEvent<QuadtreeCollider>();
 
         /// <summary>
         /// 是否自动订阅
         /// </summary>
-        public bool autoSubscribe { get { return _autoSubscribe; } }
+        public bool AutoSubscribe { get { return autoSubscribe; } }
         [SerializeField]
         [Header("自动订阅")]
-        private bool _autoSubscribe = true;
+        private bool autoSubscribe = true;
 
         /// <summary>
         /// 碰撞器的位置
         /// </summary>
-        internal Vector2 position
+        internal Vector2 Position
         {
-            get { return _transform.position; }
+            get { return transform.position; }
         }
 
         /// <summary>
         /// 碰撞器需要检测的最大半径，超过这个半径则认为不会发生碰撞
         /// </summary>
-        internal abstract float maxRadius
+        internal abstract float MaxRadius
         {
             get;
         }
@@ -48,19 +46,19 @@ namespace MtC.Tools.QuadtreeCollider
         /// <summary>
         /// 这个碰撞器是不是碰撞检测器
         /// </summary>
-        public bool isDetector
+        public bool IsDetector
         {
             get
             {
-                return _isDetector;
+                return isDetector;
             }
             set
             {
-                if (_isDetector != value) // 只有有变化时才处理，更新碰撞器成本可以省下来
+                if (isDetector != value) // 只有有变化时才处理，更新碰撞器成本可以省下来
                 {
-                    _isDetector = value;
+                    isDetector = value;
 
-                    if (_isDetector)
+                    if (isDetector)
                         Quadtree.AddDetector(this);
                     else
                         Quadtree.RemoveDetector(this);
@@ -68,28 +66,25 @@ namespace MtC.Tools.QuadtreeCollider
             }
         }
         [SerializeField]
-        private bool _isDetector;
+        private bool isDetector;
 
         private void Awake()
         {
-            // 获取组件
-            _transform = transform;
-
             // 如果是自动订阅的则将物体上实现了碰撞接口的组件进行订阅
-            if (_autoSubscribe)
+            if (autoSubscribe)
                 foreach (Component component in GetComponents<Component>())
                 {
                     if (component is IOnQuadtreeCollisionEnter)
                     {
-                        _collisionEnterEventHandler.AddListener((component as IOnQuadtreeCollisionEnter).OnQuadtreeCollisionEnter);
+                        collisionEnterEventHandler.AddListener((component as IOnQuadtreeCollisionEnter).OnQuadtreeCollisionEnter);
                     }
                     if (component is IOnQuadtreeCollisionStay)
                     {
-                        _collisionStayEventHandler.AddListener((component as IOnQuadtreeCollisionStay).OnQuadtreeCollisionStay);
+                        collisionStayEventHandler.AddListener((component as IOnQuadtreeCollisionStay).OnQuadtreeCollisionStay);
                     }
                     if (component is IOnQuadtreeCollisionExit)
                     {
-                        _collisionExitEventHandler.AddListener((component as IOnQuadtreeCollisionExit).OnQuadtreeCollisionExit);
+                        collisionExitEventHandler.AddListener((component as IOnQuadtreeCollisionExit).OnQuadtreeCollisionExit);
                     }
                 }
         }
@@ -114,26 +109,26 @@ namespace MtC.Tools.QuadtreeCollider
             foreach (QuadtreeCollider collider in collisionColliders)
             {
                 // 上一次碰撞检测时没有和这个碰撞器发生碰撞，发出碰撞进入事件
-                if (!_lastCollisionColliders.Contains(collider))
+                if (!lastCollisionColliders.Contains(collider))
                 {
-                    _collisionEnterEventHandler?.Invoke(collider);
+                    collisionEnterEventHandler?.Invoke(collider);
                 }
 
                 // 发出碰撞持续事件
-                _collisionStayEventHandler?.Invoke(collider);
+                collisionStayEventHandler?.Invoke(collider);
             }
 
             // 对上一次碰撞检测的时候发生碰撞，这一检测没有碰撞的碰撞器，发出碰撞离开事件
-            foreach (QuadtreeCollider collider in _lastCollisionColliders)
+            foreach (QuadtreeCollider collider in lastCollisionColliders)
             {
                 if (!collisionColliders.Contains(collider))
                 {
-                    _collisionExitEventHandler?.Invoke(collider);
+                    collisionExitEventHandler?.Invoke(collider);
                 }
             }
 
             // 记录这一次碰撞检测碰撞到的碰撞器
-            _lastCollisionColliders = collisionColliders;
+            lastCollisionColliders = collisionColliders;
         }
 
         /// <summary>
@@ -160,7 +155,7 @@ namespace MtC.Tools.QuadtreeCollider
             //    }
             //}
 
-            _collisionEnterEventHandler.AddListener(action);
+            collisionEnterEventHandler.AddListener(action);
         }
 
         /// <summary>
@@ -178,7 +173,7 @@ namespace MtC.Tools.QuadtreeCollider
             //    }
             //}
 
-            _collisionEnterEventHandler.RemoveListener(action);
+            collisionEnterEventHandler.RemoveListener(action);
         }
 
         /// <summary>
@@ -195,7 +190,7 @@ namespace MtC.Tools.QuadtreeCollider
             //    }
             //}
 
-            _collisionStayEventHandler.AddListener(action);
+            collisionStayEventHandler.AddListener(action);
         }
 
         /// <summary>
@@ -213,7 +208,7 @@ namespace MtC.Tools.QuadtreeCollider
             //    }
             //}
 
-            _collisionStayEventHandler.RemoveListener(action);
+            collisionStayEventHandler.RemoveListener(action);
         }
 
         /// <summary>
@@ -230,7 +225,7 @@ namespace MtC.Tools.QuadtreeCollider
             //    }
             //}
 
-            _collisionExitEventHandler.AddListener(action);
+            collisionExitEventHandler.AddListener(action);
         }
 
         /// <summary>
@@ -248,7 +243,7 @@ namespace MtC.Tools.QuadtreeCollider
             //    }
             //}
 
-            _collisionExitEventHandler.RemoveListener(action);
+            collisionExitEventHandler.RemoveListener(action);
         }
 
         private void OnDrawGizmosSelected()

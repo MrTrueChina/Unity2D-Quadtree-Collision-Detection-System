@@ -43,7 +43,7 @@ namespace MtC.Tools.QuadtreeCollider
             instance.DoAddCollider(collider);
 
             // 如果是检测器则添加检测器
-            if (collider.isDetector)
+            if (collider.IsDetector)
             {
                 AddDetector(collider);
             }
@@ -90,7 +90,7 @@ namespace MtC.Tools.QuadtreeCollider
             _instance._root.RemoveCollider(collider);
 
             // 如果要移除的碰撞器是检测器，移除检测器
-            if (collider.isDetector)
+            if (collider.IsDetector)
             {
                 RemoveDetector(collider);
             }

@@ -25,12 +25,12 @@ namespace MtC.Tools.QuadtreeCollider
         private float _radius;
 
         // 圆形碰撞器的最大半径就是半径
-        internal override float maxRadius => radius;
+        internal override float MaxRadius => radius;
 
         protected override void DrawColliderGizomoSelected()
         {
             // 检测器是黄色，碰撞器是绿色
-            Gizmos.color = (isDetector ? Color.yellow : Color.green) * 0.8f;
+            Gizmos.color = (IsDetector ? Color.yellow : Color.green) * 0.8f;
 
             // 绘制圆形
             MyGizmos.DrawCircle(transform.position, radius);
