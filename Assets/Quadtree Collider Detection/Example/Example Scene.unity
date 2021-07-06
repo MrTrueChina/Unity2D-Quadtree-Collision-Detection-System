@@ -154,8 +154,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 941f899d293b0e44393c418cec6cc3fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _autoSubscribe: 1
-  _isDetector: 1
+  autoSubscribe: 1
+  isDetector: 1
   _radius: 50
 --- !u!4 &71954735
 Transform:
@@ -411,8 +411,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 941f899d293b0e44393c418cec6cc3fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _autoSubscribe: 1
-  _isDetector: 1
+  autoSubscribe: 1
+  isDetector: 1
   _radius: 150
 --- !u!4 &838401678
 Transform:
@@ -522,8 +522,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 941f899d293b0e44393c418cec6cc3fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _autoSubscribe: 1
-  _isDetector: 1
+  autoSubscribe: 1
+  isDetector: 1
   _radius: 60
 --- !u!4 &975307289
 Transform:
@@ -570,8 +570,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 941f899d293b0e44393c418cec6cc3fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _autoSubscribe: 1
-  _isDetector: 1
+  autoSubscribe: 1
+  isDetector: 1
   _radius: 100
 --- !u!4 &1244684634
 Transform:
@@ -805,8 +805,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 941f899d293b0e44393c418cec6cc3fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _autoSubscribe: 1
-  _isDetector: 1
+  autoSubscribe: 1
+  isDetector: 1
   _radius: 200
 --- !u!4 &1428873811
 Transform:
@@ -959,8 +959,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 941f899d293b0e44393c418cec6cc3fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _autoSubscribe: 1
-  _isDetector: 1
+  autoSubscribe: 1
+  isDetector: 1
   _radius: 70
 --- !u!4 &2128354232
 Transform:
