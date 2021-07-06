@@ -12,18 +12,8 @@ namespace MtC.Tools.QuadtreeCollider
     {
         private List<QuadtreeCollider> _colliders = new List<QuadtreeCollider>();
 
-        private void Start()
-        {
-            GetComponent<QuadtreeCollider>().SubscribeCollisionStay(OnQuadtreeCollisionStay);
-            GetComponent<QuadtreeCollider>().SubscribeCollisionStay(OnQuadtreeCollisionStay);
-            GetComponent<QuadtreeCollider>().SubscribeCollisionStay(OnQuadtreeCollisionStay);
-            GetComponent<QuadtreeCollider>().SubscribeCollisionStay(OnQuadtreeCollisionStay);
-        }
-
         public void OnQuadtreeCollisionStay(QuadtreeCollider collider)
         {
-            Debug.Log(GetInstanceID());
-
             _colliders.Add(collider);
         }
 
