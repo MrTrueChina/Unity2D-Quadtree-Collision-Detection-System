@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace MtC.Tools.QuadtreeCollider
 {
@@ -11,8 +12,18 @@ namespace MtC.Tools.QuadtreeCollider
     {
         private List<QuadtreeCollider> _colliders = new List<QuadtreeCollider>();
 
+        private void Start()
+        {
+            GetComponent<QuadtreeCollider>().SubscribeCollisionStay(OnQuadtreeCollisionStay);
+            GetComponent<QuadtreeCollider>().SubscribeCollisionStay(OnQuadtreeCollisionStay);
+            GetComponent<QuadtreeCollider>().SubscribeCollisionStay(OnQuadtreeCollisionStay);
+            GetComponent<QuadtreeCollider>().SubscribeCollisionStay(OnQuadtreeCollisionStay);
+        }
+
         public void OnQuadtreeCollisionStay(QuadtreeCollider collider)
         {
+            Debug.Log(GetInstanceID());
+
             _colliders.Add(collider);
         }
 
