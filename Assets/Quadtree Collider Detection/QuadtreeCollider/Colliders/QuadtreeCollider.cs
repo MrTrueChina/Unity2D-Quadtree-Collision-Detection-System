@@ -72,30 +72,34 @@ namespace MtC.Tools.QuadtreeCollider
         {
             // 如果是自动订阅的则将物体上实现了碰撞接口的组件进行订阅
             if (autoSubscribe)
+            {
                 foreach (Component component in GetComponents<Component>())
                 {
                     if (component is IOnQuadtreeCollisionEnter)
                     {
-                        collisionEnterEventHandler.AddListener((component as IOnQuadtreeCollisionEnter).OnQuadtreeCollisionEnter);
+                        SubscribeCollisionEnter(component as IOnQuadtreeCollisionEnter);
                     }
                     if (component is IOnQuadtreeCollisionStay)
                     {
-                        collisionStayEventHandler.AddListener((component as IOnQuadtreeCollisionStay).OnQuadtreeCollisionStay);
+                        SubscribeCollisionStay(component as IOnQuadtreeCollisionStay);
                     }
                     if (component is IOnQuadtreeCollisionExit)
                     {
-                        collisionExitEventHandler.AddListener((component as IOnQuadtreeCollisionExit).OnQuadtreeCollisionExit);
+                        SubscribeCollisionExit(component as IOnQuadtreeCollisionExit);
                     }
                 }
+            }
         }
 
         private void OnEnable()
         {
+            // 将这个碰撞器添加到四叉树中
             Quadtree.AddCollider(this);
         }
 
         private void OnDisable()
         {
+            // 将这个碰撞器从四叉树中移除
             Quadtree.RemoveCollider(this);
         }
 
@@ -145,109 +149,59 @@ namespace MtC.Tools.QuadtreeCollider
         /// 订阅碰撞进入事件
         /// </summary>
         /// <param name=""></param>
-        public void SubscribeCollisionEnter(UnityAction<QuadtreeCollider> action)
+        public void SubscribeCollisionEnter(IOnQuadtreeCollisionEnter subscriber)
         {
-            //foreach (UnityAction<QuadtreeCollider> subscribedAction in _collisionEnterEventHandler.GetInvocationList())
-            //{
-            //    if (subscribedAction == action)
-            //    {
-            //        return;
-            //    }
-            //}
-
-            collisionEnterEventHandler.AddListener(action);
+            collisionEnterEventHandler.AddListener(subscriber.OnQuadtreeCollisionEnter);
         }
 
         /// <summary>
         /// 取消订阅碰撞进入事件
         /// </summary>
         /// <param name=""></param>
-        public void CancelSubscribeCollisionEnter(UnityAction<QuadtreeCollider> action)
+        public void CancelSubscribeCollisionEnter(IOnQuadtreeCollisionEnter subscriber)
         {
-            //foreach (UnityAction<QuadtreeCollider> subscribedAction in _collisionEnterEventHandler.GetInvocationList())
-            //{
-            //    if (subscribedAction == action)
-            //    {
-            //        _collisionEnterEventHandler -= action;
-            //        return;
-            //    }
-            //}
-
-            collisionEnterEventHandler.RemoveListener(action);
+            collisionEnterEventHandler.RemoveListener(subscriber.OnQuadtreeCollisionEnter);
         }
 
         /// <summary>
         /// 订阅碰撞停留事件
         /// </summary>
         /// <param name=""></param>
-        public void SubscribeCollisionStay(UnityAction<QuadtreeCollider> action)
+        public void SubscribeCollisionStay(IOnQuadtreeCollisionStay subscriber)
         {
-            //foreach (UnityAction<QuadtreeCollider> subscribedAction in _collisionStayEventHandler.GetInvocationList())
-            //{
-            //    if (subscribedAction == action)
-            //    {
-            //        return;
-            //    }
-            //}
-
-            collisionStayEventHandler.AddListener(action);
+            collisionStayEventHandler.AddListener(subscriber.OnQuadtreeCollisionStay);
         }
 
         /// <summary>
         /// 取消订阅碰撞停留事件
         /// </summary>
         /// <param name=""></param>
-        public void CancelSubscribeCollisionStay(UnityAction<QuadtreeCollider> action)
+        public void CancelSubscribeCollisionStay(IOnQuadtreeCollisionStay subscriber)
         {
-            //foreach (UnityAction<QuadtreeCollider> subscribedAction in _collisionStayEventHandler.GetInvocationList())
-            //{
-            //    if (subscribedAction == action)
-            //    {
-            //        _collisionStayEventHandler -= action;
-            //        return;
-            //    }
-            //}
-
-            collisionStayEventHandler.RemoveListener(action);
+            collisionStayEventHandler.RemoveListener(subscriber.OnQuadtreeCollisionStay);
         }
 
         /// <summary>
         /// 订阅碰撞离开事件
         /// </summary>
         /// <param name=""></param>
-        public void SubscribeCollisionExit(UnityAction<QuadtreeCollider> action)
+        public void SubscribeCollisionExit(IOnQuadtreeCollisionExit subscriber)
         {
-            //foreach (UnityAction<QuadtreeCollider> subscribedAction in _collisionExitEventHandler.GetInvocationList())
-            //{
-            //    if (subscribedAction == action)
-            //    {
-            //        return;
-            //    }
-            //}
-
-            collisionExitEventHandler.AddListener(action);
+            collisionExitEventHandler.AddListener(subscriber.OnQuadtreeCollisionExit);
         }
 
         /// <summary>
         /// 取消订阅碰撞离开事件
         /// </summary>
         /// <param name=""></param>
-        public void CancelSubscribeCollisionExit(UnityAction<QuadtreeCollider> action)
+        public void CancelSubscribeCollisionExit(IOnQuadtreeCollisionExit subscriber)
         {
-            //foreach (UnityAction<QuadtreeCollider> subscribedAction in _collisionExitEventHandler.GetInvocationList())
-            //{
-            //    if (subscribedAction == action)
-            //    {
-            //        _collisionExitEventHandler -= action;
-            //        return;
-            //    }
-            //}
-
-            collisionExitEventHandler.RemoveListener(action);
+            collisionExitEventHandler.RemoveListener(subscriber.OnQuadtreeCollisionExit);
         }
 
         private void OnDrawGizmosSelected()
         {
+            // 绘制碰撞器 Gizmo
             DrawColliderGizomoSelected();
         }
 
