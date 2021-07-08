@@ -66,7 +66,7 @@ namespace MtC.Tools.QuadtreeCollider
         private bool RemoveColliderFromSelfByPosition(QuadtreeCollider collider)
         {
             // 如果碰撞器在当前节点范围内则进行移除并返回移除结果
-            if (_area.Contains(collider.position))
+            if (_area.Contains(collider.Position))
             {
                 return RemoveColliderFromSelf(collider);
             }

@@ -16,7 +16,7 @@ namespace MtC.Tools.QuadtreeCollider
         internal bool AddCollider(QuadtreeCollider collider)
         {
             // 碰撞器不在节点范围内，返回存入失败
-            if (!_area.Contains(collider.position))
+            if (!_area.Contains(collider.Position))
             {
                 return false;
             }
