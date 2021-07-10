@@ -12,20 +12,20 @@ namespace MtC.Tools.QuadtreeCollider
         /// <summary>
         /// 半径
         /// </summary>
-        public float radius
+        public float Radius
         {
             get
             {
-                return _radius * Mathf.Max(Mathf.Abs(transform.lossyScale.x), Mathf.Abs(transform.lossyScale.y));
+                return radius * Mathf.Max(Mathf.Abs(transform.lossyScale.x), Mathf.Abs(transform.lossyScale.y));
                 //TODO：后期可以考虑通过配置文件达到不同的面向方向
             }
-            set { _radius = value; }
+            set { radius = value; }
         }
         [SerializeField]
-        private float _radius;
+        private float radius;
 
         // 圆形碰撞器的最大半径就是半径
-        internal override float MaxRadius => radius;
+        internal override float MaxRadius => Radius;
 
         protected override void DrawColliderGizomoSelected()
         {
@@ -33,15 +33,15 @@ namespace MtC.Tools.QuadtreeCollider
             Gizmos.color = (IsDetector ? Color.yellow : Color.green) * 0.8f;
 
             // 绘制圆形
-            MyGizmos.DrawCircle(transform.position, radius);
+            MyGizmos.DrawCircle(transform.position, Radius);
         }
 
         private void OnValidate()
         {
             // 限制编辑时半径不能小于 0
-            if (_radius < 0)
+            if (radius < 0)
             {
-                _radius = 0;
+                radius = 0;
             }
         }
     }

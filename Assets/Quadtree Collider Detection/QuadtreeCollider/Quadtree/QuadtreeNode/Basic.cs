@@ -33,27 +33,27 @@ namespace MtC.Tools.QuadtreeCollider
         /// <summary>
         /// 父节点
         /// </summary>
-        private QuadtreeNode _parent = null;
+        private QuadtreeNode parent = null;
         /// <summary>
         /// 四叉树节点所拥有的区域
         /// </summary>
-        internal Rect area
+        internal Rect Area
         {
-            get { return _area; }     
+            get { return area; }     
         }
-        private Rect _area = default;
+        private Rect area = default;
         /// <summary>
         /// 这个节点所拥有的碰撞器
         /// </summary>
-        private List<QuadtreeCollider> _colliders = new List<QuadtreeCollider>();
+        private readonly List<QuadtreeCollider> colliders = new List<QuadtreeCollider>();
         /// <summary>
         /// 这个节点所拥有的的子节点
         /// </summary>
-        private List<QuadtreeNode> _children = null;
+        private List<QuadtreeNode> children = null;
         /// <summary>
         /// 这个节点所拥有的所有碰撞器中，需要检测半径最长的碰撞器的检测半径
         /// </summary>
-        private float _maxRadius = DEFAULT_MAX_RADIUS;
+        private float maxRadius = DEFAULT_MAX_RADIUS;
 
         /// <summary>
         /// 根节点的构造方法，只有区域没有父节点。根节点
@@ -61,7 +61,7 @@ namespace MtC.Tools.QuadtreeCollider
         /// <param name="area"></param>
         internal QuadtreeNode(Rect area)
         {
-            _area = area;
+            this.area = area;
         }
 
         /// <summary>
@@ -71,7 +71,7 @@ namespace MtC.Tools.QuadtreeCollider
         /// <param name="parent"></param>
         internal QuadtreeNode(Rect area, QuadtreeNode parent) : this(area)
         {
-            _parent = parent;
+            this.parent = parent;
         }
 
         /// <summary>
@@ -81,15 +81,15 @@ namespace MtC.Tools.QuadtreeCollider
         /// <param name="children"></param>
         internal QuadtreeNode(Rect area, List<QuadtreeNode> children, int mainNodeIndex) : this(area)
         {
-            _children = children;
+            this.children = children;
 
             // 逆向生长出的节点没有碰撞器，之前根节点的最大半径就是新的根节点的最大半径
-            _maxRadius = children[mainNodeIndex]._maxRadius;
+            maxRadius = children[mainNodeIndex].maxRadius;
 
             // 给所有子节点设置父节点
-            foreach (QuadtreeNode child in _children)
+            foreach (QuadtreeNode child in this.children)
             {
-                child._parent = this;
+                child.parent = this;
             }
         }
 
@@ -100,7 +100,7 @@ namespace MtC.Tools.QuadtreeCollider
         private bool HaveChildren()
         {
             // 子节点List只在创建子节点时才会创建，判断是不是null就能判断有没有子节点
-            return _children != null;
+            return children != null;
         }
     }
 }

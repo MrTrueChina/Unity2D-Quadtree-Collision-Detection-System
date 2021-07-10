@@ -27,9 +27,9 @@ namespace MtC.Tools.QuadtreeCollider
         /// <returns></returns>
         private QuadtreeNode GetQuadtreeRoot()
         {
-            //Debug.Log("获取根节点，获取结果：" + (QuadtreeNode)typeof(Quadtree).GetField("_root", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(GetQuadtreeInstance()));
+            //Debug.Log("获取根节点，获取结果：" + (QuadtreeNode)typeof(Quadtree).GetField("root", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(GetQuadtreeInstance()));
 
-            return (QuadtreeNode)typeof(Quadtree).GetField("_root", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(GetQuadtreeInstance());
+            return (QuadtreeNode)typeof(Quadtree).GetField("root", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(GetQuadtreeInstance());
         }
 
         /// <summary>
@@ -38,7 +38,7 @@ namespace MtC.Tools.QuadtreeCollider
         /// <returns></returns>
         private Quadtree GetQuadtreeInstance()
         {
-            return (Quadtree)typeof(Quadtree).GetField("_instance", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
+            return (Quadtree)typeof(Quadtree).GetField("instance", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
         }
 
         /// <summary>
@@ -96,7 +96,7 @@ namespace MtC.Tools.QuadtreeCollider
         /// <returns></returns>
         private IEnumerable<QuadtreeNode> GetChildren(QuadtreeNode quadtreeNode)
         {
-            return (List<QuadtreeNode>)typeof(QuadtreeNode).GetField("_children", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(quadtreeNode);
+            return (List<QuadtreeNode>)typeof(QuadtreeNode).GetField("children", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(quadtreeNode);
         }
 
         /// <summary>
@@ -142,7 +142,7 @@ namespace MtC.Tools.QuadtreeCollider
         /// <returns></returns>
         private Rect GetArea(QuadtreeNode quadtreeNode)
         {
-            return (Rect)typeof(QuadtreeNode).GetField("_area", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(quadtreeNode);
+            return (Rect)typeof(QuadtreeNode).GetField("area", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(quadtreeNode);
         }
 
         /// <summary>
@@ -211,7 +211,7 @@ namespace MtC.Tools.QuadtreeCollider
         /// <returns></returns>
         private List<QuadtreeCollider> GetColliders(QuadtreeNode quadtreeNode)
         {
-            return (List<QuadtreeCollider>)typeof(QuadtreeNode).GetField("_colliders", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(quadtreeNode);
+            return (List<QuadtreeCollider>)typeof(QuadtreeNode).GetField("colliders", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(quadtreeNode);
         }
 
         /// <summary>
@@ -257,7 +257,7 @@ namespace MtC.Tools.QuadtreeCollider
         /// <returns></returns>
         private float GetMaxRadius(QuadtreeNode quadtreeNode)
         {
-            return (float)typeof(QuadtreeNode).GetField("_maxRadius", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(quadtreeNode);
+            return (float)typeof(QuadtreeNode).GetField("maxRadius", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(quadtreeNode);
         }
     }
 }

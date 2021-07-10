@@ -38,7 +38,7 @@ namespace MtC.Tools.QuadtreeCollider
         private bool PossibleCollisions(QuadtreeCollider collider)
         {
             // 如果节点区域到碰撞器的距离小于等于节点最大检测半径和碰撞器最大检测半径之和，则说明节点中可能有碰撞器能够与传入的碰撞器发生碰撞
-            return _area.DistanceToPoint(collider.Position) <= _maxRadius + collider.MaxRadius;
+            return area.DistanceToPoint(collider.Position) <= maxRadius + collider.MaxRadius;
         }
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace MtC.Tools.QuadtreeCollider
             List<QuadtreeCollider> colliders = new List<QuadtreeCollider>();
 
             // 遍历子节点进行碰撞检测并保存发生碰撞的碰撞器
-            foreach (QuadtreeNode child in _children)
+            foreach (QuadtreeNode child in children)
             {
                 colliders.AddRange(child.GetCollidersInCollision(collider));
             }
@@ -69,7 +69,7 @@ namespace MtC.Tools.QuadtreeCollider
             List<QuadtreeCollider> colliders = new List<QuadtreeCollider>();
 
             // 遍历所有碰撞器，如果与指定碰撞器发生碰撞则记录到列表里
-            foreach (QuadtreeCollider currentCollider in _colliders)
+            foreach (QuadtreeCollider currentCollider in this.colliders)
             {
                 if (currentCollider.IsCollitionToCollider(collider))
                 {

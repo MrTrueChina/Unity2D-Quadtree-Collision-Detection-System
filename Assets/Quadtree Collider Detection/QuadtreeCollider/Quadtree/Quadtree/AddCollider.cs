@@ -30,7 +30,7 @@ namespace MtC.Tools.QuadtreeCollider
             // XXX：只假设了存入失败是因为碰撞器不在范围内，可能需要添加限制，或在每次循环时对四叉树总区域进行判断，如果节点就在总区域内部但还是存入失败则报错
 
             // 循环存入碰撞器，直到存入成功
-            while (!_root.AddColliderByArea(collider))
+            while (!root.AddColliderByArea(collider))
             {
                 // 如果存入失败则说明碰撞器在四叉树外，让四叉树向碰撞器方向生长
                 UpwordGroupToCollider(collider);
@@ -50,10 +50,10 @@ namespace MtC.Tools.QuadtreeCollider
             List<QuadtreeNode> children = GetChildren(mainChildIndexByte);
 
             // 创建新的四叉树根节点的区域
-            Rect newRootArea = new Rect(children[QuadtreeNode.LEFT_BOTTOM_CHILD_INDEX].area.position, children[QuadtreeNode.LEFT_BOTTOM_CHILD_INDEX].area.size * 2);
+            Rect newRootArea = new Rect(children[QuadtreeNode.LEFT_BOTTOM_CHILD_INDEX].Area.position, children[QuadtreeNode.LEFT_BOTTOM_CHILD_INDEX].Area.size * 2);
 
             // 创建新的四叉树节点，并设为新的根节点
-            _root = new QuadtreeNode(newRootArea, children, indexByteToInt[mainChildIndexByte]);
+            root = new QuadtreeNode(newRootArea, children, indexByteToInt[mainChildIndexByte]);
         }
 
         /// <summary>
@@ -67,13 +67,13 @@ namespace MtC.Tools.QuadtreeCollider
             byte indexByte = 0b00;
 
             // 碰撞器位于现有区域原点的左边 => 四叉树向左生长 => 根节点是新根节点右边的节点 => 判断左右的右侧位设为1
-            if (collider.Position.x < _root.area.x)
+            if (collider.Position.x < root.Area.x)
             {
                 indexByte |= 0b01;
             }
 
             // 碰撞器位于现有区域原点的下边 => 四叉树向下生长 => 根节点是新根节点上边的节点 => 判断上下的上方向位设为1
-            if (collider.Position.y < _root.area.y)
+            if (collider.Position.y < root.Area.y)
             {
                 indexByte |= 0b10;
             }
@@ -95,10 +95,10 @@ namespace MtC.Tools.QuadtreeCollider
             List<QuadtreeNode> children = new List<QuadtreeNode>();
 
             // 添加子节点，如果是当前根节点的位置则设为当前根节点，否则创建新节点
-            children.Add(indexByteToInt[mainChildIndexByte] == 0 ? _root : new QuadtreeNode(new Rect(xMiddle, yMiddle, _root.area.width, _root.area.height)));
-            children.Add(indexByteToInt[mainChildIndexByte] == 1 ? _root : new QuadtreeNode(new Rect(xMiddle, yMin, _root.area.width, _root.area.height)));
-            children.Add(indexByteToInt[mainChildIndexByte] == 2 ? _root : new QuadtreeNode(new Rect(xMin, yMin, _root.area.width, _root.area.height)));
-            children.Add(indexByteToInt[mainChildIndexByte] == 3 ? _root : new QuadtreeNode(new Rect(xMin, yMiddle, _root.area.width, _root.area.height)));
+            children.Add(indexByteToInt[mainChildIndexByte] == 0 ? root : new QuadtreeNode(new Rect(xMiddle, yMiddle, root.Area.width, root.Area.height)));
+            children.Add(indexByteToInt[mainChildIndexByte] == 1 ? root : new QuadtreeNode(new Rect(xMiddle, yMin, root.Area.width, root.Area.height)));
+            children.Add(indexByteToInt[mainChildIndexByte] == 2 ? root : new QuadtreeNode(new Rect(xMin, yMin, root.Area.width, root.Area.height)));
+            children.Add(indexByteToInt[mainChildIndexByte] == 3 ? root : new QuadtreeNode(new Rect(xMin, yMiddle, root.Area.width, root.Area.height)));
 
             return children;
         }
@@ -114,15 +114,15 @@ namespace MtC.Tools.QuadtreeCollider
         {
             if (IsGrowToRight(mainChildIndexByte))
             {
-                xMin = _root.area.x;
-                xMiddle = _root.area.xMax;
-                xMax = _root.area.xMax + _root.area.width;
+                xMin = root.Area.x;
+                xMiddle = root.Area.xMax;
+                xMax = root.Area.xMax + root.Area.width;
             }
             else
             {
-                xMin = _root.area.x - _root.area.width;
-                xMiddle = _root.area.x;
-                xMax = _root.area.xMax;
+                xMin = root.Area.x - root.Area.width;
+                xMiddle = root.Area.x;
+                xMax = root.Area.xMax;
             }
         }
 
@@ -147,15 +147,15 @@ namespace MtC.Tools.QuadtreeCollider
         {
             if (IsGrowToUp(mainChildIndexByte))
             {
-                yMin = _root.area.y;
-                yMiddle = _root.area.yMax;
-                yMax = _root.area.yMax + _root.area.height;
+                yMin = root.Area.y;
+                yMiddle = root.Area.yMax;
+                yMax = root.Area.yMax + root.Area.height;
             }
             else
             {
-                yMin = _root.area.y - _root.area.height;
-                yMiddle = _root.area.y;
-                yMax = _root.area.yMax;
+                yMin = root.Area.y - root.Area.height;
+                yMiddle = root.Area.y;
+                yMax = root.Area.yMax;
             }
         }
 

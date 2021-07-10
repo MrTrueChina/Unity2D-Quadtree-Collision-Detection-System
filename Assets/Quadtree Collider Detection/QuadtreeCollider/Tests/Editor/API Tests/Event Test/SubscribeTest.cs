@@ -10,24 +10,24 @@ using System;
 [TestFixture]
 public class SubscribeTest
 {
-    private Action<string> _actions;
+    private Action<string> actions;
 
     [TearDown]
     public void TearDown()
     {
-        if (_actions != null)
-            foreach (Action<string> a in _actions.GetInvocationList())
-                _actions -= a;
+        if (actions != null)
+            foreach (Action<string> a in actions.GetInvocationList())
+                actions -= a;
     }
 
     [Test]
     public void RepeatSubscribe()
     {
-        _actions += Say;
-        _actions += Say;
-        _actions += Say;
+        actions += Say;
+        actions += Say;
+        actions += Say;
 
-        Debug.Log(_actions.GetInvocationList().Length == 1 ? "重复订阅不会产生多个订阅" : "重复订阅会产生多个订阅");
+        Debug.Log(actions.GetInvocationList().Length == 1 ? "重复订阅不会产生多个订阅" : "重复订阅会产生多个订阅");
     }
 
     [Test]
@@ -37,7 +37,7 @@ public class SubscribeTest
 
         try
         {
-            _actions -= Say;
+            actions -= Say;
         }
         catch
         {
@@ -51,9 +51,9 @@ public class SubscribeTest
     public void Subscribed()
     {
         bool subscribed = false;
-        _actions += Say;
+        actions += Say;
 
-        foreach (Action<string> action in _actions.GetInvocationList())
+        foreach (Action<string> action in actions.GetInvocationList())
             if (action == Say)
                 subscribed = true;
 

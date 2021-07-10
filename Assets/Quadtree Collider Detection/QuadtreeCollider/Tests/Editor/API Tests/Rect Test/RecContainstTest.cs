@@ -12,12 +12,12 @@ public class RectContainsTest
     private const float X = 10f;
     private const float Y = 2f;
 
-    private Rect _rect;
+    private Rect rect;
 
     [SetUp]
     public void SetUp()
     {
-        _rect = new Rect(X, Y, WIDTH, HEIGHT);
+        rect = new Rect(X, Y, WIDTH, HEIGHT);
     }
 
     /// <summary>
@@ -28,6 +28,6 @@ public class RectContainsTest
     {
         Vector2 right = new Vector2(X + WIDTH, (Y + HEIGHT) / 2);
 
-        Assert.IsFalse(_rect.Contains(right));
+        Assert.IsFalse(rect.Contains(right));
     }
 }
