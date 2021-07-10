@@ -24,22 +24,12 @@ namespace MtC.Tools.QuadtreeCollider
             // 有子节点，发给子节点保存
             if (HaveChildren())
             {
-                return AddColliderIntoChildrenByArea(collider);
+                return AddColliderIntoChildren(collider, (node, colliderTemp) => node.AddColliderByArea(colliderTemp));
             }
 
             // 在范围内，而且没有子节点，保存节点并返回保存成功
             AddColliderIntoSelf(collider);
             return true;
-        }
-
-        /// <summary>
-        /// 通过节点范围向子节点存入碰撞器，只当碰撞器在节点范围内时才存入
-        /// </summary>
-        /// <param name="collider"></param>
-        /// <returns></returns>
-        private bool AddColliderIntoChildrenByArea(QuadtreeCollider collider)
-        {
-            return AddColliderIntoChildren(collider, (node, colliderTemp) => node.AddColliderByArea(colliderTemp));
         }
 
         /// <summary>
@@ -63,22 +53,12 @@ namespace MtC.Tools.QuadtreeCollider
             // 有子节点，发给子节点保存
             if (HaveChildren())
             {
-                return AddColliderIntoChildrenByDirection(collider);
+                return AddColliderIntoChildren(collider, (node, colliderTemp) => node.AddColliderByDirection(colliderTemp));
             }
 
             // 没有子节点，保存节点并返回保存成功
             AddColliderIntoSelf(collider);
             return true;
-        }
-
-        /// <summary>
-        /// 根据碰撞器相对于节点的方向向子节点存入碰撞器，只当碰撞器相对父节点的方向和节点相对父节点的方向相同时才存入
-        /// </summary>
-        /// <param name="collider"></param>
-        /// <returns></returns>
-        private bool AddColliderIntoChildrenByDirection(QuadtreeCollider collider)
-        {
-            return AddColliderIntoChildren(collider, (node, colliderTemp) => node.AddColliderByDirection(colliderTemp));
         }
 
         /// <summary>
@@ -173,7 +153,7 @@ namespace MtC.Tools.QuadtreeCollider
             // 把当前节点的碰撞器全部存入到子节点，这里为了防止可能有碰撞器已经离开了节点范围，需要根据方向而不是范围存入
             foreach (QuadtreeCollider collider in _colliders)
             {
-                AddColliderIntoChildrenByDirection(collider);
+                AddColliderIntoChildren(collider, (node, colliderTemp) => node.AddColliderByDirection(colliderTemp));
             }
 
             // 清空当前节点存储的碰撞器
