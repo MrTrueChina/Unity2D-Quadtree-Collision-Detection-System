@@ -39,18 +39,7 @@ namespace MtC.Tools.QuadtreeCollider
         /// <returns></returns>
         private bool AddColliderIntoChildrenByArea(QuadtreeCollider collider)
         {
-            // 遍历子节点存入碰撞器
-            foreach (QuadtreeNode child in _children)
-            {
-                // 如果有一个子节点存入成功则返回存入成功
-                if (child.AddColliderByArea(collider))
-                {
-                    return true;
-                }
-            }
-
-            // 正常流程中不会运行到的所有子节点都保存失败的情况
-            throw new ArgumentOutOfRangeException("向范围是 " + _area + " 的节点的子节点存入碰撞器 " + collider + " 时发生错误：碰撞器没有存入任何子节点");
+            return AddColliderIntoChildren(collider, (node, colliderTemp) => node.AddColliderByArea(colliderTemp));
         }
 
         /// <summary>
@@ -89,11 +78,22 @@ namespace MtC.Tools.QuadtreeCollider
         /// <returns></returns>
         private bool AddColliderIntoChildrenByDirection(QuadtreeCollider collider)
         {
+            return AddColliderIntoChildren(collider, (node, colliderTemp) => node.AddColliderByDirection(colliderTemp));
+        }
+
+        /// <summary>
+        /// 将碰撞器按照指定标准存入到子节点
+        /// </summary>
+        /// <param name="collider">要存入的碰撞器</param>
+        /// <param name="addCollider">存入标准，返回 true 表示碰撞器可以存入到这个子节点中</param>
+        /// <returns></returns>
+        private bool AddColliderIntoChildren(QuadtreeCollider collider, Func<QuadtreeNode, QuadtreeCollider,bool> addCollider)
+        {
             // 遍历子节点存入碰撞器
             foreach (QuadtreeNode child in _children)
             {
                 // 如果有一个子节点存入成功则返回存入成功
-                if (child.AddColliderByDirection(collider))
+                if (addCollider(child, collider))
                 {
                     return true;
                 }
