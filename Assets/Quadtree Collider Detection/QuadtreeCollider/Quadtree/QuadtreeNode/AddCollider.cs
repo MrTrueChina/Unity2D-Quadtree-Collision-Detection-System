@@ -83,7 +83,7 @@ namespace MtC.Tools.QuadtreeCollider
         }
 
         /// <summary>
-        /// 根据碰撞器相对于节点的位置向子节点存入碰撞器
+        /// 根据碰撞器相对于节点的方向向子节点存入碰撞器，只当碰撞器相对父节点的方向和节点相对父节点的方向相同时才存入
         /// </summary>
         /// <param name="collider"></param>
         /// <returns></returns>
