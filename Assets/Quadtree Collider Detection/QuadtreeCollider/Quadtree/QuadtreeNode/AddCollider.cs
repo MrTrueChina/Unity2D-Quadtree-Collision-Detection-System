@@ -15,37 +15,23 @@ namespace MtC.Tools.QuadtreeCollider
         /// <returns> 如果成功存入，返回 true </returns>
         internal bool AddColliderByArea(QuadtreeCollider collider)
         {
-            // 碰撞器不在节点范围内，返回存入失败
-            if (!_area.Contains(collider.Position))
+            return AddCollider(collider, (nodeParam, colliderParam) =>
             {
-                return false;
-            }
-
-            // 有子节点，发给子节点保存
-            if (HaveChildren())
-            {
-                return AddColliderIntoChildren(collider, (node, colliderTemp) => node.AddColliderByArea(colliderTemp));
-            }
-
-            // 在范围内，而且没有子节点，保存节点并返回保存成功
-            AddColliderIntoSelf(collider);
-            return true;
+                // 如果碰撞器在节点范围内，说明碰撞器可以存入这个节点
+                return nodeParam.area.Contains(colliderParam.Position);
+            });
         }
 
         /// <summary>
-        /// 根据碰撞器相对于节点的位置向四叉树中存入碰撞器
+        /// 根据指定标准存入碰撞器
         /// </summary>
-        /// <param name="collider"></param>
+        /// <param name="collider">要存入的碰撞器</param>
+        /// <param name="canAdd">如果这个方法返回 true 这说明这个碰撞器可以存入当前节点</param>
         /// <returns></returns>
-        private bool AddColliderByDirection(QuadtreeCollider collider)
+        private bool AddCollider(QuadtreeCollider collider, Func<QuadtreeNode, QuadtreeCollider, bool> canAdd)
         {
-            // 当前节点相对于父节点的方向与碰撞器相对于父节点的方向，在 X 轴上是否一致
-            bool colliderAndNodeOnSameXSide = !((area.center.x > _parent.area.center.x) ^ (collider.Position.x > _parent.area.center.x));
-            // 当前节点相对于父节点的方向与碰撞器相对于父节点的方向，在 Y 轴上是否一致
-            bool colliderAndNodeOnSameYSide = !((area.center.y > _parent.area.center.y) ^ (collider.Position.y > _parent.area.center.y));
-
-            // 只要有一个不一致的，就说明碰撞器不应该被存入到这个节点里，直接返回
-            if (!colliderAndNodeOnSameXSide || !colliderAndNodeOnSameYSide)
+            // 不符合存入标准的直接返回存入失败
+            if (!canAdd(this, collider))
             {
                 return false;
             }
@@ -53,7 +39,7 @@ namespace MtC.Tools.QuadtreeCollider
             // 有子节点，发给子节点保存
             if (HaveChildren())
             {
-                return AddColliderIntoChildren(collider, (node, colliderTemp) => node.AddColliderByDirection(colliderTemp));
+                return AddColliderIntoChildren(collider, (nodeParam, colliderParam) => nodeParam.AddCollider(colliderParam, canAdd));
             }
 
             // 没有子节点，保存节点并返回保存成功
@@ -153,13 +139,32 @@ namespace MtC.Tools.QuadtreeCollider
             // 把当前节点的碰撞器全部存入到子节点，这里为了防止可能有碰撞器已经离开了节点范围，需要根据方向而不是范围存入
             foreach (QuadtreeCollider collider in _colliders)
             {
-                AddColliderIntoChildren(collider, (node, colliderTemp) => node.AddColliderByDirection(colliderTemp));
+                AddColliderIntoChildren(collider, (nodeParam, colliderParam) => nodeParam.AddColliderByDirection(colliderParam));
             }
 
             // 清空当前节点存储的碰撞器
             _colliders.Clear();
 
             // 此处如果使用先移除越界的碰撞器分割后重新存入树，则有可能因为移除节点导致需要合并，形成 分割反而导致了合并 的逻辑套娃
+        }
+
+        /// <summary>
+        /// 根据碰撞器相对于节点的位置向四叉树中存入碰撞器
+        /// </summary>
+        /// <param name="collider"></param>
+        /// <returns></returns>
+        private bool AddColliderByDirection(QuadtreeCollider collider)
+        {
+            return AddCollider(collider, (nodeParam, colliderParam) =>
+            {
+                // 当前节点相对于父节点的方向与碰撞器相对于父节点的方向，在 X 轴上是否一致
+                bool colliderAndNodeOnSameXSide = !((nodeParam.area.center.x > nodeParam._parent.area.center.x) ^ (colliderParam.Position.x > nodeParam._parent.area.center.x));
+                // 当前节点相对于父节点的方向与碰撞器相对于父节点的方向，在 Y 轴上是否一致
+                bool colliderAndNodeOnSameYSide = !((nodeParam.area.center.y > nodeParam._parent.area.center.y) ^ (colliderParam.Position.y > nodeParam._parent.area.center.y));
+
+                // 两个方向都一致，说明碰撞器可以存入这个节点
+                return colliderAndNodeOnSameXSide && colliderAndNodeOnSameYSide;
+            });
         }
     }
 }
