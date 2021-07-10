@@ -156,7 +156,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   autoSubscribe: 1
   isDetector: 1
-  _radius: 50
+  radius: 160
 --- !u!4 &71954735
 Transform:
   m_ObjectHideFlags: 0
@@ -330,7 +330,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   autoSubscribe: 1
   isDetector: 1
-  _radius: 160
+  radius: 210
 --- !u!4 &343835782
 Transform:
   m_ObjectHideFlags: 0
@@ -524,7 +524,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   autoSubscribe: 1
   isDetector: 1
-  _radius: 100
+  radius: 180
 --- !u!4 &542776035
 Transform:
   m_ObjectHideFlags: 0
@@ -635,7 +635,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   autoSubscribe: 1
   isDetector: 1
-  _radius: 150
+  radius: 230
 --- !u!4 &838401678
 Transform:
   m_ObjectHideFlags: 0
@@ -746,7 +746,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   autoSubscribe: 1
   isDetector: 1
-  _radius: 60
+  radius: 150
 --- !u!4 &975307289
 Transform:
   m_ObjectHideFlags: 0
@@ -857,7 +857,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   autoSubscribe: 1
   isDetector: 1
-  _radius: 80
+  radius: 85
 --- !u!4 &980718770
 Transform:
   m_ObjectHideFlags: 0
@@ -905,7 +905,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   autoSubscribe: 1
   isDetector: 1
-  _radius: 100
+  radius: 180
 --- !u!4 &1244684634
 Transform:
   m_ObjectHideFlags: 0
@@ -1140,7 +1140,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   autoSubscribe: 1
   isDetector: 1
-  _radius: 200
+  radius: 100
 --- !u!4 &1428873811
 Transform:
   m_ObjectHideFlags: 0
@@ -1294,7 +1294,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   autoSubscribe: 1
   isDetector: 1
-  _radius: 140
+  radius: 130
 --- !u!4 &1893816048
 Transform:
   m_ObjectHideFlags: 0
@@ -1405,7 +1405,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   autoSubscribe: 1
   isDetector: 1
-  _radius: 200
+  radius: 170
 --- !u!4 &2124692505
 Transform:
   m_ObjectHideFlags: 0
@@ -1516,7 +1516,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   autoSubscribe: 1
   isDetector: 1
-  _radius: 70
+  radius: 130
 --- !u!4 &2128354232
 Transform:
   m_ObjectHideFlags: 0
