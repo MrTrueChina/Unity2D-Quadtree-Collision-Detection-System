@@ -18,7 +18,7 @@ namespace MtC.Tools.QuadtreeCollider
             return AddCollider(collider, (nodeParam, colliderParam) =>
             {
                 // 如果碰撞器在节点范围内，说明碰撞器可以存入这个节点
-                return nodeParam.area.Contains(colliderParam.Position);
+                return nodeParam.Area.Contains(colliderParam.Position);
             });
         }
 
@@ -56,7 +56,7 @@ namespace MtC.Tools.QuadtreeCollider
         private bool AddColliderIntoChildren(QuadtreeCollider collider, Func<QuadtreeNode, QuadtreeCollider,bool> addCollider)
         {
             // 遍历子节点存入碰撞器
-            foreach (QuadtreeNode child in _children)
+            foreach (QuadtreeNode child in children)
             {
                 // 如果有一个子节点存入成功则返回存入成功
                 if (addCollider(child, collider))
@@ -66,7 +66,7 @@ namespace MtC.Tools.QuadtreeCollider
             }
 
             // 正常流程中不会运行到的所有子节点都保存失败的情况
-            throw new ArgumentOutOfRangeException("向范围是 " + _area + " 的节点的子节点存入碰撞器 " + collider + " 时发生错误：碰撞器没有存入任何子节点");
+            throw new ArgumentOutOfRangeException("向范围是 " + area + " 的节点的子节点存入碰撞器 " + collider + " 时发生错误：碰撞器没有存入任何子节点");
         }
 
         /// <summary>
@@ -76,7 +76,7 @@ namespace MtC.Tools.QuadtreeCollider
         private void AddColliderIntoSelf(QuadtreeCollider collider)
         {
             // 添加进碰撞器列表
-            _colliders.Add(collider);
+            colliders.Add(collider);
 
             // 如果需要分割节点则进行分割
             if (NeedSplit())
@@ -93,11 +93,11 @@ namespace MtC.Tools.QuadtreeCollider
         {
             return 
                 // 碰撞器数量超过节点内最大碰撞器数量
-                _colliders.Count > QuadtreeConfig.maxCollidersNumber
+                colliders.Count > QuadtreeConfig.MaxCollidersNumber
                 // 节点高度超过节点最小高度
-                && _area.height > QuadtreeConfig.minSideLength
+                && area.height > QuadtreeConfig.MinSideLength
                 // 节点宽度超过节点最小宽度
-                && _area.width > QuadtreeConfig.minSideLength;
+                && area.width > QuadtreeConfig.MinSideLength;
         }
 
         /// <summary>
@@ -118,16 +118,16 @@ namespace MtC.Tools.QuadtreeCollider
         private void CreateChildren()
         {
             // 计算出宽高的一半用于创建子节点，先算出一半是为了防止可能出现的计算误差
-            float halfWidth = _area.width / 2;
-            float halfHeight = _area.height / 2;
+            float halfWidth = area.width / 2;
+            float halfHeight = area.height / 2;
 
             // 创建子节点
-            _children = new List<QuadtreeNode>
+            children = new List<QuadtreeNode>
             {
-                new QuadtreeNode(new Rect(_area.x + halfWidth, _area.y + halfHeight, _area.width - halfWidth, _area.height - halfHeight), this), // 右上子节点
-                new QuadtreeNode(new Rect(_area.x + halfWidth, _area.y, _area.width - halfWidth, halfHeight), this), // 右下子节点
-                new QuadtreeNode(new Rect(_area.x, _area.y, halfWidth, halfHeight), this), // 左下子节点
-                new QuadtreeNode(new Rect(_area.x, _area.y + halfHeight, halfWidth, _area.height - halfHeight), this) // 左上子节点
+                new QuadtreeNode(new Rect(area.x + halfWidth, area.y + halfHeight, area.width - halfWidth, area.height - halfHeight), this), // 右上子节点
+                new QuadtreeNode(new Rect(area.x + halfWidth, area.y, area.width - halfWidth, halfHeight), this), // 右下子节点
+                new QuadtreeNode(new Rect(area.x, area.y, halfWidth, halfHeight), this), // 左下子节点
+                new QuadtreeNode(new Rect(area.x, area.y + halfHeight, halfWidth, area.height - halfHeight), this) // 左上子节点
             };
         }
 
@@ -137,13 +137,13 @@ namespace MtC.Tools.QuadtreeCollider
         private void SetAllColliderIntoChindren()
         {
             // 把当前节点的碰撞器全部存入到子节点，这里为了防止可能有碰撞器已经离开了节点范围，需要根据方向而不是范围存入
-            foreach (QuadtreeCollider collider in _colliders)
+            foreach (QuadtreeCollider collider in colliders)
             {
                 AddColliderIntoChildren(collider, (nodeParam, colliderParam) => nodeParam.AddColliderByDirection(colliderParam));
             }
 
             // 清空当前节点存储的碰撞器
-            _colliders.Clear();
+            colliders.Clear();
 
             // 此处如果使用先移除越界的碰撞器分割后重新存入树，则有可能因为移除节点导致需要合并，形成 分割反而导致了合并 的逻辑套娃
         }
@@ -158,9 +158,9 @@ namespace MtC.Tools.QuadtreeCollider
             return AddCollider(collider, (nodeParam, colliderParam) =>
             {
                 // 当前节点相对于父节点的方向与碰撞器相对于父节点的方向，在 X 轴上是否一致
-                bool colliderAndNodeOnSameXSide = !((nodeParam.area.center.x > nodeParam._parent.area.center.x) ^ (colliderParam.Position.x > nodeParam._parent.area.center.x));
+                bool colliderAndNodeOnSameXSide = !((nodeParam.Area.center.x > nodeParam.parent.Area.center.x) ^ (colliderParam.Position.x > nodeParam.parent.Area.center.x));
                 // 当前节点相对于父节点的方向与碰撞器相对于父节点的方向，在 Y 轴上是否一致
-                bool colliderAndNodeOnSameYSide = !((nodeParam.area.center.y > nodeParam._parent.area.center.y) ^ (colliderParam.Position.y > nodeParam._parent.area.center.y));
+                bool colliderAndNodeOnSameYSide = !((nodeParam.Area.center.y > nodeParam.parent.Area.center.y) ^ (colliderParam.Position.y > nodeParam.parent.Area.center.y));
 
                 // 两个方向都一致，说明碰撞器可以存入这个节点
                 return colliderAndNodeOnSameXSide && colliderAndNodeOnSameYSide;

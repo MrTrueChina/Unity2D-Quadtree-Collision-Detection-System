@@ -12,26 +12,26 @@ namespace MtC.Tools.QuadtreeCollider
         /// <summary>
         /// 实例
         /// </summary>
-        private static Quadtree instance
+        private static Quadtree Instance
         {
             get
             {
-                if (_instance != null)
-                    return _instance;
+                if (instance != null)
+                    return instance;
 
                 lock (typeof(Quadtree))
                 {
-                    if (_instance == null)
+                    if (instance == null)
                     {
                         // 创建一个带四叉树组件的对象，并设为不随场景加载销毁
-                        _instance = new GameObject("Quadtree").AddComponent<Quadtree>();
-                        DontDestroyOnLoad(_instance);
+                        instance = new GameObject("Quadtree").AddComponent<Quadtree>();
+                        DontDestroyOnLoad(instance);
                     }
-                    return _instance;
+                    return instance;
                 }
             }
         }
-        private static Quadtree _instance;
+        private static Quadtree instance;
 
         /// <summary>
         /// 向四叉树中添加碰撞器
@@ -40,7 +40,7 @@ namespace MtC.Tools.QuadtreeCollider
         public static void AddCollider(QuadtreeCollider collider)
         {
             // 向实例中添加碰撞器
-            instance.DoAddCollider(collider);
+            Instance.DoAddCollider(collider);
 
             // 如果是检测器则添加检测器
             if (collider.IsDetector)
@@ -56,7 +56,7 @@ namespace MtC.Tools.QuadtreeCollider
         internal static void AddColliderOnReset(QuadtreeCollider collider)
         {
             // 向实例中添加碰撞器
-            instance.DoAddCollider(collider);
+            Instance.DoAddCollider(collider);
 
             // 重新存入碰撞器是将四叉树中存在的碰撞器取出来重新存入，前后的碰撞器列表并没有变化，检测器列表更不会变化，省一步快一步
         }
@@ -68,9 +68,9 @@ namespace MtC.Tools.QuadtreeCollider
         internal static void AddDetector(QuadtreeCollider detector)
         {
             // 实例的检测器列表里没有这个碰撞器则添加进去
-            if (!instance._detectors.Contains(detector))
+            if (!Instance.detectors.Contains(detector))
             {
-                instance._detectors.Add(detector);
+                Instance.detectors.Add(detector);
             }
         }
 
@@ -81,13 +81,13 @@ namespace MtC.Tools.QuadtreeCollider
         public static void RemoveCollider(QuadtreeCollider collider)
         {
             // 没有实例则不进行操作
-            if (_instance == null)
+            if (instance == null)
             {
                 return;
             }
 
             // 从根节点开始移除碰撞器
-            _instance._root.RemoveCollider(collider);
+            instance.root.RemoveCollider(collider);
 
             // 如果要移除的碰撞器是检测器，移除检测器
             if (collider.IsDetector)
@@ -103,13 +103,13 @@ namespace MtC.Tools.QuadtreeCollider
         internal static void RemoveDetector(QuadtreeCollider detector)
         {
             // 没有实例则不进行操作
-            if (_instance == null)
+            if (instance == null)
             {
                 return;
             }
 
             // 从实例的碰撞器列表里移除这个碰撞器
-            _instance._detectors.Remove(detector);
+            instance.detectors.Remove(detector);
         }
     }
 }

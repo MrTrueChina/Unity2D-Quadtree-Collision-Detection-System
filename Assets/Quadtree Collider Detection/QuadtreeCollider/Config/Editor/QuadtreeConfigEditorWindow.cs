@@ -7,18 +7,18 @@ namespace MtC.Tools.QuadtreeCollider
 {
     public class QuadtreeConfigEditorWindow : EditorWindow
     {
-        private QuadtreeConfig config
+        private QuadtreeConfig Config
         {
             get
             {
-                if (_config != null)
-                    return _config;
+                if (config != null)
+                    return config;
 
-                _config = GetSettingObject();
-                return _config;
+                config = GetSettingObject();
+                return config;
             }
         }
-        private QuadtreeConfig _config;
+        private QuadtreeConfig config;
 
         [MenuItem("Tools/Quadtree/Quadtree Config")]
         private static void GetWindow()
@@ -40,7 +40,7 @@ namespace MtC.Tools.QuadtreeCollider
 
         private void DrawSettingEditor()
         {
-            Editor.CreateEditor(config).DrawDefaultInspector();
+            Editor.CreateEditor(Config).DrawDefaultInspector();
         }
 
         QuadtreeConfig GetSettingObject()
@@ -96,10 +96,10 @@ namespace MtC.Tools.QuadtreeCollider
         {
             Handles.color = Color.red * 0.9f;
 
-            Vector3 upperRight = new Vector3(QuadtreeConfig.startArea.xMax, QuadtreeConfig.startArea.yMax, 0);
-            Vector3 lowerRight = new Vector3(QuadtreeConfig.startArea.xMax, QuadtreeConfig.startArea.yMin, 0);
-            Vector3 lowerLeft = new Vector3(QuadtreeConfig.startArea.xMin, QuadtreeConfig.startArea.yMin, 0);
-            Vector3 upperLeft = new Vector3(QuadtreeConfig.startArea.xMin, QuadtreeConfig.startArea.yMax, 0);
+            Vector3 upperRight = new Vector3(QuadtreeConfig.StartArea.xMax, QuadtreeConfig.StartArea.yMax, 0);
+            Vector3 lowerRight = new Vector3(QuadtreeConfig.StartArea.xMax, QuadtreeConfig.StartArea.yMin, 0);
+            Vector3 lowerLeft = new Vector3(QuadtreeConfig.StartArea.xMin, QuadtreeConfig.StartArea.yMin, 0);
+            Vector3 upperLeft = new Vector3(QuadtreeConfig.StartArea.xMin, QuadtreeConfig.StartArea.yMax, 0);
 
             Handles.DrawLine(upperRight, lowerRight);
             Handles.DrawLine(lowerRight, lowerLeft);

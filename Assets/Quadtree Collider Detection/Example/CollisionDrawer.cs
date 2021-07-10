@@ -10,18 +10,18 @@ namespace MtC.Tools.QuadtreeCollider
     /// </summary>
     public class CollisionDrawer : MonoBehaviour, IOnQuadtreeCollisionStay
     {
-        private List<QuadtreeCollider> _colliders = new List<QuadtreeCollider>();
+        private readonly List<QuadtreeCollider> colliders = new List<QuadtreeCollider>();
 
         public void OnQuadtreeCollisionStay(QuadtreeCollider collider)
         {
-            _colliders.Add(collider);
+            colliders.Add(collider);
         }
 
         private void OnDrawGizmos()
         {
             Gizmos.color = Color.yellow * 0.8f;
 
-            foreach (QuadtreeCollider collider in _colliders)
+            foreach (QuadtreeCollider collider in colliders)
             {
                 if (collider != null)
                 {
@@ -29,7 +29,7 @@ namespace MtC.Tools.QuadtreeCollider
                 }
             }
 
-            _colliders.Clear();
+            colliders.Clear();
         }
     }
 }

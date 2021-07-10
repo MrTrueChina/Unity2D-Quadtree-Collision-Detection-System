@@ -15,9 +15,9 @@ namespace MtC.Tools.QuadtreeCollider
         /// </summary>
         private List<QuadtreeCollider> lastCollisionColliders = new List<QuadtreeCollider>();
 
-        private UnityEvent<QuadtreeCollider> collisionEnterEventHandler = new UnityEvent<QuadtreeCollider>();
-        private UnityEvent<QuadtreeCollider> collisionStayEventHandler = new UnityEvent<QuadtreeCollider>();
-        private UnityEvent<QuadtreeCollider> collisionExitEventHandler = new UnityEvent<QuadtreeCollider>();
+        private readonly UnityEvent<QuadtreeCollider> collisionEnterEventHandler = new UnityEvent<QuadtreeCollider>();
+        private readonly UnityEvent<QuadtreeCollider> collisionStayEventHandler = new UnityEvent<QuadtreeCollider>();
+        private readonly UnityEvent<QuadtreeCollider> collisionExitEventHandler = new UnityEvent<QuadtreeCollider>();
 
         /// <summary>
         /// 是否自动订阅

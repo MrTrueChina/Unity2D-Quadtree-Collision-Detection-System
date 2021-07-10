@@ -46,7 +46,7 @@ namespace MtC.Tools.QuadtreeCollider
         private bool RemoveColliderFromChildrenByPosition(QuadtreeCollider collider)
         {
             // 遍历所有子节点并进行移除，有移除成功的则返回移除成功
-            foreach (QuadtreeNode child in _children)
+            foreach (QuadtreeNode child in children)
             {
                 if (child.RemoveColliderByPosition(collider))
                 {
@@ -66,7 +66,7 @@ namespace MtC.Tools.QuadtreeCollider
         private bool RemoveColliderFromSelfByPosition(QuadtreeCollider collider)
         {
             // 如果碰撞器在当前节点范围内则进行移除并返回移除结果
-            if (_area.Contains(collider.Position))
+            if (area.Contains(collider.Position))
             {
                 return RemoveColliderFromSelf(collider);
             }
@@ -82,7 +82,7 @@ namespace MtC.Tools.QuadtreeCollider
         /// <returns></returns>
         private bool RemoveColliderFromSelf(QuadtreeCollider collider)
         {
-            return _colliders.Remove(collider);
+            return colliders.Remove(collider);
         }
 
         /// <summary>
@@ -110,7 +110,7 @@ namespace MtC.Tools.QuadtreeCollider
         private bool RemoveColliderFromChildrenAndAllNodes(QuadtreeCollider collider)
         {
             // 通知所有子节点移除碰撞器，移除成功则返回成功
-            foreach (QuadtreeNode child in _children)
+            foreach (QuadtreeNode child in children)
             {
                 if (child.RemoveColliderFromAllNodes(collider))
                 {
