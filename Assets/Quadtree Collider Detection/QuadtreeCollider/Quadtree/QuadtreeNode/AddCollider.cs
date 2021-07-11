@@ -111,13 +111,13 @@ namespace MtC.Tools.QuadtreeCollider
         /// <summary>
         /// 分割节点
         /// </summary>
-        private void Split()
+        private OperationResult Split()
         {
             // 创建子节点
             CreateChildren();
 
-            // 把碰撞器分发给子节点
-            SetAllColliderIntoChindren();
+            // 把碰撞器分发给子节点，返回操作结果
+            return SetAllColliderIntoChindren();
         }
 
         /// <summary>
