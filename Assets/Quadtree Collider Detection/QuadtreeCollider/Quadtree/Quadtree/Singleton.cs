@@ -39,6 +39,8 @@ namespace MtC.Tools.QuadtreeCollider
         /// <param name="collider"></param>
         public static void AddCollider(QuadtreeCollider collider)
         {
+            // FIXME：这里需要加一个不能重复存入的处理，使用映射表就可以处理
+
             // 向实例中添加碰撞器
             Instance.DoAddCollider(collider);
 
@@ -81,6 +83,8 @@ namespace MtC.Tools.QuadtreeCollider
         /// <param name="collider"></param>
         public static void RemoveCollider(QuadtreeCollider collider)
         {
+            // FIXME：在有了映射表之后可以通过映射表对不存在的碰撞器移除进行拦截
+
             // 没有实例则不进行操作
             if (instance == null)
             {

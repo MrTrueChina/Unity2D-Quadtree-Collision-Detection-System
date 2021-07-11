@@ -9,84 +9,107 @@ namespace MtC.Tools.QuadtreeCollider
         /// <summary>
         /// 更新四叉树中的所有碰撞器
         /// </summary>
-        internal void Update()
+        /// <returns></returns>
+        internal OperationResult Update()
         {
+            // 更新必然成功
+            OperationResult result = new OperationResult(true);
+
             // 更新碰撞器位置
             UpdatePosition();
+            // FIXME：此处需要更新映射表
 
             // 更新碰撞器最大半径
             UpdateMaxRadius();
+
+            return result;
         }
 
         /// <summary>
         /// 更新碰撞器位置
         /// </summary>
-        private void UpdatePosition()
+        /// <returns></returns>
+        private OperationResult UpdatePosition()
         {
             if (HaveChildren())
             {
                 // 有子节点，通知子节点更新碰撞器位置
-                UpdateChildrenPosition();
+                return UpdateChildrenPosition();
             }
             else
             {
                 // 没有子节点，更新当前节点内的碰撞器位置
-                UpdateSelfPosition();
+                return UpdateSelfPosition();
             }
         }
 
         /// <summary>
         /// 更新子节点的碰撞器位置
         /// </summary>
-        private void UpdateChildrenPosition()
+        private OperationResult UpdateChildrenPosition()
         {
+            // 更新碰撞器位置必定成功
+            OperationResult result = new OperationResult(true);
+
             // 通知所有子节点更新碰撞器位置
             foreach (QuadtreeNode child in children)
             {
                 child.UpdatePosition();
+                // FIXME：这里需要更新映射表
             }
+
+            // FIXME；在所有子节点更新完毕后进行是否需要合并的判断，在遍历子节点的过程中决不能合并节点，否则会导致极其混乱的逻辑纠缠
+
+            return result;
         }
 
         /// <summary>
         /// 更新当前节点内的碰撞器的位置
         /// </summary>
-        private void UpdateSelfPosition()
+        private OperationResult UpdateSelfPosition()
         {
+            // 更新碰撞器位置必定成功
+            OperationResult result = new OperationResult(true);
+
             // 移除所有当前节点保存的、已经离开当前节点范围的碰撞器，并将这些碰撞器保存起来
-            List<QuadtreeCollider> outOfAreaColliders = GetAndRemoveCollidersOutOfField();
+            OperationResult removeOutOfAreaCollidersResult = GetAndRemoveCollidersOutOfArea();
+            // FIXME：这里需要更新映射表
 
             // 把移除的碰撞器重新存入四叉树
-            ResetCollidersIntoQuadtree(outOfAreaColliders);
+            ResetCollidersIntoQuadtree(new List<QuadtreeCollider>(removeOutOfAreaCollidersResult.CollidersToNodes.Keys));
+            // FIXME：这里需要更新映射表
+
+            return result;
         }
 
         /// <summary>
         /// 移除所有当前节点保存的、已经离开当前节点范围的碰撞器，并返回
         /// </summary>
         /// <returns></returns>
-        private List<QuadtreeCollider> GetAndRemoveCollidersOutOfField()
+        private OperationResult GetAndRemoveCollidersOutOfArea()
         {
-            List<QuadtreeCollider> outOfFieldColliders = new List<QuadtreeCollider>();
+            OperationResult result = new OperationResult(true);
 
-            // 遍历所有碰撞器，超出节点范围的保存到列表里
+            // 遍历所有碰撞器，超出节点范围的记录下来
             foreach (QuadtreeCollider collider in colliders)
             {
                 if (!area.Contains(collider.Position))
                 {
-                    outOfFieldColliders.Add(collider);
+                    result.CollidersToNodes.Add(collider, null);
                 }
             }
 
             // 将所有超出节点范围的碰撞器移除出四叉树
-            foreach (QuadtreeCollider collider in outOfFieldColliders)
+            foreach (QuadtreeCollider collider in result.CollidersToNodes.Keys)
             {
                 RemoveSelfColliderOnReset(collider);
             }
 
-            // 返回被移除的碰撞器列表
-            return outOfFieldColliders;
+            // 返回结果，主要是移除的节点的记录
+            return result;
         }
 
-        // XXX：这个方法有大问题，只是直接删除了碰撞器
+        // FIXME：这个方法没有走通常流程，需要删除
         /// <summary>
         /// 从当前节点移除碰撞器，仅在移除并重新存入时使用
         /// </summary>
@@ -103,13 +126,22 @@ namespace MtC.Tools.QuadtreeCollider
         /// 将碰撞器重新存入四叉树
         /// </summary>
         /// <param name="outOfFieldColliders"></param>
-        private void ResetCollidersIntoQuadtree(List<QuadtreeCollider> outOfFieldColliders)
+        private OperationResult ResetCollidersIntoQuadtree(List<QuadtreeCollider> outOfFieldColliders)
         {
+            // 重新存入必定成功
+            OperationResult result = new OperationResult(true);
+
             // 通过包装类将碰撞器从根节点存入
             foreach (QuadtreeCollider collider in outOfFieldColliders)
             {
                 Quadtree.AddColliderOnReset(collider);
+                // FIXME：此处需要更新映射表
             }
+
+            // 这里并不需要担心重新存入导致分割问题，首先重新存入的是越界的，不会存入当前节点，当前节点不会分割。
+            // 如果存到已更新的节点，已更新的节点分割不影响操作。如果存到未更新的节点，为更新的节点分割只会在遍历到的时候把更新下发到分割出的子节点中，不会导致逻辑问题。
+
+            return result;
         }
 
         /// <summary>
