@@ -30,7 +30,7 @@ namespace MtC.Tools.QuadtreeCollider
             // XXX：只假设了存入失败是因为碰撞器不在范围内，可能需要添加限制，或在每次循环时对四叉树总区域进行判断，如果节点就在总区域内部但还是存入失败则报错
 
             // 循环存入碰撞器，直到存入成功
-            while (!root.AddColliderByArea(collider))
+            while (!root.AddColliderByArea(collider).Success)
             {
                 // 如果存入失败则说明碰撞器在四叉树外，让四叉树向碰撞器方向生长
                 UpwordGroupToCollider(collider);
