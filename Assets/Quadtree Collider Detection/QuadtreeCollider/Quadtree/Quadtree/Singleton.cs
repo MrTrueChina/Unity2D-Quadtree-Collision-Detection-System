@@ -49,6 +49,7 @@ namespace MtC.Tools.QuadtreeCollider
             }
         }
 
+        // FIXME：这个不走标准流程的方法需要删掉
         /// <summary>
         /// 在重新存入碰撞器时使用的存入方法，不会改变检测器列表
         /// </summary>
