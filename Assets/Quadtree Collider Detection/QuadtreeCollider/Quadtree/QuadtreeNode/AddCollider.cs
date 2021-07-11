@@ -13,7 +13,7 @@ namespace MtC.Tools.QuadtreeCollider
         /// </summary>
         /// <param name="collider">存入的碰撞器</param>
         /// <returns> 如果成功存入，返回 true </returns>
-        internal bool AddColliderByArea(QuadtreeCollider collider)
+        internal OperationResult AddColliderByArea(QuadtreeCollider collider)
         {
             return AddCollider(collider, (nodeParam, colliderParam) =>
             {
@@ -28,12 +28,13 @@ namespace MtC.Tools.QuadtreeCollider
         /// <param name="collider">要存入的碰撞器</param>
         /// <param name="canAdd">如果这个方法返回 true 这说明这个碰撞器可以存入当前节点</param>
         /// <returns></returns>
-        private bool AddCollider(QuadtreeCollider collider, Func<QuadtreeNode, QuadtreeCollider, bool> canAdd)
+        private OperationResult AddCollider(QuadtreeCollider collider, Func<QuadtreeNode, QuadtreeCollider, bool> canAdd)
         {
             // 不符合存入标准的直接返回存入失败
             if (!canAdd(this, collider))
             {
-                return false;
+                return new OperationResult(false);
+                // FIXME：这里应该不需要操作节点表，但还是确认一下比较安全
             }
 
             // 有子节点，发给子节点保存
@@ -42,26 +43,26 @@ namespace MtC.Tools.QuadtreeCollider
                 return AddColliderIntoChildren(collider, (nodeParam, colliderParam) => nodeParam.AddCollider(colliderParam, canAdd));
             }
 
-            // 没有子节点，保存节点并返回保存成功
-            AddColliderIntoSelf(collider);
-            return true;
+            // 没有子节点，保存节点并返回结果
+            return AddColliderIntoSelf(collider);
         }
 
         /// <summary>
         /// 将碰撞器按照指定标准存入到子节点
         /// </summary>
         /// <param name="collider">要存入的碰撞器</param>
-        /// <param name="addCollider">存入标准，返回 true 表示碰撞器可以存入到这个子节点中</param>
+        /// <param name="addCollider">存入方法</param>
         /// <returns></returns>
-        private bool AddColliderIntoChildren(QuadtreeCollider collider, Func<QuadtreeNode, QuadtreeCollider,bool> addCollider)
+        private OperationResult AddColliderIntoChildren(QuadtreeCollider collider, Func<QuadtreeNode, QuadtreeCollider,OperationResult> addCollider)
         {
             // 遍历子节点存入碰撞器
             foreach (QuadtreeNode child in children)
             {
-                // 如果有一个子节点存入成功则返回存入成功
-                if (addCollider(child, collider))
+                // 如果有一个子节点存入成功，则将这个节点的操作结果作为结果返回
+                OperationResult result = addCollider(child, collider);
+                if (result.Success)
                 {
-                    return true;
+                    return result;
                 }
             }
 
@@ -73,16 +74,23 @@ namespace MtC.Tools.QuadtreeCollider
         /// 向当前节点添加碰撞器
         /// </summary>
         /// <param name="collider"></param>
-        private void AddColliderIntoSelf(QuadtreeCollider collider)
+        private OperationResult AddColliderIntoSelf(QuadtreeCollider collider)
         {
+            // 向当前节点添加肯定是成功的
+            OperationResult result = new OperationResult(true);
+
             // 添加进碰撞器列表
             colliders.Add(collider);
+            // FIXME：需要记录映射表
 
             // 如果需要分割节点则进行分割
             if (NeedSplit())
             {
                 Split();
+                // FIXME：分割节点需要更新映射表
             }
+
+            return result;
         }
 
         /// <summary>
@@ -103,13 +111,13 @@ namespace MtC.Tools.QuadtreeCollider
         /// <summary>
         /// 分割节点
         /// </summary>
-        private void Split()
+        private OperationResult Split()
         {
             // 创建子节点
             CreateChildren();
 
-            // 把碰撞器分发给子节点
-            SetAllColliderIntoChindren();
+            // 把碰撞器分发给子节点，返回操作结果
+            return SetAllColliderIntoChindren();
         }
 
         /// <summary>
@@ -134,18 +142,24 @@ namespace MtC.Tools.QuadtreeCollider
         /// <summary>
         /// 把碰撞器分发给子节点
         /// </summary>
-        private void SetAllColliderIntoChindren()
+        private OperationResult SetAllColliderIntoChindren()
         {
+            // 分发操作必然成功
+            OperationResult result = new OperationResult(true);
+
             // 把当前节点的碰撞器全部存入到子节点，这里为了防止可能有碰撞器已经离开了节点范围，需要根据方向而不是范围存入
             foreach (QuadtreeCollider collider in colliders)
             {
                 AddColliderIntoChildren(collider, (nodeParam, colliderParam) => nodeParam.AddColliderByDirection(colliderParam));
+                // FIXME：这里需要记录操作后的映射表
             }
 
             // 清空当前节点存储的碰撞器
             colliders.Clear();
 
-            // 此处如果使用先移除越界的碰撞器分割后重新存入树，则有可能因为移除节点导致需要合并，形成 分割反而导致了合并 的逻辑套娃
+            return result;
+
+            // 分发功能如果使用先移除越界的碰撞器分割后重新存入树，则有可能因为移除节点导致需要合并，形成 分割反而导致了合并 的逻辑套娃
         }
 
         /// <summary>
@@ -153,7 +167,7 @@ namespace MtC.Tools.QuadtreeCollider
         /// </summary>
         /// <param name="collider"></param>
         /// <returns></returns>
-        private bool AddColliderByDirection(QuadtreeCollider collider)
+        private OperationResult AddColliderByDirection(QuadtreeCollider collider)
         {
             return AddCollider(collider, (nodeParam, colliderParam) =>
             {

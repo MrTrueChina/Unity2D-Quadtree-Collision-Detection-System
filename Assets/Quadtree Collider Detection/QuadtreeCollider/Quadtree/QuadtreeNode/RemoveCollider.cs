@@ -11,14 +11,19 @@ namespace MtC.Tools.QuadtreeCollider
         /// 从树中移除碰撞器
         /// </summary>
         /// <param name="collider"></param>
-        internal void RemoveCollider(QuadtreeCollider collider)
+        internal OperationResult RemoveCollider(QuadtreeCollider collider)
         {
-            // 根据位置移除碰撞器，但有时候碰撞器移出了所在节点的范围，就会发生找不到节点无法移除的情况
-            if (!RemoveColliderByPosition(collider))
+            // 根据位置移除碰撞器
+            OperationResult result = RemoveColliderByPosition(collider);
+
+            // 可能移除时碰撞器移出了所在节点的范围，会发生找不到节点无法移除的情况，此时需要遍历全树移除
+            if (!result.Success)
             {
-                // 按照位置移除失败，使用全节点遍历移除}
-                RemoveColliderFromAllNodes(collider);
+                // 按照位置移除失败，使用全节点遍历移除，并以全节点移除的结果为移除操作的结果
+                result = RemoveColliderFromAllNodes(collider);
             }
+
+            return result;
         }
 
         /// <summary>
@@ -26,7 +31,7 @@ namespace MtC.Tools.QuadtreeCollider
         /// </summary>
         /// <param name="collider"></param>
         /// <returns></returns>
-        private bool RemoveColliderByPosition(QuadtreeCollider collider)
+        private OperationResult RemoveColliderByPosition(QuadtreeCollider collider)
         {
             // 有子节点，通知子节点移除碰撞器
             if (HaveChildren())
@@ -43,19 +48,21 @@ namespace MtC.Tools.QuadtreeCollider
         /// </summary>
         /// <param name="collider"></param>
         /// <returns></returns>
-        private bool RemoveColliderFromChildrenByPosition(QuadtreeCollider collider)
+        private OperationResult RemoveColliderFromChildrenByPosition(QuadtreeCollider collider)
         {
-            // 遍历所有子节点并进行移除，有移除成功的则返回移除成功
+            // 遍历所有子节点并进行移除，有移除成功的则返回子节点的移除结果
             foreach (QuadtreeNode child in children)
             {
-                if (child.RemoveColliderByPosition(collider))
+                OperationResult result = child.RemoveColliderByPosition(collider);
+                if (result.Success)
                 {
-                    return true;
+                    return result;
                 }
             }
 
             // 所有子节点都移除失败，返回移除失败
-            return false;
+            return new OperationResult(false);
+            // FIXME：移除失败应该不用更新映射表，但还是确认下比较安全
         }
 
         /// <summary>
@@ -63,7 +70,7 @@ namespace MtC.Tools.QuadtreeCollider
         /// </summary>
         /// <param name="collider"></param>
         /// <returns></returns>
-        private bool RemoveColliderFromSelfByPosition(QuadtreeCollider collider)
+        private OperationResult RemoveColliderFromSelfByPosition(QuadtreeCollider collider)
         {
             // 如果碰撞器在当前节点范围内则进行移除并返回移除结果
             if (area.Contains(collider.Position))
@@ -72,7 +79,8 @@ namespace MtC.Tools.QuadtreeCollider
             }
 
             // 不在范围内返回移除失败
-            return false;
+            return new OperationResult(false);
+            // FIXME：移除失败应该不用更新映射表，但还是确认下比较安全
         }
 
         /// <summary>
@@ -80,9 +88,20 @@ namespace MtC.Tools.QuadtreeCollider
         /// </summary>
         /// <param name="collider"></param>
         /// <returns></returns>
-        private bool RemoveColliderFromSelf(QuadtreeCollider collider)
+        private OperationResult RemoveColliderFromSelf(QuadtreeCollider collider)
         {
-            return colliders.Remove(collider);
+            bool listResult = colliders.Remove(collider);
+
+            if (listResult)
+            {
+                return new OperationResult(true);
+                // FIXME：需要更新映射表
+            }
+            else
+            {
+                return new OperationResult(false);
+                // FIXME：移除失败应该不用更新映射表，但还是确认下比较安全
+            }
         }
 
         /// <summary>
@@ -90,7 +109,7 @@ namespace MtC.Tools.QuadtreeCollider
         /// </summary>
         /// <param name="collider"></param>
         /// <returns></returns>
-        private bool RemoveColliderFromAllNodes(QuadtreeCollider collider)
+        private OperationResult RemoveColliderFromAllNodes(QuadtreeCollider collider)
         {
             // 有子节点，通知子节点移除指定碰撞器
             if (HaveChildren())
@@ -107,19 +126,22 @@ namespace MtC.Tools.QuadtreeCollider
         /// </summary>
         /// <param name="collider"></param>
         /// <returns></returns>
-        private bool RemoveColliderFromChildrenAndAllNodes(QuadtreeCollider collider)
+        private OperationResult RemoveColliderFromChildrenAndAllNodes(QuadtreeCollider collider)
         {
-            // 通知所有子节点移除碰撞器，移除成功则返回成功
+            // 通知所有子节点移除碰撞器，移除成功则返回操作结果
             foreach (QuadtreeNode child in children)
             {
-                if (child.RemoveColliderFromAllNodes(collider))
+                OperationResult result = child.RemoveColliderFromAllNodes(collider);
+                if (result.Success)
                 {
-                    return true;
+                    return result;
+                    // FIXME：需要更新映射表
                 }
             }
 
             // 所有子节点都移除失败，返回移除失败
-            return false;
+            return new OperationResult(false);
+            // FIXME：移除失败应该不用更新映射表，但还是确认下比较安全
         }
     }
 }
