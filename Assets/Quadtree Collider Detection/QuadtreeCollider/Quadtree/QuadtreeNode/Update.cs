@@ -64,6 +64,7 @@ namespace MtC.Tools.QuadtreeCollider
             }
 
             // FIXME；在所有子节点更新完毕后进行是否需要合并的判断，在遍历子节点的过程中决不能合并节点，否则会导致极其混乱的逻辑纠缠
+            // FIXME：因此这里的合并逻辑和一般的移除不同，移除是下到上合并，更新是上到下逐次判断合并
 
             return result;
         }
