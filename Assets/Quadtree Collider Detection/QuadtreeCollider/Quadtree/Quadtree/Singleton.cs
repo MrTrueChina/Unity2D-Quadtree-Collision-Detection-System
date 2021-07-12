@@ -92,12 +92,19 @@ namespace MtC.Tools.QuadtreeCollider
             }
 
             // 从根节点开始移除碰撞器
-            instance.root.RemoveCollider(collider);
+            QuadtreeNode.OperationResult result = instance.root.RemoveCollider(collider);
 
-            // 如果要移除的碰撞器是检测器，移除检测器
-            if (collider.IsDetector)
+            // 移除成功进行后续操作
+            if (result.Success)
             {
-                RemoveDetector(collider);
+                // 覆盖合并映射表并移除空值
+                Instance.collidersToNodes.OverlayMerge(result.CollidersToNodes).RemoveOnValueIsNull();
+
+                // 如果要移除的碰撞器是检测器，移除检测器
+                if (collider.IsDetector)
+                {
+                    RemoveDetector(collider);
+                }
             }
         }
 
