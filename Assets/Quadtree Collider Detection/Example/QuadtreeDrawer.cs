@@ -267,8 +267,6 @@ namespace MtC.Tools.QuadtreeCollider
         {
             Dictionary<QuadtreeCollider, QuadtreeNode> collidersToNodes = GetCollidersToNodes(instance);
 
-            Debug.Log(collidersToNodes.Count);
-
             foreach(KeyValuePair<QuadtreeCollider, QuadtreeNode> pair in collidersToNodes)
             {
                 Handles.Label(pair.Key.Position, "所属节点：(" + pair.Value.Area.x + ", " + pair.Value.Area.y + ")");
