@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 namespace MtC.Tools.QuadtreeCollider
 {
@@ -33,8 +34,8 @@ namespace MtC.Tools.QuadtreeCollider
             // 不符合存入标准的直接返回存入失败
             if (!canAdd(this, collider))
             {
+                // 不符合存入标准并不会导致映射表的变化，只返回失败即可
                 return new OperationResult(false);
-                // FIXME：这里应该不需要操作节点表，但还是确认一下比较安全
             }
 
             // 有子节点，发给子节点保存
@@ -81,13 +82,17 @@ namespace MtC.Tools.QuadtreeCollider
 
             // 添加进碰撞器列表
             colliders.Add(collider);
-            // FIXME：需要记录映射表
+            // 记录下碰撞器到这个节点的映射
+            result.CollidersToNodes.Add(collider, this);
 
             // 如果需要分割节点则进行分割
             if (NeedSplit())
             {
-                Split();
-                // FIXME：分割节点需要更新映射表
+                // 分割节点
+                OperationResult splitResult = Split();
+
+                // 将分割节点的映射覆盖到返回结果的映射中
+                result.CollidersToNodes.OverlayMerge(splitResult.CollidersToNodes);
             }
 
             return result;
@@ -150,8 +155,11 @@ namespace MtC.Tools.QuadtreeCollider
             // 把当前节点的碰撞器全部存入到子节点，这里为了防止可能有碰撞器已经离开了节点范围，需要根据方向而不是范围存入
             foreach (QuadtreeCollider collider in colliders)
             {
-                AddColliderIntoChildren(collider, (nodeParam, colliderParam) => nodeParam.AddColliderByDirection(colliderParam));
-                // FIXME：这里需要记录操作后的映射表
+                // 根据方向进行存入
+                OperationResult addResult = AddColliderByDirection(collider);
+
+                // 因为分发给子节点后子节点可能也会发生分割，因此通过覆盖合并的方式把子节点的映射合并进返回结果中
+                result.CollidersToNodes.OverlayMerge(addResult.CollidersToNodes);
             }
 
             // 清空当前节点存储的碰撞器
@@ -171,6 +179,12 @@ namespace MtC.Tools.QuadtreeCollider
         {
             return AddCollider(collider, (nodeParam, colliderParam) =>
             {
+                // 没有父节点的是根节点，根节点可以存入任何方向的碰撞器
+                if(nodeParam.parent == null)
+                {
+                    return true;
+                }
+
                 // 当前节点相对于父节点的方向与碰撞器相对于父节点的方向，在 X 轴上是否一致
                 bool colliderAndNodeOnSameXSide = !((nodeParam.Area.center.x > nodeParam.parent.Area.center.x) ^ (colliderParam.Position.x > nodeParam.parent.Area.center.x));
                 // 当前节点相对于父节点的方向与碰撞器相对于父节点的方向，在 Y 轴上是否一致
