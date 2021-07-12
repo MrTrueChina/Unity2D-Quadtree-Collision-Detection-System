@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 namespace MtC.Tools.QuadtreeCollider
 {
@@ -110,7 +111,6 @@ namespace MtC.Tools.QuadtreeCollider
     internal static partial class DictionaryExtension
     {
         /// <summary>
-        /// 
         /// 将指定的 Dictionary 中的内容直接覆盖进调用这个方法的 Dictionary 中<br/>
         /// 【注意】这个方法会导致调用的 Dictionary 内容变化
         /// </summary>
@@ -118,7 +118,8 @@ namespace MtC.Tools.QuadtreeCollider
         /// <typeparam name="TValue"></typeparam>
         /// <param name="mainDictonary"></param>
         /// <param name="subDictonary"></param>
-        public static void OverlayMerge<TKey, TValue>(this Dictionary<TKey, TValue> mainDictonary, Dictionary<TKey, TValue> subDictonary)
+        /// <returns></returns>
+        public static Dictionary<TKey, TValue> OverlayMerge<TKey, TValue>(this Dictionary<TKey, TValue> mainDictonary, Dictionary<TKey, TValue> subDictonary)
         {
             // 遍历整个 subDictionary
             foreach(KeyValuePair<TKey,TValue> pair in subDictonary)
@@ -126,6 +127,28 @@ namespace MtC.Tools.QuadtreeCollider
                 // 使用根据索引存值的特性，如果没有这个 Key 则添加，有这个 Key 则覆盖
                 mainDictonary[pair.Key] = subDictonary[pair.Key];
             }
+
+            return mainDictonary;
+        }
+
+        /// <summary>
+        /// 移除掉 Value 为 null 的值<br/>
+        /// 【注意】这个方法会导致调用的 Dictionary 内容变化
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="mainDictonary"></param>
+        /// <returns></returns>
+        public static Dictionary<TKey, TValue> RemoveOnValueIsNull<TKey, TValue>(this Dictionary<TKey, TValue> mainDictonary)
+        {
+            List<TKey> nullKeys = mainDictonary.Where(pair => pair.Value == null).Select(pair => pair.Key).ToList();
+
+            nullKeys.ForEach(key =>
+            {
+                mainDictonary.Remove(key);
+            });
+
+            return mainDictonary;
         }
     }
 }
