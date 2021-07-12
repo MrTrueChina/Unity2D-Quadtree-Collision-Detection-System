@@ -103,4 +103,29 @@ namespace MtC.Tools.QuadtreeCollider
             return children != null;
         }
     }
+
+    /// <summary>
+    /// <see cref="Dictionary{TKey, TValue}"/> 的扩展方法类
+    /// </summary>
+    internal static partial class DictionaryExtension
+    {
+        /// <summary>
+        /// 
+        /// 将指定的 Dictionary 中的内容直接覆盖进调用这个方法的 Dictionary 中<br/>
+        /// 【注意】这个方法会导致调用的 Dictionary 内容变化
+        /// </summary>
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="mainDictonary"></param>
+        /// <param name="subDictonary"></param>
+        public static void OverlayMerge<TKey, TValue>(this Dictionary<TKey, TValue> mainDictonary, Dictionary<TKey, TValue> subDictonary)
+        {
+            // 遍历整个 subDictionary
+            foreach(KeyValuePair<TKey,TValue> pair in subDictonary)
+            {
+                // 使用根据索引存值的特性，如果没有这个 Key 则添加，有这个 Key 则覆盖
+                mainDictonary[pair.Key] = subDictonary[pair.Key];
+            }
+        }
+    }
 }
