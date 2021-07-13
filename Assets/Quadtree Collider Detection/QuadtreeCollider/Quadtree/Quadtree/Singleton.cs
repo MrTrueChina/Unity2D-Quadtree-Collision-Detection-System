@@ -68,6 +68,12 @@ namespace MtC.Tools.QuadtreeCollider
         /// <param name="collider"></param>
         public static void RemoveCollider(QuadtreeCollider collider)
         {
+            // 如果没有实例，不进行处理，这一步是必须的，否则在游戏关闭时会发生销毁时四叉树实例一次次出现，进而导致异常
+            if(instance == null)
+            {
+                return;
+            }
+
             // 映射表里没有这个碰撞器，说明树里没有这个碰撞器，直接返回
             if (!Instance.collidersToNodes.ContainsKey(collider))
             {
