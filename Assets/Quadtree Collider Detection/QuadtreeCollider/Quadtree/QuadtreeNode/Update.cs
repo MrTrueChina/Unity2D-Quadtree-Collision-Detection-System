@@ -18,6 +18,20 @@ namespace MtC.Tools.QuadtreeCollider
             // 更新碰撞器位置
             OperationResult positionResult = UpdatePosition();
 
+            /*
+             * FIXME：此处有一个重大逻辑问题
+             * 首先，在进行碰撞检测时会通过最大半径来判断一个区域到底有没有可能发生碰撞，也就是说碰撞检测时必须保证每个区域的最大半径是正确的
+             * 但是，在更新位置时可能导致节点的分割和合并，这就导致有些全新的节点会没被更新到
+             * 因此，逻辑是先更新位置后更新半径，这样更新半径时就不会漏掉任何一个节点
+             * 
+             * 但这些有一个前提：更新从根节点发起，这才能保证更新不漏
+             * 而更新位置可能会有碰撞器跑出了根节点范围，这会导致四叉树生长。原来的根节点在生长后的四叉树里并不是根节点
+             * 这就导致一旦四叉树生长，那么新生长从的节点都不会更新半径，它们的半径都是负无穷，也就不会进行碰撞检测，进而导致应该碰撞的碰撞器检测不到碰撞
+             * 
+             * 要解决这个问题，最简单的办法是两次更新都由包装类通过根节点发起
+             * 这会引申出一个问题，现在的设计中包装类同时是实例，也就导致四叉树逻辑和 Unity3D 逻辑在包装层面是结合的而不是分离的，这可能需要进行后续分割，即 节点、树包装、实例，三者分离
+             */
+
             // 将更新碰撞器位置导致的更新合并进结果中
             result.CollidersToNodes.OverlayMerge(positionResult.CollidersToNodes);
 
@@ -31,7 +45,7 @@ namespace MtC.Tools.QuadtreeCollider
         /// 更新碰撞器位置
         /// </summary>
         /// <returns></returns>
-        private OperationResult UpdatePosition()
+        public OperationResult UpdatePosition()
         {
             if (HaveChildren())
             {
@@ -174,7 +188,7 @@ namespace MtC.Tools.QuadtreeCollider
         /// 更新最大半径
         /// </summary>
         /// <returns></returns>
-        private float UpdateMaxRadius()
+        public float UpdateMaxRadius()
         {
             if (HaveChildren())
             {
