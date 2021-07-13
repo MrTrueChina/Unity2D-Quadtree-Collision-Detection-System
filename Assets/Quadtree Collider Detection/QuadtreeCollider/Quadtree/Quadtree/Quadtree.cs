@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 namespace MtC.Tools.QuadtreeCollider
 {
@@ -8,12 +9,6 @@ namespace MtC.Tools.QuadtreeCollider
     /// </summary>
     internal partial class Quadtree : MonoBehaviour
     {
-        /// <summary>
-        /// 所有检测器
-        /// </summary>
-        private readonly List<QuadtreeCollider> detectors = new List<QuadtreeCollider>();
-        // FIXME：这个检测器的维护逻辑本身就涉及到一些组件生命周期问题，在字典表完善后改为使用字典表进行
-
         /// <summary>
         /// 四叉树根节点
         /// </summary>
@@ -52,8 +47,8 @@ namespace MtC.Tools.QuadtreeCollider
         /// </summary>
         private void Detect()
         {
-            // 防止在进行检测时发生检测器列表的变化，直接用碰撞器列表内容创建新列表
-            List<QuadtreeCollider> detectorsTemp = new List<QuadtreeCollider>(detectors);
+            // 筛选出所有碰撞器中是检测器的
+            List<QuadtreeCollider> detectorsTemp = collidersToNodes.Keys.Where(collider => collider.IsDetector).ToList();
 
             foreach (QuadtreeCollider detector in detectorsTemp)
             {
