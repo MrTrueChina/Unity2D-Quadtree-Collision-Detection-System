@@ -39,7 +39,11 @@ namespace MtC.Tools.QuadtreeCollider
         /// <param name="collider"></param>
         public static void AddCollider(QuadtreeCollider collider)
         {
-            // FIXME：这里需要加一个不能重复存入的处理，使用映射表就可以处理
+            // 不能重复存入碰撞器
+            if (Instance.collidersToNodes.ContainsKey(collider))
+            {
+                return;
+            }
 
             // 向实例中添加碰撞器
             Instance.DoAddCollider(collider);
