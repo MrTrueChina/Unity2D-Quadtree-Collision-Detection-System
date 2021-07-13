@@ -18,6 +18,8 @@ namespace MtC.Tools.QuadtreeCollider
             if (Application.isPlaying)
             {
                 DrawQuadtreeNodes(GetQuadtreeRoot());
+
+                DrawCollidersToNodes(GetQuadtreeInstance());
             }
         }
 
@@ -258,6 +260,26 @@ namespace MtC.Tools.QuadtreeCollider
         private float GetMaxRadius(QuadtreeNode quadtreeNode)
         {
             return (float)typeof(QuadtreeNode).GetField("maxRadius", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(quadtreeNode);
+        }
+
+        // 绘制碰撞器到节点的映射表
+        private void DrawCollidersToNodes(Quadtree instance)
+        {
+            Dictionary<QuadtreeCollider, QuadtreeNode> collidersToNodes = GetCollidersToNodes(instance);
+
+            foreach(KeyValuePair<QuadtreeCollider, QuadtreeNode> pair in collidersToNodes)
+            {
+                Handles.Label(pair.Key.Position, "所属节点：(" + pair.Value.Area.x + ", " + pair.Value.Area.y + ")");
+            }
+        }
+
+        /// <summary>
+        /// 获取四叉树映射表
+        /// </summary>
+        /// <returns></returns>
+        private Dictionary<QuadtreeCollider,QuadtreeNode> GetCollidersToNodes(Quadtree instance)
+        {
+            return (Dictionary<QuadtreeCollider, QuadtreeNode>)typeof(Quadtree).GetField("collidersToNodes", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(instance);
         }
     }
 }

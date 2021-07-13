@@ -12,10 +12,16 @@ namespace MtC.Tools.QuadtreeCollider
         /// 所有检测器
         /// </summary>
         private readonly List<QuadtreeCollider> detectors = new List<QuadtreeCollider>();
+        // FIXME：这个检测器的维护逻辑本身就涉及到一些组件生命周期问题，在字典表完善后改为使用字典表进行
+
         /// <summary>
         /// 四叉树根节点
         /// </summary>
         private QuadtreeNode root = null;
+        /// <summary>
+        /// 碰撞器到节点的映射表
+        /// </summary>
+        private readonly Dictionary<QuadtreeCollider, QuadtreeNode> collidersToNodes = new Dictionary<QuadtreeCollider, QuadtreeNode>();
 
         private void Awake()
         {

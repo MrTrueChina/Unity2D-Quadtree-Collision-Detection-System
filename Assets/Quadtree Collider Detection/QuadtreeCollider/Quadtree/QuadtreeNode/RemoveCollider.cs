@@ -60,9 +60,8 @@ namespace MtC.Tools.QuadtreeCollider
                 }
             }
 
-            // 所有子节点都移除失败，返回移除失败
+            // 所有子节点都移除失败，返回移除失败，移除失败不用更新映射表，返回失败即可
             return new OperationResult(false);
-            // FIXME：移除失败应该不用更新映射表，但还是确认下比较安全
         }
 
         /// <summary>
@@ -78,9 +77,8 @@ namespace MtC.Tools.QuadtreeCollider
                 return RemoveColliderFromSelf(collider);
             }
 
-            // 不在范围内返回移除失败
+            // 不在范围内返回移除失败，移除失败不用更新映射表，返回失败即可
             return new OperationResult(false);
-            // FIXME：移除失败应该不用更新映射表，但还是确认下比较安全
         }
 
         /// <summary>
@@ -94,13 +92,18 @@ namespace MtC.Tools.QuadtreeCollider
 
             if (listResult)
             {
-                return new OperationResult(true);
-                // FIXME：需要更新映射表
+                // 创建操作成功的返回对象
+                OperationResult result = new OperationResult(true);
+
+                // 映射表值为 null 表示碰撞器不属于任何节点
+                result.CollidersToNodes.Add(collider, null);
+
+                return result;
             }
             else
             {
+                // 返回移除失败，移除失败不改变映射表，直接返回失败即可
                 return new OperationResult(false);
-                // FIXME：移除失败应该不用更新映射表，但还是确认下比较安全
             }
         }
 
@@ -134,14 +137,13 @@ namespace MtC.Tools.QuadtreeCollider
                 OperationResult result = child.RemoveColliderFromAllNodes(collider);
                 if (result.Success)
                 {
+                    // 一个节点移除成功后就会停止遍历，返回结果即可
                     return result;
-                    // FIXME：需要更新映射表
                 }
             }
 
-            // 所有子节点都移除失败，返回移除失败
+            // 所有子节点都移除失败，返回移除失败，移除失败不会改变映射表，只要返回失败即可
             return new OperationResult(false);
-            // FIXME：移除失败应该不用更新映射表，但还是确认下比较安全
         }
     }
 }

@@ -39,6 +39,8 @@ namespace MtC.Tools.QuadtreeCollider
         /// <param name="collider"></param>
         public static void AddCollider(QuadtreeCollider collider)
         {
+            // FIXME：这里需要加一个不能重复存入的处理，使用映射表就可以处理
+
             // 向实例中添加碰撞器
             Instance.DoAddCollider(collider);
 
@@ -49,14 +51,15 @@ namespace MtC.Tools.QuadtreeCollider
             }
         }
 
+        // FIXME：这个不走标准流程的方法需要删掉
         /// <summary>
         /// 在重新存入碰撞器时使用的存入方法，不会改变检测器列表
         /// </summary>
         /// <param name="collider"></param>
-        internal static void AddColliderOnReset(QuadtreeCollider collider)
+        internal static QuadtreeNode.OperationResult AddColliderOnReset(QuadtreeCollider collider)
         {
             // 向实例中添加碰撞器
-            Instance.DoAddCollider(collider);
+            return Instance.DoAddCollider(collider);
 
             // 重新存入碰撞器是将四叉树中存在的碰撞器取出来重新存入，前后的碰撞器列表并没有变化，检测器列表更不会变化，省一步快一步
         }
@@ -80,6 +83,8 @@ namespace MtC.Tools.QuadtreeCollider
         /// <param name="collider"></param>
         public static void RemoveCollider(QuadtreeCollider collider)
         {
+            // FIXME：在有了映射表之后可以通过映射表对不存在的碰撞器移除进行拦截
+
             // 没有实例则不进行操作
             if (instance == null)
             {
@@ -87,12 +92,19 @@ namespace MtC.Tools.QuadtreeCollider
             }
 
             // 从根节点开始移除碰撞器
-            instance.root.RemoveCollider(collider);
+            QuadtreeNode.OperationResult result = instance.root.RemoveCollider(collider);
 
-            // 如果要移除的碰撞器是检测器，移除检测器
-            if (collider.IsDetector)
+            // 移除成功进行后续操作
+            if (result.Success)
             {
-                RemoveDetector(collider);
+                // 覆盖合并映射表并移除空值
+                Instance.collidersToNodes.OverlayMerge(result.CollidersToNodes).RemoveOnValueIsNull();
+
+                // 如果要移除的碰撞器是检测器，移除检测器
+                if (collider.IsDetector)
+                {
+                    RemoveDetector(collider);
+                }
             }
         }
 
