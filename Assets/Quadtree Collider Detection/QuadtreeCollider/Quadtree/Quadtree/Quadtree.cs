@@ -39,7 +39,10 @@ namespace MtC.Tools.QuadtreeCollider
         private void UpdateQuadtree()
         {
             // 从根节点开始更新四叉树
-            root.Update();
+            QuadtreeNode.OperationResult result = root.Update();
+
+            // 更新映射表
+            collidersToNodes.OverlayMerge(result.CollidersToNodes).RemoveOnValueIsNull();
         }
 
         /// <summary>
