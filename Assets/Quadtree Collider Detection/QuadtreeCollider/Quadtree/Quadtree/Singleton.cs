@@ -68,16 +68,14 @@ namespace MtC.Tools.QuadtreeCollider
         /// <param name="collider"></param>
         public static void RemoveCollider(QuadtreeCollider collider)
         {
-            // FIXME：在有了映射表之后可以通过映射表对不存在的碰撞器移除进行拦截
-
-            // 没有实例则不进行操作
-            if (instance == null)
+            // 映射表里没有这个碰撞器，说明树里没有这个碰撞器，直接返回
+            if (!Instance.collidersToNodes.ContainsKey(collider))
             {
                 return;
             }
 
             // 从根节点开始移除碰撞器
-            QuadtreeNode.OperationResult result = instance.root.RemoveCollider(collider);
+            QuadtreeNode.OperationResult result = Instance.root.RemoveCollider(collider);
 
             // 移除成功后更新映射表
             if (result.Success)
