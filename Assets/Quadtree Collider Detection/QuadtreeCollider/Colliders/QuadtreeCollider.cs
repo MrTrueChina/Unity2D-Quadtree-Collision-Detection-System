@@ -48,22 +48,8 @@ namespace MtC.Tools.QuadtreeCollider
         /// </summary>
         public bool IsDetector
         {
-            get
-            {
-                return isDetector;
-            }
-            set
-            {
-                if (isDetector != value) // 只有有变化时才处理，更新碰撞器成本可以省下来
-                {
-                    isDetector = value;
-
-                    if (isDetector)
-                        Quadtree.AddDetector(this);
-                    else
-                        Quadtree.RemoveDetector(this);
-                }
-            }
+            get { return isDetector; }
+            set { isDetector = value; }
         }
         [SerializeField]
         private bool isDetector;
