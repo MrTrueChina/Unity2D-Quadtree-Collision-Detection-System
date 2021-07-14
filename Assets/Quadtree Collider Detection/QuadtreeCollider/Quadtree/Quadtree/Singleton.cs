@@ -39,7 +39,11 @@ namespace MtC.Tools.QuadtreeCollider
         /// <param name="collider"></param>
         public static void AddCollider(QuadtreeCollider collider)
         {
-            // FIXME：这里需要加一个不能重复存入的处理，使用映射表就可以处理
+            // 不能重复存入碰撞器
+            if (Instance.collidersToNodes.ContainsKey(collider))
+            {
+                return;
+            }
 
             // 向实例中添加碰撞器
             Instance.DoAddCollider(collider);
@@ -64,16 +68,20 @@ namespace MtC.Tools.QuadtreeCollider
         /// <param name="collider"></param>
         public static void RemoveCollider(QuadtreeCollider collider)
         {
-            // FIXME：在有了映射表之后可以通过映射表对不存在的碰撞器移除进行拦截
-
-            // 没有实例则不进行操作
-            if (instance == null)
+            // 如果没有实例，不进行处理，这一步是必须的，否则在游戏关闭时会发生销毁时四叉树实例一次次出现，进而导致异常
+            if(instance == null)
             {
                 return;
             }
 
-            // 从根节点开始移除碰撞器
-            QuadtreeNode.OperationResult result = instance.root.RemoveCollider(collider);
+            // 映射表里没有这个碰撞器，说明树里没有这个碰撞器，直接返回
+            if (!Instance.collidersToNodes.ContainsKey(collider))
+            {
+                return;
+            }
+
+            // 根据映射表直接从末梢节点移除碰撞器
+            QuadtreeNode.OperationResult result = Instance.collidersToNodes[collider].RemoveColliderFromSelf(collider);
 
             // 移除成功后更新映射表
             if (result.Success)

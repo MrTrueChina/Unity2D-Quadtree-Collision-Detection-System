@@ -38,8 +38,18 @@ namespace MtC.Tools.QuadtreeCollider
         /// </summary>
         private void UpdateQuadtree()
         {
-            // 从根节点开始更新四叉树
-            root.Update();
+            // 从根节点开始更新碰撞器位置
+            QuadtreeNode.OperationResult positionResult = root.UpdatePosition();
+
+            // 更新映射表
+            collidersToNodes.OverlayMerge(positionResult.CollidersToNodes).RemoveOnValueIsNull();
+
+            // 从根节点更新最大半径
+            root.UpdateMaxRadius();
+
+            // 从包装类两次调用而不是从根节点一次调用的原因是，更新位置时可能有的节点跑到了树外面，这就需要生长四叉树，根节点就会改变
+            // 因为生长出的节点原来是没有碰撞器的，因此这些节点不需要进行碰撞器位置越界更新
+            // 但这些节点需要进行最大半径更新，否则新节点的最大半径是负无穷，会导致生长的这一帧碰撞检测错误
         }
 
         /// <summary>

@@ -7,31 +7,10 @@ namespace MtC.Tools.QuadtreeCollider
     internal partial class QuadtreeNode
     {
         /// <summary>
-        /// 更新四叉树中的所有碰撞器
-        /// </summary>
-        /// <returns></returns>
-        internal OperationResult Update()
-        {
-            // 更新必然成功
-            OperationResult result = new OperationResult(true);
-
-            // 更新碰撞器位置
-            OperationResult positionResult = UpdatePosition();
-
-            // 将更新碰撞器位置导致的更新合并进结果中
-            result.CollidersToNodes.OverlayMerge(positionResult.CollidersToNodes);
-
-            // 更新碰撞器最大半径
-            UpdateMaxRadius();
-
-            return result;
-        }
-
-        /// <summary>
         /// 更新碰撞器位置
         /// </summary>
         /// <returns></returns>
-        private OperationResult UpdatePosition()
+        internal OperationResult UpdatePosition()
         {
             if (HaveChildren())
             {
@@ -174,7 +153,7 @@ namespace MtC.Tools.QuadtreeCollider
         /// 更新最大半径
         /// </summary>
         /// <returns></returns>
-        private float UpdateMaxRadius()
+        internal float UpdateMaxRadius()
         {
             if (HaveChildren())
             {
