@@ -92,7 +92,7 @@ namespace MtC.Tools.QuadtreeCollider
             foreach (QuadtreeCollider collider in new List<QuadtreeCollider>(result.CollidersToNodes.Keys))
             {
                 // 移除碰撞器
-                OperationResult removeResult = RemoveSelfColliderOnReset(collider);
+                OperationResult removeResult = Quadtree.RemoveCollider(collider);
 
                 // 记录映射表的变化
                 result.CollidersToNodes.OverlayMerge(removeResult.CollidersToNodes);
@@ -100,28 +100,6 @@ namespace MtC.Tools.QuadtreeCollider
 
             // 返回结果
             return result;
-        }
-
-        // FIXME：这个方法没有走通常流程，需要删除
-        /// <summary>
-        /// 从当前节点移除碰撞器，仅在移除并重新存入时使用
-        /// </summary>
-        /// <param name="collider"></param>
-        private OperationResult RemoveSelfColliderOnReset(QuadtreeCollider collider)
-        {
-            // 就在当前节点移除，一定成功
-            OperationResult result = new OperationResult(true);
-
-            // 移除碰撞器
-            colliders.Remove(collider);
-
-            // 记录更新映射，设为 null 的表示碰撞器不属于任何节点
-            result.CollidersToNodes.Add(collider, null);
-
-            return result;
-
-            // TODO：可以通过添加字典使封装类具有直接从树梢移除碰撞器的能力，这个方法就可以提取到包装类去了
-            // TODO：移除不是完全从包装类进行，出现bug优先排查此处
         }
 
         /// <summary>
@@ -137,7 +115,7 @@ namespace MtC.Tools.QuadtreeCollider
             foreach (QuadtreeCollider collider in outOfFieldColliders)
             {
                 // 通过包装类重新存入碰撞器
-                OperationResult addResult = Quadtree.AddColliderOnReset(collider);
+                OperationResult addResult = Quadtree.AddCollider(collider);
 
                 // 将映射表变更合并进结果中
                 result.CollidersToNodes.OverlayMerge(addResult.CollidersToNodes);
