@@ -30,9 +30,6 @@ namespace MtC.Tools.QuadtreeCollider
         {
             // XXX：只假设了存入失败是因为碰撞器不在范围内，可能需要添加限制，或在每次循环时对四叉树总区域进行判断，如果节点就在总区域内部但还是存入失败则报错
 
-            // FIXME：如果是更新导致的碰撞器重新存入，重新存入导致四叉树生长，则会发生一个问题：新生长的四叉树节点是不会更新到的，这会导致一帧的时间里这些碰撞器无法被检测到碰撞
-            // FIXME：这会导致碰撞器明明没离开但还是离开碰撞，下一帧又进入碰撞
-
             // 存入
             QuadtreeNode.OperationResult result = root.AddColliderByArea(collider);
 

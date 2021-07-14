@@ -37,58 +37,51 @@ namespace MtC.Tools.QuadtreeCollider
         /// 向四叉树中添加碰撞器
         /// </summary>
         /// <param name="collider"></param>
-        public static void AddCollider(QuadtreeCollider collider)
+        public static QuadtreeNode.OperationResult AddCollider(QuadtreeCollider collider)
         {
             // 不能重复存入碰撞器
             if (Instance.collidersToNodes.ContainsKey(collider))
             {
-                return;
+                return new QuadtreeNode.OperationResult(false);
             }
 
             // 向实例中添加碰撞器
-            Instance.DoAddCollider(collider);
-        }
-
-        // FIXME：这个不走标准流程的方法需要删掉
-        /// <summary>
-        /// 在重新存入碰撞器时使用的存入方法，不会改变检测器列表
-        /// </summary>
-        /// <param name="collider"></param>
-        internal static QuadtreeNode.OperationResult AddColliderOnReset(QuadtreeCollider collider)
-        {
-            // 向实例中添加碰撞器
             return Instance.DoAddCollider(collider);
-
-            // 重新存入碰撞器是将四叉树中存在的碰撞器取出来重新存入，前后的碰撞器列表并没有变化，检测器列表更不会变化，省一步快一步
         }
 
         /// <summary>
         /// 从四叉树中移除碰撞器
         /// </summary>
         /// <param name="collider"></param>
-        public static void RemoveCollider(QuadtreeCollider collider)
+        public static QuadtreeNode.OperationResult RemoveCollider(QuadtreeCollider collider)
         {
             // 如果没有实例，不进行处理，这一步是必须的，否则在游戏关闭时会发生销毁时四叉树实例一次次出现，进而导致异常
             if(instance == null)
             {
-                return;
+                return new QuadtreeNode.OperationResult(false);
             }
 
-            // 映射表里没有这个碰撞器，说明树里没有这个碰撞器，直接返回
+            // 映射表里没有这个碰撞器，说明树里没有这个碰撞器，直接返回失败
             if (!Instance.collidersToNodes.ContainsKey(collider))
             {
-                return;
+                return new QuadtreeNode.OperationResult(false);
             }
 
             // 根据映射表直接从末梢节点移除碰撞器
             QuadtreeNode.OperationResult result = Instance.collidersToNodes[collider].RemoveColliderFromSelf(collider);
 
-            // 移除成功后更新映射表
+            
             if (result.Success)
             {
-                // 覆盖合并映射表并移除空值
+                // 移除成功后更新映射表，覆盖合并映射表并移除空值
                 Instance.collidersToNodes.OverlayMerge(result.CollidersToNodes).RemoveOnValueIsNull();
             }
+            else
+            {
+                throw new System.ArgumentOutOfRangeException("移除碰撞器 " + collider + " 时发生错误：碰撞器到节点的映射表中存在这个碰撞器，但映射到的节点  " + Instance.collidersToNodes[collider] + " 移除失败，可能是碰撞器并不在节点中");
+            }
+
+            return result;
         }
     }
 }
