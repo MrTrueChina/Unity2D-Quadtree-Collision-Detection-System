@@ -86,7 +86,7 @@ namespace MtC.Tools.QuadtreeCollider
         /// </summary>
         /// <param name="collider"></param>
         /// <returns></returns>
-        private OperationResult RemoveColliderFromSelf(QuadtreeCollider collider)
+        public OperationResult RemoveColliderFromSelf(QuadtreeCollider collider)
         {
             bool listResult = colliders.Remove(collider);
 

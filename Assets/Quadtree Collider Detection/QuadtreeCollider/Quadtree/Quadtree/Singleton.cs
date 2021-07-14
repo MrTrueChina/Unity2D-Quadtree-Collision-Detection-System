@@ -80,8 +80,8 @@ namespace MtC.Tools.QuadtreeCollider
                 return;
             }
 
-            // 从根节点开始移除碰撞器
-            QuadtreeNode.OperationResult result = Instance.root.RemoveCollider(collider);
+            // 根据映射表直接从末梢节点移除碰撞器
+            QuadtreeNode.OperationResult result = Instance.collidersToNodes[collider].RemoveColliderFromSelf(collider);
 
             // 移除成功后更新映射表
             if (result.Success)
