@@ -12,43 +12,37 @@ namespace MtC.Tools.QuadtreeCollider
         /// <summary>
         /// 半径
         /// </summary>
-        public float radius
+        public float Radius
         {
             get
             {
-                return _radius * Mathf.Max(Mathf.Abs(_transform.lossyScale.x), Mathf.Abs(_transform.lossyScale.y)); //TODO：后期可以考虑通过配置文件达到不同的面向方向
+                return radius * Mathf.Max(Mathf.Abs(transform.lossyScale.x), Mathf.Abs(transform.lossyScale.y));
+                //TODO：后期可以考虑通过配置文件达到不同的面向方向
             }
-            set { _radius = value; }
+            set { radius = value; }
         }
         [SerializeField]
-        private float _radius;
+        private float radius;
 
-        internal override float maxRadius => radius;
+        // 圆形碰撞器的最大半径就是半径
+        internal override float MaxRadius => Radius;
 
         protected override void DrawColliderGizomoSelected()
         {
-            Gizmos.color = (isDetector ? Color.yellow : Color.green) * 0.8f;
+            // 检测器是黄色，碰撞器是绿色
+            Gizmos.color = (IsDetector ? Color.yellow : Color.green) * 0.8f;
 
-            Vector3 beginPoint = transform.position + Vector3.right * _radius * Mathf.Max(Mathf.Abs(transform.lossyScale.x), Mathf.Abs(transform.lossyScale.y));       //三角函数角度是从正右方开始的，画圆起始点是最右边的点raw
-            Gizmos.DrawLine(transform.position, beginPoint);
-            for (int i = 1; i <= 144; i++)
-            {
-                float angle = 2 * Mathf.PI / 144 * i;
-
-                float x = _radius * Mathf.Max(Mathf.Abs(transform.lossyScale.x), Mathf.Abs(transform.lossyScale.y)) * Mathf.Cos(angle) + transform.position.x;
-                float y = _radius * Mathf.Max(Mathf.Abs(transform.lossyScale.x), Mathf.Abs(transform.lossyScale.y)) * Mathf.Sin(angle) + transform.position.y;
-                Vector3 endPoint = new Vector3(x, y, transform.position.z);
-
-                Gizmos.DrawLine(beginPoint, endPoint);
-
-                beginPoint = endPoint;
-            }
+            // 绘制圆形
+            MyGizmos.DrawCircle(transform.position, Radius);
         }
 
         private void OnValidate()
         {
-            if (_radius < 0)
-                _radius = 0;
+            // 限制编辑时半径不能小于 0
+            if (radius < 0)
+            {
+                radius = 0;
+            }
         }
     }
 }

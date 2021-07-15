@@ -38,3 +38,23 @@ Update Mode: updateDependencies
 
 The following packages were updated:
   com.unity.ide.rider from version 1.0.8 to 1.1.0
+
+=== Sat Jun 26 15:03:19 2021
+
+Packages were changed.
+Update Mode: updateDependencies
+
+The following packages were 已添加:
+  com.unity.ide.visualstudio@2.0.3
+The following packages were 已更新:
+  com.unity.ads 从版本 2.0.8 到 3.5.0
+  com.unity.analytics 从版本 3.3.2 到 3.5.3
+  com.unity.collab-proxy 从版本 1.2.16 到 1.3.9
+  com.unity.ide.rider 从版本 1.1.0 到 1.2.1
+  com.unity.ide.vscode 从版本 1.0.7 到 1.2.3
+  com.unity.purchasing 从版本 2.0.6 到 2.1.1
+  com.unity.test-framework 从版本 1.0.13 到 1.1.18
+  com.unity.textmeshpro 从版本 2.0.1 到 3.0.1
+  com.unity.timeline 从版本 1.1.0 到 1.2.6
+The following packages were 已移除:
+  com.unity.package-manager-ui@2.2.0

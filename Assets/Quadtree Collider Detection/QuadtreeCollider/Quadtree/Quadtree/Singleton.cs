@@ -4,90 +4,117 @@ using UnityEngine;
 
 namespace MtC.Tools.QuadtreeCollider
 {
-    // 单例部分
+    /// <summary>
+    /// 四叉树单例部分
+    /// </summary>
     internal partial class Quadtree : MonoBehaviour
     {
         /// <summary>
         /// 实例
         /// </summary>
-        private static Quadtree instance
+        private static Quadtree Instance
         {
             get
             {
-                if (_instance != null)
-                    return _instance;
+                if (instance != null)
+                    return instance;
 
                 lock (typeof(Quadtree))
                 {
-                    if (_instance == null)
+                    if (instance == null)
                     {
-                        _instance = new GameObject("Quadtree").AddComponent<Quadtree>();
-                        DontDestroyOnLoad(_instance);
+                        // 创建一个带四叉树组件的对象，并设为不随场景加载销毁
+                        instance = new GameObject("Quadtree").AddComponent<Quadtree>();
+                        DontDestroyOnLoad(instance);
                     }
-                    return _instance;
+                    return instance;
                 }
             }
         }
-        private static Quadtree _instance;
+        private static Quadtree instance;
 
         /// <summary>
         /// 向四叉树中添加碰撞器
         /// </summary>
         /// <param name="collider"></param>
-        public static void AddCollider(QuadtreeCollider collider)
+        public static QuadtreeNode.OperationResult AddCollider(QuadtreeCollider collider)
         {
-            instance.DoAddCollider(collider);
+            // 不能重复存入碰撞器
+            if (Instance.collidersToNodes.ContainsKey(collider))
+            {
+                return new QuadtreeNode.OperationResult(false);
+            }
 
-            if (collider.isDetector)
-                AddDetector(collider);
+            // 向实例中添加碰撞器
+            return Instance.DoAddCollider(collider);
         }
 
         /// <summary>
-        /// 在重新存入碰撞器时使用的存入方法，不会改变检测器列表
+        /// 从四叉树中移除碰撞器，符合条件时会合并节点
         /// </summary>
         /// <param name="collider"></param>
-        internal static void AddColliderOnReset(QuadtreeCollider collider)
+        /// <returns></returns>
+        public static QuadtreeNode.OperationResult RemoveColliderWithMerge(QuadtreeCollider collider)
         {
-            instance.DoAddCollider(collider);
-
-            // 重新存入碰撞器是将四叉树中存在的碰撞器取出来重新存入，前后的碰撞器列表并没有变化，检测器列表更不会变化，省一步快一步
+            return RemoveCollider(collider, true);
         }
 
         /// <summary>
-        /// 添加检测器，只会添加进检测列表，不会添加碰撞器
+        /// 从四叉树中移除碰撞器，不进行合并
         /// </summary>
-        /// <param name="detector"></param>
-        internal static void AddDetector(QuadtreeCollider detector)
+        /// <param name="collider"></param>
+        internal static QuadtreeNode.OperationResult RemoveColliderWithOutMerge(QuadtreeCollider collider)
         {
-            if (!instance._detectors.Contains(detector))
-                instance._detectors.Add(detector);
+            return RemoveCollider(collider, false);
         }
 
         /// <summary>
         /// 从四叉树中移除碰撞器
         /// </summary>
         /// <param name="collider"></param>
-        public static void RemoveCollider(QuadtreeCollider collider)
+        /// <param name="withMerge">是否需要在需要合并的时候进行合并</param>
+        /// <returns></returns>
+        internal static QuadtreeNode.OperationResult RemoveCollider(QuadtreeCollider collider, bool withMerge)
         {
-            if (_instance == null)
-                return;
+            // 如果没有实例，不进行处理，这一步是必须的，否则在游戏关闭时会发生销毁时四叉树实例一次次出现，进而导致异常
+            if(instance == null)
+            {
+                return new QuadtreeNode.OperationResult(false);
+            }
 
-            _instance._root.RemoveCollider(collider);
+            // 映射表里没有这个碰撞器，说明树里没有这个碰撞器，直接返回失败
+            if (!Instance.collidersToNodes.ContainsKey(collider))
+            {
+                return new QuadtreeNode.OperationResult(false);
+            }
 
-            if (collider.isDetector)
-                RemoveDetector(collider);
-        }
+            // 根据映射表直接从末梢节点移除碰撞器
+            QuadtreeNode.OperationResult result;
+            if (withMerge)
+            {
+                result = Instance.collidersToNodes[collider].RemoveColliderFromSelfWithMerge(collider);
+            }
+            else
+            {
+                result = Instance.collidersToNodes[collider].RemoveColliderFromSelfWithOutMerge(collider);
+            }
 
-        /// <summary>
-        /// 移除检测器，只会移除出监测列表，不会移除碰撞器
-        /// </summary>
-        /// <param name="detector"></param>
-        internal static void RemoveDetector(QuadtreeCollider detector)
-        {
-            if (_instance == null)
-                return;
+            if (result.Success)
+            {
+                // 移除成功后更新映射表，覆盖合并映射表并移除空值
+                Instance.collidersToNodes.OverlayMerge(result.CollidersToNodes).RemoveOnValueIsNull();
+            }
+            else
+            {
+                throw new System.ArgumentOutOfRangeException(
+                    "移除碰撞器 "
+                    + "(" + collider.Position.x + ", " + collider.Position.y + ")"
+                    + " 时发生错误：碰撞器到节点的映射表中存在这个碰撞器，但映射到的节点  "
+                    + "(" + Instance.collidersToNodes[collider].Area.ToString() + ")"
+                    + " 移除失败，可能是碰撞器并不在节点中");
+            }
 
-            _instance._detectors.Remove(detector);
+            return result;
         }
     }
 }

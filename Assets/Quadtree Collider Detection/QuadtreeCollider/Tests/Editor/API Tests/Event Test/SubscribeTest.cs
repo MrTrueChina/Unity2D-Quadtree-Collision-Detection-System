@@ -4,64 +4,67 @@ using UnityEngine;
 using NUnit.Framework;
 using System;
 
-/// <summary>
-/// 事件委托的订阅机制测试
-/// </summary>
-[TestFixture]
-public class SubscribeTest
+namespace MtC.Tools.QuadtreeCollider.Test
 {
-    private Action<string> _actions;
-
-    [TearDown]
-    public void TearDown()
+    /// <summary>
+    /// 事件委托的订阅机制测试
+    /// </summary>
+    [TestFixture]
+    public class SubscribeTest
     {
-        if (_actions != null)
-            foreach (Action<string> a in _actions.GetInvocationList())
-                _actions -= a;
-    }
+        private Action<string> actions;
 
-    [Test]
-    public void RepeatSubscribe()
-    {
-        _actions += Say;
-        _actions += Say;
-        _actions += Say;
-
-        Debug.Log(_actions.GetInvocationList().Length == 1 ? "重复订阅不会产生多个订阅" : "重复订阅会产生多个订阅");
-    }
-
-    [Test]
-    public void RepeatCancelSubscribe()
-    {
-        bool exception = false;
-
-        try
+        [TearDown]
+        public void TearDown()
         {
-            _actions -= Say;
-        }
-        catch
-        {
-            exception = true;
+            if (actions != null)
+                foreach (Action<string> a in actions.GetInvocationList())
+                    actions -= a;
         }
 
-        Debug.Log(exception ? "重复取消订阅会导致异常" : "重复取消订阅会导致异常");
-    }
+        [Test]
+        public void RepeatSubscribe()
+        {
+            actions += Say;
+            actions += Say;
+            actions += Say;
 
-    [Test]
-    public void Subscribed()
-    {
-        bool subscribed = false;
-        _actions += Say;
+            Debug.Log(actions.GetInvocationList().Length == 1 ? "重复订阅不会产生多个订阅" : "重复订阅会产生多个订阅");
+        }
 
-        foreach (Action<string> action in _actions.GetInvocationList())
-            if (action == Say)
-                subscribed = true;
+        [Test]
+        public void RepeatCancelSubscribe()
+        {
+            bool exception = false;
 
-        Debug.Log(subscribed ? "使用 == 可以判断出是否已经订阅" : "使用 == 无法判断出是否已经订阅");
-    }
+            try
+            {
+                actions -= Say;
+            }
+            catch
+            {
+                exception = true;
+            }
 
-    private void Say(string str)
-    {
-        Debug.Log(str);
+            Debug.Log(exception ? "重复取消订阅会导致异常" : "重复取消订阅会导致异常");
+        }
+
+        [Test]
+        public void Subscribed()
+        {
+            bool subscribed = false;
+            actions += Say;
+
+            foreach (Action<string> action in actions.GetInvocationList())
+                if (action == Say)
+                    subscribed = true;
+
+            Debug.Log(subscribed ? "使用 == 可以判断出是否已经订阅" : "使用 == 无法判断出是否已经订阅");
+        }
+
+        private void Say(string str)
+        {
+            Debug.Log(str);
+        }
     }
 }
