@@ -151,13 +151,13 @@ namespace MtC.Tools.QuadtreeCollider
             OperationResult result = new OperationResult(true);
 
             // 将当前节点和所有子节点的碰撞器移除并记录
-            result.CollidersToNodes.OverlayMerge(RemoveAllColliders().CollidersToNodes);
+            OperationResult removeResult = RemoveAllColliders();
 
             // 把子节点列表抛弃掉
             children = null;
 
             // 把移除的子节点重新添加到当前节点中，这里使用直接添加，因为合并操作并不会导致节点达到分割标准
-            OperationResult addCollidersResult = AddCollidersIntoSelf(result.CollidersToNodes.Select(pair => pair.Key).ToList());
+            OperationResult addCollidersResult = AddCollidersIntoSelf(removeResult.CollidersToNodes.Select(pair => pair.Key).ToList());
 
             // 更新映射表修改记录
             result.CollidersToNodes.OverlayMerge(addCollidersResult.CollidersToNodes);
