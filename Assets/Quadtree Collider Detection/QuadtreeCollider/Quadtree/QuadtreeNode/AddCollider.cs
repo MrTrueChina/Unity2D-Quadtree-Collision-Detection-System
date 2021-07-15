@@ -185,10 +185,18 @@ namespace MtC.Tools.QuadtreeCollider
                     return true;
                 }
 
+                // 如果检测的节点是发起这个方法的节点，无论碰撞器在什么位置，都可以存入到这个节点中
+                if (nodeParam == this)
+                {
+                    return true;
+                }
+
                 // 当前节点相对于父节点的方向与碰撞器相对于父节点的方向，在 X 轴上是否一致
-                bool colliderAndNodeOnSameXSide = !((nodeParam.Area.center.x > nodeParam.parent.Area.center.x) ^ (colliderParam.Position.x > nodeParam.parent.Area.center.x));
+                bool colliderAndNodeOnSameXSide = !((nodeParam.Area.center.x >= nodeParam.parent.Area.center.x) ^ (colliderParam.Position.x >= nodeParam.parent.Area.center.x));
                 // 当前节点相对于父节点的方向与碰撞器相对于父节点的方向，在 Y 轴上是否一致
-                bool colliderAndNodeOnSameYSide = !((nodeParam.Area.center.y > nodeParam.parent.Area.center.y) ^ (colliderParam.Position.y > nodeParam.parent.Area.center.y));
+                bool colliderAndNodeOnSameYSide = !((nodeParam.Area.center.y >= nodeParam.parent.Area.center.y) ^ (colliderParam.Position.y >= nodeParam.parent.Area.center.y));
+
+                // 这里使用 >= 是因为 Rect 的范围是（包含左边和底边，不包含顶边和右边）
 
                 // 两个方向都一致，说明碰撞器可以存入这个节点
                 return colliderAndNodeOnSameXSide && colliderAndNodeOnSameYSide;

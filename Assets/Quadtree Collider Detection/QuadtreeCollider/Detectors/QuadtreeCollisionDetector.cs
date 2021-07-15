@@ -47,7 +47,6 @@ namespace MtC.Tools.QuadtreeCollider
             CircleQuadtreeCollider circleColliderB = (CircleQuadtreeCollider)colliderB;
 
             return Vector2.Distance(circleColliderA.Position, circleColliderB.Position) <= circleColliderA.Radius + circleColliderB.Radius;
-            //TODO：圆形碰撞器的半径和最大检测半径是一样的，如果功能无误可以考虑不进行强转节约计算量
         }
     }
 }

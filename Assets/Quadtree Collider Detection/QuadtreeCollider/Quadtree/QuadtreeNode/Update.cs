@@ -42,8 +42,17 @@ namespace MtC.Tools.QuadtreeCollider
                 result.CollidersToNodes.OverlayMerge(childResult.CollidersToNodes);
             }
 
-            // FIXME；在所有子节点更新完毕后进行是否需要合并的判断，在遍历子节点的过程中决不能合并节点，否则会导致极其混乱的逻辑纠缠
-            // FIXME：因此这里的合并逻辑和一般的移除不同，移除是下到上合并，更新是上到下逐次判断合并
+            // 如果达到了合并标准则进行合并
+            if (NeedMerge())
+            {
+                // 合并所有子节点
+                OperationResult mergeResult = Merge();
+
+                // 记录映射表变化
+                result.CollidersToNodes.OverlayMerge(mergeResult.CollidersToNodes);
+            }
+
+            // 这里需要在所有子节点更新完毕后进行是否需要合并的判断，在遍历子节点的过程中决不能合并节点，否则可能遍历到一半就到了合并标准，之后的遍历就会发生逻辑错误
 
             return result;
         }
@@ -92,7 +101,7 @@ namespace MtC.Tools.QuadtreeCollider
             foreach (QuadtreeCollider collider in new List<QuadtreeCollider>(result.CollidersToNodes.Keys))
             {
                 // 移除碰撞器
-                OperationResult removeResult = Quadtree.RemoveCollider(collider);
+                OperationResult removeResult = Quadtree.RemoveColliderWithOutMerge(collider);
 
                 // 记录映射表的变化
                 result.CollidersToNodes.OverlayMerge(removeResult.CollidersToNodes);

@@ -70,7 +70,6 @@ namespace MtC.Tools.QuadtreeCollider
 
                 // 发出碰撞事件
                 detector.SendCollision(collisionColliders);
-                // XXX：如果在检测时报出空异常等异常，可能是这里没有进行空异常的判断导致的
             }
         }
     }

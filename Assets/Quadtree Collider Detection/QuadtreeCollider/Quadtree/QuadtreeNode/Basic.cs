@@ -46,7 +46,7 @@ namespace MtC.Tools.QuadtreeCollider
         /// <summary>
         /// 这个节点所拥有的碰撞器
         /// </summary>
-        private readonly List<QuadtreeCollider> colliders = new List<QuadtreeCollider>();
+        private List<QuadtreeCollider> colliders = new List<QuadtreeCollider>();
         /// <summary>
         /// 这个节点所拥有的的子节点
         /// </summary>

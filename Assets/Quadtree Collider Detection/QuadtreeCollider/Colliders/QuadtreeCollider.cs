@@ -86,7 +86,7 @@ namespace MtC.Tools.QuadtreeCollider
         private void OnDisable()
         {
             // 将这个碰撞器从四叉树中移除
-            Quadtree.RemoveCollider(this);
+            Quadtree.RemoveColliderWithMerge(this);
         }
 
         /// <summary>
