@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 742584cee55bd2c4b9469b9c7adef272, type: 3}
   m_Name: Quadtree Config
   m_EditorClassIdentifier: 
-  _maxCollidersNumber: 10
-  _minSideLength: 10
-  _startArea:
+  maxCollidersNumber: 10
+  minSideLength: 10
+  minCollidersNumber: 7
+  startArea:
     serializedVersion: 2
     x: -1
     y: -1
