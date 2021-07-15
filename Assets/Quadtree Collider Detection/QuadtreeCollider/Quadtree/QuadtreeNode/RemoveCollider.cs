@@ -52,7 +52,7 @@ namespace MtC.Tools.QuadtreeCollider
         /// 如果当前节点达到了合并条件，返回 true
         /// </summary>
         /// <returns></returns>
-        private bool Needmerge()
+        private bool NeedMerge()
         {
             // 有子节点，且节点中的碰撞器总数小于最小碰撞器总数，就是达到了合并条件
             return
