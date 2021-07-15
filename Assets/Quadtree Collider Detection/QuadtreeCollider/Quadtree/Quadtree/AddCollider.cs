@@ -28,8 +28,6 @@ namespace MtC.Tools.QuadtreeCollider
         /// <param name="collider"></param>
         internal QuadtreeNode.OperationResult DoAddCollider(QuadtreeCollider collider)
         {
-            // XXX：只假设了存入失败是因为碰撞器不在范围内，可能需要添加限制，或在每次循环时对四叉树总区域进行判断，如果节点就在总区域内部但还是存入失败则报错
-
             // 存入
             QuadtreeNode.OperationResult result = root.AddColliderByArea(collider);
 
@@ -42,6 +40,7 @@ namespace MtC.Tools.QuadtreeCollider
                 // 再次存入
                 result = root.AddColliderByArea(collider);
             }
+            // XXX：逻辑上存入失败的原因只可能是碰撞器不在范围内，但也不排除意外的可能，如果发生死循环 bug，可以考虑从这里处理
 
             // 更新映射表
             collidersToNodes.OverlayMerge(result.CollidersToNodes).RemoveOnValueIsNull();
