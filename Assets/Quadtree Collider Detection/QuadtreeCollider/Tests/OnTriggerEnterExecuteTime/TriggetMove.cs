@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace MtC.Tools.QuadtreeCollider.Test.API.OnTriggerEnterExecuteTime
+namespace MtC.Tools.QuadtreeCollider.Test
 {
     public class TriggetMove : MonoBehaviour
     {

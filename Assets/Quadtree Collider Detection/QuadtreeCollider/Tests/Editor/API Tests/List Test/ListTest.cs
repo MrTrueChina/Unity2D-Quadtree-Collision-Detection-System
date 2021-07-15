@@ -4,7 +4,8 @@ using UnityEngine;
 using NUnit.Framework;
 using System.Linq;
 
-namespace MtC.Tools.QuadtreeCollider {
+namespace MtC.Tools.QuadtreeCollider.Test
+{
     [TestFixture]
     public class ListTest
     {

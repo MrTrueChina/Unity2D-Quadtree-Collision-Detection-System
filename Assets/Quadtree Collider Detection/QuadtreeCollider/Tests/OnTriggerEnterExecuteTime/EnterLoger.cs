@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 
-namespace MtC.Tools.QuadtreeCollider.Test.API.OnTriggerEnterExecuteTime
+namespace MtC.Tools.QuadtreeCollider.Test
 {
-    public class Loger : MonoBehaviour
+    public class EnterLoger : MonoBehaviour
     {
         private float lastTime;
 

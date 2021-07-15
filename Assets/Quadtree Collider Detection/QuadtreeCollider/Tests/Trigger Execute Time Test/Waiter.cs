@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace MtC.Tools.QuadtreeCollider.Test.API.TriggerExecuteTime
+namespace MtC.Tools.QuadtreeCollider.Test
 {
     /// <summary>
     /// 通过等待时间的循环达到降低Update频率的效果的脚本
