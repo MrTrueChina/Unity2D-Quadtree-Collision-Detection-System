@@ -106,7 +106,12 @@ namespace MtC.Tools.QuadtreeCollider
             }
             else
             {
-                throw new System.ArgumentOutOfRangeException("移除碰撞器 " + collider + " 时发生错误：碰撞器到节点的映射表中存在这个碰撞器，但映射到的节点  " + Instance.collidersToNodes[collider] + " 移除失败，可能是碰撞器并不在节点中");
+                throw new System.ArgumentOutOfRangeException(
+                    "移除碰撞器 "
+                    + "(" + collider.Position.x + ", " + collider.Position.y + ")"
+                    + " 时发生错误：碰撞器到节点的映射表中存在这个碰撞器，但映射到的节点  "
+                    + "(" + Instance.collidersToNodes[collider].Area.ToString() + ")"
+                    + " 移除失败，可能是碰撞器并不在节点中");
             }
 
             return result;
