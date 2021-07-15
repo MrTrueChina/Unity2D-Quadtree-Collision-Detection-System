@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 namespace MtC.Tools.QuadtreeCollider
 {
@@ -88,14 +89,78 @@ namespace MtC.Tools.QuadtreeCollider
             // 合并节点必然成功
             OperationResult result = new OperationResult(true);
 
-            // UNDONE：递归把所有子节点的碰撞器移除并记录
+            // 将当前节点和所有子节点的碰撞器移除并记录
+            result.CollidersToNodes.OverlayMerge(RemoveAllColliders().CollidersToNodes);
 
             // 把子节点列表抛弃掉
             children = null;
 
-            // UNDONE：把移除的碰撞器全部存入到当前节点中并记录
+            // 把移除的子节点重新添加到当前节点中，这里使用直接添加，因为合并操作并不会导致节点达到分割标准
+            OperationResult addCollidersResult = AddCollidersIntoSelf(result.CollidersToNodes.Select(pair => pair.Key).ToList());
+
+            // 更新映射表修改记录
+            result.CollidersToNodes.OverlayMerge(addCollidersResult.CollidersToNodes);
 
             // 返回记录
+            return result;
+        }
+
+        /// <summary>
+        /// 将当前节点和所有子节点的碰撞器移除
+        /// </summary>
+        /// <returns></returns>
+        private OperationResult RemoveAllColliders()
+        {
+            // 清空碰撞器必然成功
+            OperationResult result = new OperationResult(true);
+
+            if (!HaveChildren())
+            {
+                // 没有子节点，移除碰撞器并返回
+
+                // 将所有碰撞器记录到操作结果里，映射的节点是 null，表示从树里移除
+                result.CollidersToNodes = colliders.Select(collider => new KeyValuePair<QuadtreeCollider, QuadtreeNode>(collider, null)).ToDictionary(pair => pair.Key, pair => pair.Value);
+
+                // 清空碰撞器列表
+                colliders.Clear();
+
+                return result;
+            }
+            else
+            {
+                // 有子节点，通知子节点清空碰撞器并合并记录
+
+                children.ForEach(child =>
+                {
+                    result.CollidersToNodes.OverlayMerge(child.RemoveAllColliders().CollidersToNodes);
+                });
+
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// 向当前节点批量添加碰撞器
+        /// </summary>
+        /// <param name="newColliders"></param>
+        /// <returns></returns>
+        private OperationResult AddCollidersIntoSelf(List<QuadtreeCollider> newColliders)
+        {
+            // 批量添加必然成功
+            OperationResult result = new OperationResult(true);
+
+            // 将碰撞器添加到碰撞器列表里
+            colliders.AddRange(newColliders);
+
+            // 去重
+            colliders = new List<QuadtreeCollider>(colliders.Distinct());
+
+            // 记录映射变化
+            result.CollidersToNodes = newColliders
+                .Where(collider => collider != null)
+                .Select(collider => new KeyValuePair<QuadtreeCollider, QuadtreeNode>(collider, this))
+                .ToDictionary(pair => pair.Key, pair => pair.Value);
+
             return result;
         }
     }
