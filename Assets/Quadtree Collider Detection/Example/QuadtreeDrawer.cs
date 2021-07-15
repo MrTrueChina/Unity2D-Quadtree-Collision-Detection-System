@@ -217,6 +217,16 @@ namespace MtC.Tools.QuadtreeCollider
         }
 
         /// <summary>
+        /// 获取一个节点及其所有子节点的碰撞器总数
+        /// </summary>
+        /// <param name="quadtreeNode"></param>
+        /// <returns></returns>
+        private int GetCollidersNumber(QuadtreeNode quadtreeNode)
+        {
+            return (int)typeof(QuadtreeNode).GetMethod("GetColliderNumbers", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(quadtreeNode, new object[0]);
+        }
+
+        /// <summary>
         /// 绘制节点
         /// </summary>
         /// <param name="node"></param>
@@ -246,7 +256,7 @@ namespace MtC.Tools.QuadtreeCollider
         {
             string infomation = "";
 
-            infomation += "总碰撞器数：" + GetColliders(node).Count + "\n";
+            infomation += "总碰撞器数：" + GetCollidersNumber(node) + "\n";
             infomation += "最大检测半径：" + GetMaxRadius(node) + "\n";
 
             return infomation;
