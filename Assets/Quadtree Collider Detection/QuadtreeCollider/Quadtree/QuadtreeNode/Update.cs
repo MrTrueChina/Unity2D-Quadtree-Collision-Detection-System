@@ -101,7 +101,7 @@ namespace MtC.Tools.QuadtreeCollider
             foreach (QuadtreeCollider collider in new List<QuadtreeCollider>(result.CollidersToNodes.Keys))
             {
                 // 移除碰撞器
-                OperationResult removeResult = Quadtree.RemoveCollider(collider);
+                OperationResult removeResult = Quadtree.RemoveColliderWithOutMerge(collider);
 
                 // 记录映射表的变化
                 result.CollidersToNodes.OverlayMerge(removeResult.CollidersToNodes);
