@@ -256,6 +256,7 @@ namespace MtC.Tools.QuadtreeCollider
         {
             string infomation = "";
 
+            infomation += "当前节点碰撞器数：" + GetColliders(node).Count + "\n";
             infomation += "总碰撞器数：" + GetCollidersNumber(node) + "\n";
             infomation += "最大检测半径：" + GetMaxRadius(node) + "\n";
 
