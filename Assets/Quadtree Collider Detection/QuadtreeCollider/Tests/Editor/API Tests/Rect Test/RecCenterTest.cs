@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using NUnit.Framework;
 
-namespace MtC.Tools.QuadtreeCollider
+namespace MtC.Tools.QuadtreeCollider.Test
 {
     [TestFixture]
     public class RecCenterTest

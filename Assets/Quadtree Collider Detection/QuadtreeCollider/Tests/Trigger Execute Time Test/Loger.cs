@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace MtC.Tools.QuadtreeCollider.Test.API.TriggerExecuteTime
+namespace MtC.Tools.QuadtreeCollider.Test
 {
     public class Loger : MonoBehaviour
     {
